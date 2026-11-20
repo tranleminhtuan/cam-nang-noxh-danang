@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v4.6)</title>
+<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v4.7)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
@@ -203,7 +203,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 <nav class="sb" id="sb" aria-label="Điều hướng chính">
   <div class="sb-brand">
     <div class="sb-logo">ĐN</div>
-    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v4.6 · QHC 2050 & CSDL động</small></div>
+    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v4.7 · QHC 2050 & CSDL động</small></div>
   </div>
   <div class="sb-grp">Dành cho người dân</div>
   <div class="sb-nav" role="tablist">
@@ -1203,6 +1203,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     const prjInfo = Object.assign({
       so_qd: '', cdt: p.cdt || '', dien_tich: p.dientich ? (p.dientich + ' ha') : '',
       quy_mo_can: p.can ? (p.can.toLocaleString('vi-VN') + ' căn (Bán: ' + (p.ban||0).toLocaleString('vi-VN') + ' · Thuê: ' + (p.thue||0).toLocaleString('vi-VN') + ')') : '',
+      so_bo_quy_mo: '',
       tong_von: '', tien_do: p.tinhtrang || '', pdf_url: p.ctdtPdf || ''
     }, p.prjEdit || {});
     const s2EditHtml = !isUninvested ? `
@@ -1222,6 +1223,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
             <tr><td>Chủ đầu tư</td><td>${esc(prjInfo.cdt || 'Chưa cập nhật')}</td></tr>
             <tr><td>Diện tích đất</td><td>${esc(prjInfo.dien_tich || 'Chưa cập nhật')}</td></tr>
             <tr><td>Quy mô căn hộ (bán / thuê)</td><td>${esc(prjInfo.quy_mo_can || 'Chưa cập nhật')}</td></tr>
+            <tr><td>Sơ bộ quy mô dự án</td><td>${esc(prjInfo.so_bo_quy_mo || 'Chưa cập nhật (số tòa, số tầng, diện tích sàn, hạng mục thương mại...)')}</td></tr>
             <tr><td>Sơ bộ tổng mức đầu tư</td><td>${esc(prjInfo.tong_von || 'Chưa cập nhật')}</td></tr>
             <tr><td>Tình trạng / Tiến độ</td><td>${esc(prjInfo.tien_do || 'Chưa cập nhật')}</td></tr>
             <tr><td>Văn bản QĐ CTĐT (.pdf)</td><td>${prjInfo.pdf_url ? `<a class="sm pri" href="${esc(prjInfo.pdf_url)}" target="_blank" rel="noopener">📄 Mở xem file PDF QĐ CTĐT ↗</a>` : '<span class="note">Chưa gắn file PDF (bấm Upload & Trích xuất PDF phía trên để tự đọc)</span>'}</td></tr>
@@ -1233,6 +1235,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
             <div><label>Chủ đầu tư</label><input type="text" id="inp_s2_cdt" value="${esc(prjInfo.cdt)}"></div>
             <div><label>Diện tích đất</label><input type="text" id="inp_s2_dt" value="${esc(prjInfo.dien_tich)}"></div>
             <div><label>Quy mô căn hộ (bán / thuê)</label><input type="text" id="inp_s2_can" value="${esc(prjInfo.quy_mo_can)}"></div>
+            <div style="grid-column:1/-1"><label>Sơ bộ quy mô dự án (số tòa, số tầng, sàn xây dựng, hạng mục thương mại...)</label><input type="text" id="inp_s2_sbqm" value="${esc(prjInfo.so_bo_quy_mo)}" placeholder="VD: 04 tòa chung cư (02 tòa 15 tầng, 02 tòa 19 tầng), tổng 1.326 căn; sàn ~136.636 m²; 40 căn liền kề & TMDV 5 tầng"></div>
             <div><label>Sơ bộ tổng mức đầu tư</label><input type="text" id="inp_s2_von" value="${esc(prjInfo.tong_von)}"></div>
             <div><label>Tình trạng / Tiến độ</label><input type="text" id="inp_s2_td" value="${esc(prjInfo.tien_do)}"></div>
           </div>
@@ -1351,6 +1354,11 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       if(cdtM) out.cdt = cdtM[1].trim();
       out.dien_tich = pickRe(txt, /(?:Diện tích\s+(?:khu\s+đất|đất|sử\s+dụng\s+đất))[^\n.;]{0,55}(?:m2|m²|ha)/i);
       out.quy_mo_can = pickRe(txt, /(?:khoảng\s+)?[\d.,]+\s*căn\s*hộ[^\n.;]{0,70}/i);
+      out.so_bo_quy_mo = [
+        pickRe(txt, /(?:Quy mô\s+(?:dự án|xây dựng|công trình)[^\n.;]{0,130})/i),
+        pickRe(txt, /\d+\s*tòa\s*(?:chung cư|nhà)[^\n.;]{0,110}/i),
+        pickRe(txt, /(?:tổng\s+diện tích\s+sàn|diện tích\s+sàn)[^\n.;]{0,75}(?:m2|m²)/i)
+      ].filter(Boolean).join(' · ');
       out.tong_von = pickRe(txt, /(?:Sơ bộ\s+)?(?:tổng\s+(?:mức|vốn)\s+đầu\s+tư)[^\n.;]{0,80}(?:tỷ\s+đồng|đồng)/i);
       out.tien_do = pickRe(txt, /(?:Tiến độ\s+thực\s+hiện|Thời gian\s+thực\s+hiện)[^\n.;]{0,110}/i);
       return out;
@@ -1371,11 +1379,13 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       const qmStr = $('inp_s2_can').value.trim();
       const numM = qmStr.match(/([\d.,]+)\s*căn/i);
       const parsedCan = numM ? Number(numM[1].replace(/[.,]/g,'')) : (p.can || 0);
+      const sbqmStr = $('inp_s2_sbqm') ? $('inp_s2_sbqm').value.trim() : '';
       p.prjEdit = {
         so_qd: $('inp_s2_qd').value.trim(),
         cdt: $('inp_s2_cdt').value.trim(),
         dien_tich: $('inp_s2_dt').value.trim(),
         quy_mo_can: qmStr,
+        so_bo_quy_mo: sbqmStr,
         tong_von: $('inp_s2_von').value.trim(),
         tien_do: $('inp_s2_td').value.trim(),
         pdf_url: (p.prjEdit && p.prjEdit.pdf_url) || p.ctdtPdf || ''
@@ -1384,6 +1394,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       if(p.prjEdit.tien_do) p.tinhtrang = p.prjEdit.tien_do;
       if(parsedCan > 0) p.can = parsedCan;
       if(p.prjEdit.so_qd && !p.rows.some(r=>r[0]==='Số / Trích yếu QĐ CTĐT')) p.rows.push(['Số / Trích yếu QĐ CTĐT', p.prjEdit.so_qd]);
+      if(p.prjEdit.so_bo_quy_mo && !p.rows.some(r=>r[0]==='Sơ bộ quy mô dự án')) p.rows.push(['Sơ bộ quy mô dự án', p.prjEdit.so_bo_quy_mo]);
       if(p.prjEdit.tong_von && !p.rows.some(r=>r[0]==='Sơ bộ tổng mức đầu tư')) p.rows.push(['Sơ bộ tổng mức đầu tư', p.prjEdit.tong_von]);
       try{ localStorage.setItem('noxh_s2_'+p.id, JSON.stringify(p.prjEdit)); }catch(e){}
     }
@@ -1418,6 +1429,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
         thue: p.thue || 0,
         tinhtrang: s2Cur.tien_do || p.tinhtrang || '',
         so_qd: s2Cur.so_qd || '',
+        so_bo_quy_mo: s2Cur.so_bo_quy_mo || '',
         tong_von: s2Cur.tong_von || '',
         plan: qCur
       };
@@ -1427,7 +1439,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
         p.lat||'', p.lng||'', '', '', '', (mode==='plan' ? (qCur.pdf_url||'') : (s2Cur.pdf_url||'')),
         mode==='plan'
           ? `Tên QH: ${qCur.ten_qh} | Ô QH: ${qCur.ky_hieu_o} | DT: ${qCur.dien_tich} | Dân số: ${qCur.dan_so} | Mật độ: ${qCur.mat_do} | Hệ số SDĐ: ${qCur.he_so_sdd} | Tầng cao: ${qCur.tang_cao} | Chiều cao: ${qCur.chieu_cao}`
-          : `QĐ: ${payload.so_qd} | DT: ${s2Cur.dien_tich||''} | Quy mô: ${s2Cur.quy_mo_can||''} | Vốn: ${payload.tong_von} | Tiến độ: ${payload.tien_do||payload.tinhtrang}`
+          : [payload.so_bo_quy_mo ? ('Sơ bộ quy mô: ' + payload.so_bo_quy_mo) : '', payload.so_qd ? ('QĐ: ' + payload.so_qd) : '', s2Cur.dien_tich ? ('DT: ' + s2Cur.dien_tich) : '', payload.tong_von ? ('Vốn: ' + payload.tong_von) : '', (payload.tien_do||payload.tinhtrang) ? ('Tiến độ: ' + (payload.tien_do||payload.tinhtrang)) : ''].filter(Boolean).join(' | ')
       ].join('\t');
       if(navigator.clipboard && navigator.clipboard.writeText){
         navigator.clipboard.writeText(tsvLine).catch(()=>{});
@@ -1466,6 +1478,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
           if(ext.cdt) $('inp_s2_cdt').value = ext.cdt;
           if(ext.dien_tich) $('inp_s2_dt').value = ext.dien_tich;
           if(ext.quy_mo_can) $('inp_s2_can').value = ext.quy_mo_can;
+          if(ext.so_bo_quy_mo && $('inp_s2_sbqm')) $('inp_s2_sbqm').value = ext.so_bo_quy_mo;
           if(ext.tong_von) $('inp_s2_von').value = ext.tong_von;
           if(ext.tien_do) $('inp_s2_td').value = ext.tien_do;
           if(stEl) stEl.innerHTML = '✅ Đã tự trích xuất từ PDF <b>' + esc(f.name) + '</b> và điền sẵn vào khung chỉnh sửa bên dưới. Hãy kiểm tra, chỉnh sửa nếu cần rồi bấm <b>Lưu & Đồng bộ ngược CSDL</b>.';
@@ -1691,6 +1704,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
           const ban = Number(String(r[10]||'').replace(/[^\d.-]/g,'')) || 0;
           const thue = Number(String(r[11]||'').replace(/[^\d.-]/g,'')) || 0;
           const tinhtrang = String(r[12] || '').trim();
+          const sbqmCsv = String(r[20] || '').trim();
           const lat = parseFloat(String(r[13]||'').replace(',','.'));
           const lng = parseFloat(String(r[14]||'').replace(',','.'));
           const polyRaw = String(r[15] || '').trim();
@@ -1726,6 +1740,10 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
             p.rentOnly = rentOnly;
             if(can || ban || thue){ p.can = can || (ban+thue); p.ban = ban; p.thue = thue; }
             if(tinhtrang) p.tinhtrang = tinhtrang;
+          if(sbqmCsv){
+            if(!p.prjEdit) p.prjEdit = {};
+            if(!p.prjEdit.so_bo_quy_mo) p.prjEdit.so_bo_quy_mo = sbqmCsv;
+          }
             if(!isNaN(lat) && !isNaN(lng)){ p.lat = lat; p.lng = lng; p.hasExactGeo = true; }
             if(poly) p.polygon = poly;
             if(i3d.length) p.img3d = i3d;
