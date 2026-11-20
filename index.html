@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v4.5)</title>
+<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v4.6)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
@@ -185,6 +185,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" crossorigin=""></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin=""></script>
 <style>
 .auth-bar{display:flex;align-items:center;gap:8px;margin-left:auto}
 .auth-user{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);padding:4px 10px;border-radius:99px;font-size:12.5px}
@@ -202,7 +203,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 <nav class="sb" id="sb" aria-label="Điều hướng chính">
   <div class="sb-brand">
     <div class="sb-logo">ĐN</div>
-    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v4.5 · QHC 2050 & CSDL động</small></div>
+    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v4.6 · QHC 2050 & CSDL động</small></div>
   </div>
   <div class="sb-grp">Dành cho người dân</div>
   <div class="sb-nav" role="tablist">
@@ -327,7 +328,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
       <div class="subtabs" id="prj_subtabs">
         <button class="stab on" data-g="s2">🏗️ Đã chấp thuận & Đang triển khai <span class="cnt" id="cnt_s2">36</span></button>
         <button class="stab" data-g="s3">📐 Đang làm thủ tục chấp thuận, giao CĐT <span class="cnt" id="cnt_s3">22</span></button>
-        <button class="stab" data-g="s3_qh">🗺️ Đã có quy hoạch, chưa đầu tư (Kêu gọi NĐT) <span class="cnt" id="cnt_s3qh">0</span></button>
+        <button class="stab" data-g="s3_qh">🗺️ Đã có quy hoạch, chưa đầu tư <span class="cnt" id="cnt_s3qh">0</span></button>
       </div>
       <div class="box" style="margin-bottom:12px">
         <div class="row" style="margin-top:0">
@@ -1196,6 +1197,48 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       : '<span class="st kiem">Thông tin Quy hoạch & Quỹ đất (Đang làm TT)</span>';
     const rentBanner = p.rentNote ? `<div class="rent-alert"><b>${p.rentOnly ? '🔒 LƯU Ý QUAN TRỌNG — DỰ ÁN CHỈ CHO THUÊ:' : 'ℹ️ Thông tin quỹ nhà:'}</b> ${esc(p.rentNote)}</div>` : '';
     const isUninvested = (p.group !== 's2');
+    let savedS2Local = null;
+    try{ savedS2Local = JSON.parse(localStorage.getItem('noxh_s2_'+p.id) || 'null'); }catch(e){}
+    if(savedS2Local && !p.prjEdit) p.prjEdit = savedS2Local;
+    const prjInfo = Object.assign({
+      so_qd: '', cdt: p.cdt || '', dien_tich: p.dientich ? (p.dientich + ' ha') : '',
+      quy_mo_can: p.can ? (p.can.toLocaleString('vi-VN') + ' căn (Bán: ' + (p.ban||0).toLocaleString('vi-VN') + ' · Thuê: ' + (p.thue||0).toLocaleString('vi-VN') + ')') : '',
+      tong_von: '', tien_do: p.tinhtrang || '', pdf_url: p.ctdtPdf || ''
+    }, p.prjEdit || {});
+    const s2EditHtml = !isUninvested ? `
+      <div class="box" style="margin:12px 0;background:var(--bg)">
+        <div class="row" style="margin-top:0;justify-content:space-between">
+          <h3 style="margin:0">🏗️ Thông tin Dự án & QĐ Chấp thuận chủ trương đầu tư</h3>
+          <div class="row" style="margin-top:0">
+            <button class="sm" id="btn_edit_s2">✏️ Nhập / Sửa thông tin</button>
+            <label class="sm pri" style="cursor:pointer">📄 Upload & Trích xuất PDF QĐ CTĐT<input type="file" id="s2_pdf_file" accept="application/pdf,.pdf" style="display:none"></label>
+            <button class="sm" id="btn_sync_back_s2">🔄 Đồng bộ ngược CSDL</button>
+          </div>
+        </div>
+        <div id="s2_pdf_status" class="note" style="margin-top:6px"></div>
+        <div class="tw" style="margin-top:8px">
+          <table class="kv">
+            <tr><td>Số / Trích yếu QĐ CTĐT</td><td>${esc(prjInfo.so_qd || 'Chưa cập nhật (nhập tay hoặc upload PDF để tự trích xuất)')}</td></tr>
+            <tr><td>Chủ đầu tư</td><td>${esc(prjInfo.cdt || 'Chưa cập nhật')}</td></tr>
+            <tr><td>Diện tích đất</td><td>${esc(prjInfo.dien_tich || 'Chưa cập nhật')}</td></tr>
+            <tr><td>Quy mô căn hộ (bán / thuê)</td><td>${esc(prjInfo.quy_mo_can || 'Chưa cập nhật')}</td></tr>
+            <tr><td>Sơ bộ tổng mức đầu tư</td><td>${esc(prjInfo.tong_von || 'Chưa cập nhật')}</td></tr>
+            <tr><td>Tình trạng / Tiến độ</td><td>${esc(prjInfo.tien_do || 'Chưa cập nhật')}</td></tr>
+            <tr><td>Văn bản QĐ CTĐT (.pdf)</td><td>${prjInfo.pdf_url ? `<a class="sm pri" href="${esc(prjInfo.pdf_url)}" target="_blank" rel="noopener">📄 Mở xem file PDF QĐ CTĐT ↗</a>` : '<span class="note">Chưa gắn file PDF (bấm Upload & Trích xuất PDF phía trên để tự đọc)</span>'}</td></tr>
+          </table>
+        </div>
+        <div id="s2_edit_form" hidden style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)">
+          <div class="fld">
+            <div><label>Số / Trích yếu QĐ CTĐT</label><input type="text" id="inp_s2_qd" value="${esc(prjInfo.so_qd)}"></div>
+            <div><label>Chủ đầu tư</label><input type="text" id="inp_s2_cdt" value="${esc(prjInfo.cdt)}"></div>
+            <div><label>Diện tích đất</label><input type="text" id="inp_s2_dt" value="${esc(prjInfo.dien_tich)}"></div>
+            <div><label>Quy mô căn hộ (bán / thuê)</label><input type="text" id="inp_s2_can" value="${esc(prjInfo.quy_mo_can)}"></div>
+            <div><label>Sơ bộ tổng mức đầu tư</label><input type="text" id="inp_s2_von" value="${esc(prjInfo.tong_von)}"></div>
+            <div><label>Tình trạng / Tiến độ</label><input type="text" id="inp_s2_td" value="${esc(prjInfo.tien_do)}"></div>
+          </div>
+          <div class="row"><button class="go" id="btn_save_s2">💾 Lưu thông tin</button><button class="sm pri" id="btn_save_sync_s2">💾 Lưu & Đồng bộ ngược CSDL</button><span class="note">Kiểm tra, sửa lại nếu trích xuất PDF chưa khớp rồi bấm Lưu / Đồng bộ.</span></div>
+        </div>
+      </div>` : '';
     const qh = isUninvested ? parsePlanFields(p) : null;
     const planHtml = isUninvested ? `
       <div class="box" style="margin:12px 0;background:var(--bg)">
@@ -1203,9 +1246,10 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
           <h3 style="margin:0">📐 Thông tin Quy hoạch khu đất (Chưa có Chủ đầu tư)</h3>
           <div class="row" style="margin-top:0">
             <button class="sm" id="btn_edit_qh">✏️ Nhập / Cập nhật chỉ tiêu QH</button>
-            <label class="sm pri" style="cursor:pointer">📄 Đính kèm file PDF Quy hoạch<input type="file" id="qh_pdf_file" accept="application/pdf,.pdf" style="display:none"></label>
+            <label class="sm pri" style="cursor:pointer">📄 Upload & Trích xuất PDF Quy hoạch<input type="file" id="qh_pdf_file" accept="application/pdf,.pdf" style="display:none"></label>
           </div>
         </div>
+        <div id="qh_pdf_status" class="note" style="margin-top:6px"></div>
         <div class="tw" style="margin-top:8px">
           <table class="kv">
             <tr><td>Tên Quy hoạch (Quy hoạch phân khu, Quy hoạch chi tiết...)</td><td>${esc(qh.ten_qh || 'Chưa cập nhật')}</td></tr>
@@ -1230,7 +1274,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
             <div><label>Tầng cao</label><input type="text" id="inp_qh_tc" value="${esc(qh.tang_cao)}"></div>
             <div><label>Chiều cao</label><input type="text" id="inp_qh_cc" value="${esc(qh.chieu_cao)}"></div>
           </div>
-          <div class="row"><button class="go" id="btn_save_qh">💾 Lưu chỉ tiêu quy hoạch</button><span class="note">Lưu tạm trên trình duyệt để tra cứu & xuất báo cáo; quản trị viên đồng bộ vào cột Quy hoạch trên CSDL gốc.</span></div>
+          <div class="row"><button class="go" id="btn_save_qh">💾 Lưu chỉ tiêu quy hoạch</button><button class="sm" id="btn_sync_back_qh">🔄 Xuất dữ liệu đồng bộ ngược CSDL</button><span class="note">Cập nhật ngay trên App và hỗ trợ đồng bộ ngược về CSDL gốc.</span></div>
         </div>
       </div>` : '';
 
@@ -1252,6 +1296,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
         <button class="sm" id="btn_reg_prj">🔔 Đăng ký nhận tin dự án này</button>
         ${p.lat!=null?`<a class="sm" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}">🗺️ Mở Google Maps ${p.hasExactGeo?'':'(ước tính)'}</a>`:''}
       </div>
+      ${s2EditHtml}
       ${planHtml}
       <div class="tw"><table class="kv">${(p.rows||[]).map(([a,b])=>`<tr><td>${esc(a)}</td><td style="white-space:pre-wrap">${/^https?:\/\//i.test(String(b).trim())?`<a class="sm pri" href="${esc(String(b).trim())}" target="_blank" rel="noopener">📄 Mở văn bản đính kèm ↗</a>`:esc(String(b))}</td></tr>`).join('')}</table></div>
 
@@ -1279,35 +1324,189 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       };
     }
 
+    async function extractPdfTextClient(file){
+      if(!window.pdfjsLib) return '';
+      try{
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        const buf = await file.arrayBuffer();
+        const doc = await pdfjsLib.getDocument({data: buf}).promise;
+        let full = '';
+        const maxP = Math.min(doc.numPages, 12);
+        for(let i=1; i<=maxP; i++){
+          const pg = await doc.getPage(i);
+          const tc = await pg.getTextContent();
+          full += tc.items.map(it=>it.str).join(' ') + '\n';
+        }
+        return full.replace(/[ \t]+/g, ' ').trim();
+      }catch(err){
+        console.error(err);
+        return '';
+      }
+    }
+    function pickRe(txt, re){ const m = txt.match(re); return m ? m[0].replace(/\s+/g,' ').trim() : ''; }
+    function parseS2FromPdfText(txt){
+      const out = {};
+      out.so_qd = pickRe(txt, /(?:Quyết định\s+số|Số)\s*[:\.]?\s*\d+\/[A-ZĐa-zđ0-9\-]+(?:\s+ngày\s+\d{1,2}[\/\-\s]\d{1,2}[\/\-\s]\d{4})?/i);
+      const cdtM = txt.match(/(?:Chủ đầu tư|Nhà đầu tư|Giao cho)\s*[:\.]?\s*([^\n.;]{6,110})/i);
+      if(cdtM) out.cdt = cdtM[1].trim();
+      out.dien_tich = pickRe(txt, /(?:Diện tích\s+(?:khu\s+đất|đất|sử\s+dụng\s+đất))[^\n.;]{0,55}(?:m2|m²|ha)/i);
+      out.quy_mo_can = pickRe(txt, /(?:khoảng\s+)?[\d.,]+\s*căn\s*hộ[^\n.;]{0,70}/i);
+      out.tong_von = pickRe(txt, /(?:Sơ bộ\s+)?(?:tổng\s+(?:mức|vốn)\s+đầu\s+tư)[^\n.;]{0,80}(?:tỷ\s+đồng|đồng)/i);
+      out.tien_do = pickRe(txt, /(?:Tiến độ\s+thực\s+hiện|Thời gian\s+thực\s+hiện)[^\n.;]{0,110}/i);
+      return out;
+    }
+    function parsePlanFromPdfText(txt){
+      const out = {};
+      out.ten_qh = pickRe(txt, /(?:Quy hoạch\s+(?:phân khu|chi tiết|chung)[^\n.;]{0,85})/i);
+      out.ky_hieu_o = pickRe(txt, /(?:Ký hiệu|Ô\s+(?:quy hoạch|đất)|Lô\s+đất)\s*[:\.]?\s*[A-Z0-9\-_\.\/]{2,35}/i);
+      out.dien_tich = pickRe(txt, /(?:Diện tích(?:\s+đất)?)[^\n.;]{0,45}(?:m2|m²|ha)/i);
+      out.dan_so = pickRe(txt, /(?:Quy mô\s+)?dân số[^\n.;]{0,45}người/i);
+      out.mat_do = pickRe(txt, /mật độ(?:\s+xây dựng)?[^\n.;]{0,35}%/i);
+      out.he_so_sdd = pickRe(txt, /hệ số sử dụng đất[^\n.;]{0,35}(?:lần|\d[\d.,]*)/i);
+      out.tang_cao = pickRe(txt, /tầng cao[^\n.;]{0,35}tầng/i);
+      out.chieu_cao = pickRe(txt, /chiều cao[^\n.;]{0,35}m\b/i);
+      return out;
+    }
+    function saveS2State(){
+      const qmStr = $('inp_s2_can').value.trim();
+      const numM = qmStr.match(/([\d.,]+)\s*căn/i);
+      const parsedCan = numM ? Number(numM[1].replace(/[.,]/g,'')) : (p.can || 0);
+      p.prjEdit = {
+        so_qd: $('inp_s2_qd').value.trim(),
+        cdt: $('inp_s2_cdt').value.trim(),
+        dien_tich: $('inp_s2_dt').value.trim(),
+        quy_mo_can: qmStr,
+        tong_von: $('inp_s2_von').value.trim(),
+        tien_do: $('inp_s2_td').value.trim(),
+        pdf_url: (p.prjEdit && p.prjEdit.pdf_url) || p.ctdtPdf || ''
+      };
+      if(p.prjEdit.cdt) p.cdt = p.prjEdit.cdt;
+      if(p.prjEdit.tien_do) p.tinhtrang = p.prjEdit.tien_do;
+      if(parsedCan > 0) p.can = parsedCan;
+      if(p.prjEdit.so_qd && !p.rows.some(r=>r[0]==='Số / Trích yếu QĐ CTĐT')) p.rows.push(['Số / Trích yếu QĐ CTĐT', p.prjEdit.so_qd]);
+      if(p.prjEdit.tong_von && !p.rows.some(r=>r[0]==='Sơ bộ tổng mức đầu tư')) p.rows.push(['Sơ bộ tổng mức đầu tư', p.prjEdit.tong_von]);
+      try{ localStorage.setItem('noxh_s2_'+p.id, JSON.stringify(p.prjEdit)); }catch(e){}
+    }
+    function saveQhState(){
+      p.plan = {
+        ten_qh: $('inp_qh_ten').value.trim(),
+        ky_hieu_o: $('inp_qh_o').value.trim(),
+        dien_tich: $('inp_qh_dt').value.trim(),
+        dan_so: $('inp_qh_ds').value.trim(),
+        mat_do: $('inp_qh_md').value.trim(),
+        he_so_sdd: $('inp_qh_hs').value.trim(),
+        tang_cao: $('inp_qh_tc').value.trim(),
+        chieu_cao: $('inp_qh_cc').value.trim(),
+        pdf_url: (p.plan && p.plan.pdf_url) || p.planPdf || ''
+      };
+      try{ localStorage.setItem('noxh_plan_'+p.id, JSON.stringify(p.plan)); }catch(e){}
+    }
+    function triggerSyncBack(mode){
+      const qCur = parsePlanFields(p);
+      const s2Cur = p.prjEdit || {};
+      const payload = {
+        action: 'sync_back_project',
+        id: p.id,
+        group: p.group,
+        name: p.name,
+        cdt: s2Cur.cdt || p.cdt || '',
+        phuong: p.phuong || '',
+        diaban: p.diaban || '',
+        dien_tich: mode==='plan' ? (qCur.dien_tich || '') : (s2Cur.dien_tich || ''),
+        can: p.can || 0,
+        ban: p.ban || 0,
+        thue: p.thue || 0,
+        tinhtrang: s2Cur.tien_do || p.tinhtrang || '',
+        so_qd: s2Cur.so_qd || '',
+        tong_von: s2Cur.tong_von || '',
+        plan: qCur
+      };
+      const tsvLine = [
+        p.id, p.group, 'Có', p.name, payload.cdt, p.phuong, p.diaban, p.nguon_ma||'',
+        p.rentOnly?'CHỈ CHO THUÊ':'Không', p.can||0, p.ban||0, p.thue||0, payload.tinhtrang,
+        p.lat||'', p.lng||'', '', '', '', (mode==='plan' ? (qCur.pdf_url||'') : (s2Cur.pdf_url||'')),
+        mode==='plan'
+          ? `Tên QH: ${qCur.ten_qh} | Ô QH: ${qCur.ky_hieu_o} | DT: ${qCur.dien_tich} | Dân số: ${qCur.dan_so} | Mật độ: ${qCur.mat_do} | Hệ số SDĐ: ${qCur.he_so_sdd} | Tầng cao: ${qCur.tang_cao} | Chiều cao: ${qCur.chieu_cao}`
+          : `QĐ: ${payload.so_qd} | DT: ${s2Cur.dien_tich||''} | Quy mô: ${s2Cur.quy_mo_can||''} | Vốn: ${payload.tong_von} | Tiến độ: ${payload.tien_do||payload.tinhtrang}`
+      ].join('\t');
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(tsvLine).catch(()=>{});
+      }
+      const actUrl = window.NOXH_CONFIG && window.NOXH_CONFIG.formActionUrl;
+      if(actUrl){
+        fetch(actUrl, {method:'POST', body:JSON.stringify(payload)}).catch(()=>{});
+      }
+      alert('Đã gửi tín hiệu đồng bộ ngược cho mã ' + p.id + ' về sheet APP_DU_AN_VA_HINH_ANH (và hàng chờ CHO_DUYET_APP) của CSDL gốc, đồng thời sao chép dòng dữ liệu vào bộ nhớ tạm.\nTrên Google Sheets, chạy menu "4. Đồng bộ ngược từ sheet APP về CSDL gốc (S1/S2/S3)" để cập nhật chính thức vào S1/S2/S3.');
+    }
+    if($('btn_edit_s2')){
+      $('btn_edit_s2').onclick = ()=>{ $('s2_edit_form').hidden = !$('s2_edit_form').hidden; };
+    }
+    if($('btn_save_s2')){
+      $('btn_save_s2').onclick = ()=>{ saveS2State(); renderPDetail(p); };
+    }
+    if($('btn_save_sync_s2')){
+      $('btn_save_sync_s2').onclick = ()=>{ saveS2State(); triggerSyncBack('s2'); renderPDetail(p); };
+    }
+    if($('btn_sync_back_s2')) $('btn_sync_back_s2').onclick = ()=>triggerSyncBack('s2');
+    if($('s2_pdf_file')){
+      $('s2_pdf_file').onchange = async e=>{
+        const f = e.target.files && e.target.files[0];
+        if(!f) return;
+        const stEl = $('s2_pdf_status');
+        if(stEl) stEl.innerHTML = '⏳ Đang đọc và tự động trích xuất thông tin dự án từ file PDF <b>' + esc(f.name) + '</b>...';
+        const u = URL.createObjectURL(f);
+        p.ctdtPdf = u;
+        if(!p.prjEdit) p.prjEdit = {};
+        p.prjEdit.pdf_url = u;
+        const txt = await extractPdfTextClient(f);
+        $('s2_edit_form').hidden = false;
+        if(txt && txt.length > 25){
+          const ext = parseS2FromPdfText(txt);
+          if(ext.so_qd) $('inp_s2_qd').value = ext.so_qd;
+          if(ext.cdt) $('inp_s2_cdt').value = ext.cdt;
+          if(ext.dien_tich) $('inp_s2_dt').value = ext.dien_tich;
+          if(ext.quy_mo_can) $('inp_s2_can').value = ext.quy_mo_can;
+          if(ext.tong_von) $('inp_s2_von').value = ext.tong_von;
+          if(ext.tien_do) $('inp_s2_td').value = ext.tien_do;
+          if(stEl) stEl.innerHTML = '✅ Đã tự trích xuất từ PDF <b>' + esc(f.name) + '</b> và điền sẵn vào khung chỉnh sửa bên dưới. Hãy kiểm tra, chỉnh sửa nếu cần rồi bấm <b>Lưu & Đồng bộ ngược CSDL</b>.';
+        } else {
+          if(stEl) stEl.innerHTML = '⚠️ File PDF <b>' + esc(f.name) + '</b> là bản scan dạng ảnh (chưa có lớp chữ). Bạn có thể nhập nhanh vào khung bên dưới hoặc dùng chức năng <b>Upload & OCR tiếng Việt</b> ngay trong Google Sheets CSDL.';
+        }
+      };
+    }
     if($('btn_edit_qh')){
       $('btn_edit_qh').onclick = ()=>{ $('qh_edit_form').hidden = !$('qh_edit_form').hidden; };
     }
     if($('btn_save_qh')){
-      $('btn_save_qh').onclick = ()=>{
-        p.plan = {
-          ten_qh: $('inp_qh_ten').value.trim(),
-          ky_hieu_o: $('inp_qh_o').value.trim(),
-          dien_tich: $('inp_qh_dt').value.trim(),
-          dan_so: $('inp_qh_ds').value.trim(),
-          mat_do: $('inp_qh_md').value.trim(),
-          he_so_sdd: $('inp_qh_hs').value.trim(),
-          tang_cao: $('inp_qh_tc').value.trim(),
-          chieu_cao: $('inp_qh_cc').value.trim(),
-          pdf_url: (p.plan && p.plan.pdf_url) || p.planPdf || ''
-        };
-        try{ localStorage.setItem('noxh_plan_'+p.id, JSON.stringify(p.plan)); }catch(e){}
-        renderPDetail(p);
-      };
+      $('btn_save_qh').onclick = ()=>{ saveQhState(); renderPDetail(p); };
     }
+    if($('btn_sync_back_qh')) $('btn_sync_back_qh').onclick = ()=>{ saveQhState(); triggerSyncBack('plan'); };
     if($('qh_pdf_file')){
-      $('qh_pdf_file').onchange = e=>{
+      $('qh_pdf_file').onchange = async e=>{
         const f = e.target.files && e.target.files[0];
         if(!f) return;
+        const stEl = $('qh_pdf_status');
+        if(stEl) stEl.innerHTML = '⏳ Đang đọc và tự động trích xuất 8 chỉ tiêu quy hoạch từ file PDF <b>' + esc(f.name) + '</b>...';
         const blobUrl = URL.createObjectURL(f);
         p.planPdf = blobUrl;
         if(!p.plan) p.plan = parsePlanFields(p);
         p.plan.pdf_url = blobUrl;
-        renderPDetail(p);
+        const txt = await extractPdfTextClient(f);
+        $('qh_edit_form').hidden = false;
+        if(txt && txt.length > 25){
+          const ext = parsePlanFromPdfText(txt);
+          if(ext.ten_qh) $('inp_qh_ten').value = ext.ten_qh;
+          if(ext.ky_hieu_o) $('inp_qh_o').value = ext.ky_hieu_o;
+          if(ext.dien_tich) $('inp_qh_dt').value = ext.dien_tich;
+          if(ext.dan_so) $('inp_qh_ds').value = ext.dan_so;
+          if(ext.mat_do) $('inp_qh_md').value = ext.mat_do;
+          if(ext.he_so_sdd) $('inp_qh_hs').value = ext.he_so_sdd;
+          if(ext.tang_cao) $('inp_qh_tc').value = ext.tang_cao;
+          if(ext.chieu_cao) $('inp_qh_cc').value = ext.chieu_cao;
+          if(stEl) stEl.innerHTML = '✅ Đã tự trích xuất chỉ tiêu từ PDF <b>' + esc(f.name) + '</b> và điền sẵn vào khung chỉnh sửa bên dưới. Hãy rà soát, sửa lại nếu cần rồi bấm <b>Lưu chỉ tiêu</b> hoặc <b>Đồng bộ ngược CSDL</b>.';
+        } else {
+          if(stEl) stEl.innerHTML = '⚠️ File PDF <b>' + esc(f.name) + '</b> là bản scan dạng ảnh (không có lớp chữ). Hãy nhập vào khung bên dưới hoặc dùng <b>Sidebar Upload & OCR</b> ngay trên Google Sheets CSDL.';
+        }
       };
     }
     $('btn_chk_prj').onclick = ()=>{
@@ -1543,6 +1742,8 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
           try{
             const savedPlan = JSON.parse(localStorage.getItem('noxh_plan_'+id) || 'null');
             if(savedPlan) p.plan = savedPlan;
+            const savedS2 = JSON.parse(localStorage.getItem('noxh_s2_'+id) || 'null');
+            if(savedS2) p.prjEdit = savedS2;
           }catch(e){}
           updated++;
         }
@@ -1970,55 +2171,114 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
   const INV_FAQ = [
     {
       q: 'Hai cách để Nhà đầu tư tham gia dự án chưa chấp thuận CTĐT theo Điều 7 NĐ 192 (37 ngày và 52 ngày)?',
+      kws: ['dieu 7', '37 ngay', '52 ngay', 'chua chap thuan', 'chua cong khai', 'cong khai thong tin', 'tham gia du an'],
       bullets: [
-        '<b>Cách 1 — Dự án chưa công khai thông tin (Khoản 1 Điều 7 NĐ 192/2025/NĐ-CP — Tổng 37 ngày):</b> Áp dụng khi nhà đầu tư đã có quyền sử dụng đất (thỏa thuận nhận quyền sử dụng đất hoặc đang có quyền sử dụng đất) hoặc nhà đầu tư đề xuất dự án chưa được công khai, phù hợp quy hoạch đô thị và nông thôn hoặc vị trí khu đất đã xác định phát triển NOXH. Sở Xây dựng chủ trì thẩm định trong <b>30 ngày</b>; UBND cấp tỉnh ban hành quyết định chấp thuận CTĐT đồng thời giao CĐT trong <b>07 ngày</b> (Tổng: <b>37 ngày</b>).',
-        '<b>Cách 2 — Dự án được công khai thông tin (Khoản 2 & Khoản 4 Điều 7 NĐ 192/2025/NĐ-CP — Tổng 52 ngày):</b> UBND cấp tỉnh giao Sở Xây dựng lập, trình quyết định công bố thông tin dự án công khai trong <b>30 ngày</b>; sau khi hết hạn công khai, Sở Xây dựng tổ chức thẩm định hồ sơ NĐT đăng ký trong <b>15 ngày</b>; UBND cấp tỉnh ban hành quyết định chấp thuận CTĐT đồng thời giao CĐT trong <b>07 ngày</b> (Tổng: <b>52 ngày</b>).'
+        '<b>Cách 1 — Dự án chưa công khai thông tin (Khoản 1 Điều 7 NĐ 192/2025/NĐ-CP — Tổng 37 ngày):</b> Áp dụng khi NĐT có quyền sử dụng đất (thỏa thuận nhận quyền SDĐ hoặc đang có quyền SDĐ) hoặc NĐT đề xuất dự án chưa công khai, phù hợp quy hoạch đô thị và nông thôn hoặc vị trí khu đất đã xác định phát triển NOXH. Sở Xây dựng thẩm định trong <b>30 ngày</b>; UBND cấp tỉnh chấp thuận CTĐT đồng thời giao CĐT trong <b>07 ngày</b> (Tổng: <b>37 ngày</b>).',
+        '<b>Cạnh tranh hồ sơ theo điểm c khoản 1 Điều 7 NĐ 192 (khoản 2 Điều 2 NĐ 261/2025/NĐ-CP bổ sung):</b> Trong <b>30 ngày</b> kể từ ngày Sở Xây dựng nhận hồ sơ của NĐT đầu tiên (UBND tỉnh chưa ban hành QĐ) mà có NĐT khác nộp hồ sơ thì giao cho NĐT đáp ứng điều kiện và có quyền SDĐ toàn bộ diện tích hoặc là NĐT duy nhất có quyền SDĐ một phần diện tích; nếu sau 30 ngày mới có NĐT khác nộp thì tiếp tục trình giao cho NĐT đầu tiên nếu đủ điều kiện.',
+        '<b>Cách 2 — Dự án được công khai thông tin (Khoản 2 & 4 Điều 7 NĐ 192/2025/NĐ-CP — Tổng 52 ngày):</b> Sở Xây dựng lập, trình UBND tỉnh công bố thông tin dự án công khai trong <b>30 ngày</b> → hết hạn công khai, Sở Xây dựng thẩm định hồ sơ NĐT đăng ký trong <b>15 ngày</b> → UBND tỉnh ban hành QĐ chấp thuận CTĐT đồng thời giao CĐT trong <b>07 ngày</b> (Tổng: <b>52 ngày</b>).'
       ],
-      cites: [{d:'nd192', t:'Điều 7. Thủ tục chấp thuận chủ trương đầu tư đồng thời giao chủ đầu tư'}]
+      cites: [{d:'nd192', t:'Điều 7. Thủ tục chấp thuận chủ trương đầu tư đồng thời giao chủ đầu tư'}, {d:'nd261', t:'Điều 2. Sửa đổi, bổ sung một số điều của Nghị định số 192/2025/NĐ-CP'}]
     },
     {
-      q: 'Điều kiện và tiêu chí ưu tiên giao chủ đầu tư khi có từ 02 nhà đầu tư trở lên là gì?',
+      q: 'Điều kiện giao chủ đầu tư và 3 tiêu chí ưu tiên khi có từ 02 nhà đầu tư trở lên là gì?',
+      kws: ['dieu 5', 'dieu kien giao', 'tieu chi uu tien', '02 nha dau tu', 'lien danh', 'nang luc tai chinh'],
       bullets: [
-        '<b>Điều kiện giao CĐT (Khoản 1 Điều 5 NĐ 192/2025/NĐ-CP):</b> Nhà đầu tư phải đáp ứng điều kiện đối với tổ chức kinh doanh bất động sản theo khoản 1 và khoản 2 Điều 9 Luật Kinh doanh bất động sản 2023 (đã sửa đổi bởi Luật 43/2024/QH15). Trường hợp nhà đầu tư liên danh thì thành viên được liên danh đề xuất làm chủ đầu tư phải đáp ứng đủ điều kiện này.',
-        '<b>Thứ tự ưu tiên khi có từ 02 nhà đầu tư trở lên (Khoản 2, Khoản 3 Điều 5 NĐ 192/2025/NĐ-CP):</b> Xét lần lượt theo thứ tự: (1) Năng lực tài chính (vốn chủ sở hữu phân bổ cho dự án cao hơn); (2) Kinh nghiệm đã làm chủ đầu tư, hoàn thành số lượng dự án nhà ở nhiều hơn với quy mô sử dụng đất, tổng mức đầu tư tương đương hoặc lớn hơn; (3) Doanh nghiệp nhà nước.'
+        '<b>Điều kiện giao CĐT (Khoản 3 Điều 5 NQ 201 & Khoản 1 Điều 5 NĐ 192/2025/NĐ-CP):</b> Nhà đầu tư phải đáp ứng điều kiện đối với tổ chức kinh doanh bất động sản theo khoản 1, khoản 2 Điều 9 Luật Kinh doanh BĐS số 29/2023/QH15 (sửa đổi bởi Luật 43/2024/QH15). Trường hợp liên danh thì thành viên được liên danh đề xuất làm chủ đầu tư phải đáp ứng đủ điều kiện này.',
+        '<b>Thứ tự ưu tiên khi có từ 02 nhà đầu tư trở lên (Khoản 2, Khoản 3 Điều 5 NĐ 192/2025/NĐ-CP):</b> Xét lần lượt: (1) <b>Năng lực tài chính</b> (vốn chủ sở hữu phân bổ cho dự án cao hơn; liên danh tính tổng vốn CSH phân bổ của các thành viên); (2) <b>Kinh nghiệm</b> đã làm CĐT, hoàn thành số lượng dự án nhà ở nhiều hơn với quy mô sử dụng đất, tổng mức đầu tư tương đương hoặc lớn hơn; (3) <b>Doanh nghiệp nhà nước</b>.'
       ],
-      cites: [{d:'nd192', t:'Điều 5. Điều kiện giao chủ đầu tư; tiêu chí ưu tiên giao chủ đầu tư'}]
+      cites: [{d:'nd192', t:'Điều 5. Điều kiện giao chủ đầu tư; tiêu chí ưu tiên giao chủ đầu tư'}, {d:'nq201', t:'Điều 5. Giao chủ đầu tư, chấp thuận chủ trương đầu tư đồng thời giao chủ đầu tư không thông qua đấu thầu'}]
     },
     {
-      q: 'Dự án đã chấp thuận chủ trương đầu tư trước ngày 01/7/2025 thì giao chủ đầu tư thế nào?',
+      q: 'Trường hợp điều chỉnh quyết định giao CĐT, quyết định chấp thuận CTĐT đồng thời giao CĐT (Điều 10 NĐ 192)?',
+      kws: ['dieu 10', 'dieu chinh', 'keo dai tien do', '12 thang', '10%', '10 ha', 'to chuc kinh te', 'lien danh'],
       bullets: [
-        '<b>Dự án do nhà đầu tư đề xuất trước 01/7/2025 (Khoản 1 Điều 6 NĐ 192):</b> Nếu NĐT đề nghị giao CĐT (trong 60 ngày kể từ ngày NĐ có hiệu lực), Sở Xây dựng thẩm định trong <b>15 ngày</b> và UBND cấp tỉnh quyết định giao CĐT trong <b>07 ngày</b> (<b>Tổng 22 ngày</b>).',
-        '<b>Dự án do cơ quan nhà nước lập, chấp thuận trước 01/7/2025 (Khoản 2 Điều 6 NĐ 192):</b> Sở Xây dựng công khai văn bản chấp thuận trong <b>30 ngày</b> → thẩm định hồ sơ NĐT đăng ký trong <b>15 ngày</b> → UBND cấp tỉnh quyết định giao CĐT trong <b>07 ngày</b> (<b>Tổng 52 ngày</b>).'
+        '<b>Quyền tự điều chỉnh của CĐT (Khoản 1 Điều 10 NĐ 192/2025/NĐ-CP):</b> Trong quá trình triển khai dự án, nếu có thay đổi nội dung trong QĐ giao CĐT hoặc QĐ chấp thuận CTĐT đồng thời giao CĐT thì CĐT được <b>tự quyết định việc điều chỉnh</b> và bảo đảm tuân thủ pháp luật liên quan, trừ các trường hợp bắt buộc tại khoản 2 và khoản 3.',
+        '<b>04 trường hợp bắt buộc phải làm thủ tục điều chỉnh (Khoản 2 Điều 10 NĐ 192):</b> (a) Thay đổi điều kiện đối với CĐT; (b) Thay đổi mục tiêu dự án; (c) Thay đổi quy mô diện tích đất sử dụng <b>trên 10% hoặc trên 10 ha</b>, hoặc thay đổi địa điểm đầu tư; (d) Kéo dài tiến độ thực hiện dự án mà tổng thời gian đầu tư <b>vượt quá 12 tháng</b> so với tiến độ tại quyết định đã giao.',
+        '<b>Trường hợp liên danh lập tổ chức kinh tế (Khoản 3 Điều 10 NĐ 192):</b> Tổ chức kinh tế phải do các NĐT trong liên danh nắm giữ <b>100% vốn điều lệ</b>, đáp ứng điều kiện giao CĐT và giao đất/thuê đất; thành viên được giao CĐT phải chiếm <b>tỷ lệ vốn góp cao nhất</b> — trường hợp này phải làm thủ tục điều chỉnh quyết định.',
+        '<b>Trình tự, thời hạn (Khoản 4 Điều 10 NĐ 192):</b> CĐT nộp hồ sơ → Sở Xây dựng (hoặc cơ quan chuyên môn BQP/BCA) thẩm định trong <b>30 ngày</b> → UBND cấp tỉnh (hoặc Bộ trưởng BQP/BCA) quyết định điều chỉnh trong <b>07 ngày</b> kể từ ngày có văn bản thẩm định (Tổng: <b>37 ngày</b>).'
       ],
-      cites: [{d:'nd192', t:'Điều 6. Giao chủ đầu tư không thông qua đấu thầu đối với dự án đã chấp thuận CTĐT'}]
+      cites: [{d:'nd192', t:'Điều 10. Điều chỉnh quyết định giao chủ đầu tư, quyết định chấp thuận chủ trương đầu tư đồng thời giao chủ đầu tư (phần 1)'}, {d:'nd192', t:'Điều 10. Điều chỉnh quyết định giao chủ đầu tư, quyết định chấp thuận chủ trương đầu tư đồng thời giao chủ đầu tư (phần 2)'}]
     },
     {
-      q: 'Thủ tục quy hoạch 1/500, thẩm định thiết kế, PCCC và cấp phép xây dựng NOXH được rút gọn ra sao?',
+      q: 'Dự án đã chấp thuận CTĐT trước 01/7/2025 thì giao chủ đầu tư không qua đấu thầu thế nào (Điều 6 NĐ 192)?',
+      kws: ['dieu 6', 'da chap thuan', 'truoc 01/7/2025', '22 ngay', '60 ngay'],
       bullets: [
-        '<b>Quy hoạch chi tiết (Điều 6 NQ 201/2025/QH15):</b> Không phải thực hiện thủ tục lập, thẩm định, phê duyệt nhiệm vụ quy hoạch. Khu đất &lt; 02 ha đáp ứng điều kiện được chấp thuận quy hoạch tổng mặt bằng tại UBND cấp xã (<b>15 ngày</b>); trường hợp còn lại thẩm định, phê duyệt QHCT 1/500 trong <b>20 ngày</b>.',
-        '<b>Báo cáo nghiên cứu khả thi (Khoản 6 Điều 11 NĐ 192):</b> Dự án NOXH <b>không phải thẩm định BCNCKT</b> tại cơ quan chuyên môn về xây dựng; chủ đầu tư tự tổ chức thẩm định, phê duyệt và chịu trách nhiệm tuân thủ quy chuẩn.',
-        '<b>Cấp phép xây dựng lồng ghép PCCC (Khoản 1–4 Điều 11 NĐ 192):</b> Lồng ghép thẩm định thiết kế PCCC tại cơ quan chuyên môn về xây dựng trong thủ tục cấp GPXD (thời hạn cấp GPXD <b>30 ngày</b>; hồ sơ môi trường nộp kết quả trước thời hạn cấp phép <b>05 ngày</b>).'
+        '<b>Dự án do NĐT đề xuất đã được chấp thuận CTĐT trước ngày NĐ 192 có hiệu lực (Khoản 1 Điều 6 NĐ 192):</b> Trong thời hạn <b>60 ngày</b> kể từ ngày NĐ có hiệu lực, NĐT đề xuất dự án gửi hồ sơ đề nghị giao CĐT đến Sở Xây dựng. Sở Xây dựng thẩm định trong <b>15 ngày</b>; UBND cấp tỉnh ban hành quyết định giao CĐT trong <b>07 ngày</b> (Tổng: <b>22 ngày</b>). Quá 60 ngày không đề nghị hoặc không đủ điều kiện thì chuyển sang công khai 30 ngày theo khoản 2.',
+        '<b>Dự án do cơ quan nhà nước lập, chấp thuận CTĐT trước ngày NĐ 192 có hiệu lực (Khoản 2 Điều 6 NĐ 192):</b> Sở Xây dựng công khai văn bản chấp thuận CTĐT trong <b>30 ngày</b> → thẩm định hồ sơ NĐT đăng ký trong <b>15 ngày</b> → UBND cấp tỉnh quyết định giao CĐT trong <b>07 ngày</b> (Tổng: <b>52 ngày</b>).'
       ],
-      cites: [{d:'nd192', t:'Điều 11. Thủ tục đầu tư xây dựng nhà ở xã hội'}, {d:'nq201', t:'Điều 6. Quy hoạch chi tiết dự án đầu tư xây dựng nhà ở xã hội'}]
+      cites: [{d:'nd192', t:'Điều 6. Giao chủ đầu tư không thông qua đấu thầu đối với trường hợp dự án đầu tư xây dựng nhà ở xã hội đã được chấp thuận chủ trương đầu tư, chấp thuậ (phần 1)'}, {d:'nd192', t:'Điều 6. Giao chủ đầu tư không thông qua đấu thầu đối với trường hợp dự án đầu tư xây dựng nhà ở xã hội đã được chấp thuận chủ trương đầu tư, chấp thuậ (phần 2)'}]
     },
     {
-      q: 'Chủ đầu tư dự án nhà ở xã hội được hưởng những cơ chế ưu đãi nào?',
+      q: 'Thủ tục đầu tư dự án nhà ở cho lực lượng vũ trang nhân dân (Điều 8, Điều 9 NĐ 192) khác gì NOXH thông thường?',
+      kws: ['dieu 8', 'dieu 9', 'luc luong vu trang', 'llvt', 'bo quoc phong', 'bo cong an', '20 ngay'],
       bullets: [
-        '<b>Miễn tiền sử dụng đất, tiền thuê đất (Điểm a Khoản 2 Điều 85 Luật Nhà ở):</b> Được miễn đối với toàn bộ diện tích đất của dự án mà không phải thực hiện thủ tục xác định giá đất, tính tiền được miễn hay nộp đơn đề nghị miễn.',
-        '<b>Lợi nhuận định mức & Quỹ đất thương mại 20% (Điểm c, d Khoản 2 Điều 85 Luật Nhà ở):</b> Lợi nhuận định mức tối đa <b>10%</b> tổng chi phí đầu tư xây dựng phần NOXH; được dành tối đa <b>20%</b> tổng diện tích đất ở (hoặc 20% tổng diện tích sàn nhà ở) để kinh doanh dịch vụ, thương mại, nhà ở thương mại và hưởng toàn bộ lợi nhuận phần này.',
-        '<b>Ưu đãi thuế & vốn vay:</b> Được ưu đãi thuế GTGT, thuế TNDN và vay vốn tín dụng ưu đãi (lãi suất thấp hơn nếu đầu tư NOXH chỉ để cho thuê).'
+        '<b>Thẩm quyền giao CĐT (Điểm b khoản 2 Điều 5 NQ 201 & Điều 3 NĐ 192):</b> Bộ Quốc phòng, Bộ Công an trực tiếp giao CĐT hoặc chấp thuận CTĐT đồng thời giao CĐT sau khi UBND cấp tỉnh thống nhất bằng văn bản về vị trí khu đất (UBND tỉnh trả lời trong <b>15 ngày</b>, khoản 2 Điều 9 NĐ 192). Không được phân cấp, ủy quyền thẩm quyền này.',
+        '<b>Thời hạn công khai & thẩm định (Điều 8, Điều 9 NĐ 192):</b> Dự án chưa chấp thuận CTĐT được công khai thông tin trên Cổng TTĐT Bộ Quốc phòng/Bộ Công an trong <b>20 ngày</b> (ngắn hơn mức 30 ngày của dự án dân sự), cơ quan chuyên môn thẩm định trong <b>15 ngày</b>, Bộ trưởng quyết định trong <b>07 ngày</b>. Dự án được phép phân kỳ đầu tư phù hợp đặc thù lực lượng vũ trang.'
       ],
-      cites: [{d:'luat', t:'Điều 85. Ưu đãi chủ đầu tư dự án đầu tư xây dựng nhà ở xã hội'}]
+      cites: [{d:'nd192', t:'Điều 8. Giao chủ đầu tư không thông qua đấu thầu đối với dự án đầu tư xây dựng nhà ở cho lực lượng vũ trang nhân dân đã được chấp thuận chủ trương đầu (phần 1)'}, {d:'nd192', t:'Điều 9. Thủ tục chấp thuận chủ trương đầu tư đồng thời giao chủ đầu tư đối với trường hợp dự án đầu tư xây dựng nhà ở cho lực lượng vũ trang nhân dân  (phần 1)'}]
     },
     {
-      q: 'Trình tự thẩm tra, công khai giá bán, giá thuê mua và kiểm toán quyết toán NOXH như thế nào?',
+      q: 'Quy hoạch chi tiết 1/500, BCNCKT, PCCC, GPXD & Thiết kế mẫu NOXH được cắt giảm thủ tục ra sao?',
+      kws: ['quy hoach', '1/500', 'nhiem vu quy hoach', 'bcnckt', 'pccc', 'gpxd', 'giay phep xay dung', 'thiet ke mau', 'dieu 11', 'dieu 12'],
       bullets: [
-        '<b>Trước khi mở bán 30 ngày (Khoản 1 Điều 13 NĐ 192):</b> Chủ đầu tư tự xây dựng phương án giá bán/thuê mua, thuê tư vấn đủ điều kiện năng lực thẩm tra trước khi phê duyệt, và gửi hồ sơ về Sở Xây dựng để công khai lên Cổng TTĐT UBND tỉnh và Trang TTĐT Sở Xây dựng.',
-        '<b>Kiểm toán & quyết toán sau nghiệm thu (Khoản 2–4 Điều 13 NĐ 192):</b> Trong <b>180 ngày</b> kể từ ngày nghiệm thu hoàn thành đưa vào sử dụng, CĐT phải kiểm toán và gửi hồ sơ về Sở Xây dựng; Sở Xây dựng có ý kiến bằng văn bản trong <b>30 ngày</b>. Nếu giá kiểm toán thấp hơn giá hợp đồng, CĐT phải hoàn trả phần chênh lệch cho người mua.'
+        '<b>Miễn nhiệm vụ quy hoạch chi tiết (Điều 6 NQ 201/2025/QH15):</b> Không phải lập, thẩm định, phê duyệt, điều chỉnh nhiệm vụ QHCT; sử dụng trực tiếp chỉ tiêu quy hoạch phân khu (hoặc quy hoạch chung nơi không yêu cầu QHPK) làm cơ sở lập QHCT 1/500.',
+        '<b>Không thẩm định BCNCKT tại cơ quan chuyên môn (Khoản 1 Điều 7 NQ 201 & Khoản 6 Điều 11 NĐ 192):</b> CĐT, người quyết định đầu tư tự tổ chức thẩm định, phê duyệt Báo cáo nghiên cứu khả thi và chịu trách nhiệm tuân thủ pháp luật xây dựng.',
+        '<b>Cấp GPXD lồng ghép PCCC trong 30 ngày & Miễn GPXD (Điều 7 NQ 201, Điều 11 & 12 NĐ 192):</b> Thẩm định thiết kế PCCC tại cơ quan chuyên môn xây dựng được lồng ghép vào thủ tục cấp GPXD (thời hạn <b>30 ngày</b>; kết quả môi trường bổ sung trước thời hạn cấp GPXD <b>05 ngày</b>). Nếu áp dụng <b>thiết kế mẫu, thiết kế điển hình</b> do cơ quan có thẩm quyền công bố và đáp ứng quy hoạch, PCCC thì được <b>miễn giấy phép xây dựng</b>.'
       ],
-      cites: [{d:'nd192', t:'Điều 13. Xác định giá bán, giá thuê mua nhà ở xã hội'}]
+      cites: [{d:'nq201', t:'Điều 6. Lập, thẩm định, phê duyệt, điều chỉnh quy hoạch chi tiết dự án đầu tư xây dựng nhà ở xã hội'}, {d:'nq201', t:'Điều 7. Thủ tục đầu tư xây dựng nhà ở xã hội'}, {d:'nd192', t:'Điều 11. Thủ tục đầu tư xây dựng nhà ở xã hội (phần 1)'}, {d:'nd192', t:'Điều 12. Về áp dụng thiết kế mẫu, thiết kế điển hình công trình xây dựng nhà ở xã hội'}]
+    },
+    {
+      q: 'Trình tự xác định giá bán, lợi nhuận định mức, ứng trước GPMB và kiểm toán quyết toán NOXH?',
+      kws: ['gia ban', 'gia thue mua', 'dieu 13', 'kiem toan', 'quyet toan', '180 ngay', 'ung truoc', 'gpmb', 'boi thuong', '95%'],
+      bullets: [
+        '<b>Xây dựng, thẩm tra và công khai giá trước 30 ngày (Điều 8 NQ 201 & Khoản 1 Điều 13 NĐ 192):</b> CĐT căn cứ phương pháp tính giá và lợi nhuận định mức (tối đa 10% tổng chi phí đầu tư xây dựng phần NOXH), thuê tư vấn đủ năng lực thẩm tra trước khi phê duyệt, và gửi quyết định giá kèm hồ sơ/kết quả thẩm tra về Sở Xây dựng công khai trước <b>30 ngày</b> khi mở bán hoặc khi nộp hồ sơ thông báo đủ điều kiện bán nhà hình thành trong tương lai.',
+        '<b>Ứng trước kinh phí bồi thường, GPMB (Khoản 1a Điều 13 NĐ 192 do NĐ 261/2025/NĐ-CP bổ sung):</b> CĐT tự nguyện ứng trước kinh phí bồi thường, hỗ trợ, tái định cư theo phương án đã được phê duyệt thì được tính vào chi phí đầu tư của dự án theo pháp luật về đất đai.',
+        '<b>Kiểm toán, quyết toán trong 180 ngày & Giới hạn thu 95% (Khoản 2–4 Điều 13 NĐ 192):</b> Trong <b>180 ngày</b> từ ngày nghiệm thu đưa vào sử dụng, CĐT phải kiểm toán, quyết toán gửi Sở Xây dựng; Sở có ý kiến trong <b>30 ngày</b>. Giá kiểm toán cao hơn giá hợp đồng thì không thu thêm; thấp hơn phải hoàn trả chênh lệch. Không được thu quá <b>95%</b> giá trị hợp đồng trước khi cấp sổ đỏ và hoàn tất hoàn trả chênh lệch (nếu có).'
+      ],
+      cites: [{d:'nq201', t:'Điều 8. Xác định giá bán, giá thuê mua nhà ở xã hội'}, {d:'nd192', t:'Điều 13. Xác định giá bán, giá thuê mua nhà ở xã hội'}, {d:'nd261', t:'Điều 2. Sửa đổi, bổ sung một số điều của Nghị định số 192/2025/NĐ-CP (phần 1)'}]
+    },
+    {
+      q: 'Ưu đãi chủ đầu tư NOXH và cách tính tiền nộp tương đương quỹ đất 20% (Điều 19 NĐ 100 sửa bởi NĐ 261)?',
+      kws: ['uu dai', 'mien tien su dung dat', 'quy dat 20%', 'nop tien tuong duong', 'dieu 19', 'dieu 85', 'tien cham nop', 'chuyen nhuong'],
+      bullets: [
+        '<b>Ưu đãi chủ đầu tư (Điều 85 Luật Nhà ở 2023):</b> Được miễn tiền sử dụng đất, tiền thuê đất đối với toàn bộ diện tích đất dự án (không phải làm thủ tục xác định giá đất/tính tiền được miễn); hưởng ưu đãi thuế GTGT, thuế TNDN; lợi nhuận định mức tối đa 10%; được dành tối đa <b>20%</b> tổng diện tích đất ở đã đầu tư hạ tầng (hoặc 20% tổng diện tích sàn) để kinh doanh dịch vụ, thương mại, nhà ở thương mại và hạch toán riêng.',
+        '<b>Cách tính tiền tương đương quỹ đất 20% (Khoản 2, 2a Điều 19 NĐ 100 do Khoản 1 Điều 1 NĐ 261/2025/NĐ-CP sửa đổi):</b> Gồm (a) tiền sử dụng đất của 20% diện tích đất ở theo pháp luật đất đai + (b) chi phí đầu tư xây dựng HTKT tính theo tỷ lệ 20% diện tích đất ở trên tổng diện tích đất dự án nhân tổng chi phí HTKT theo suất vốn đầu tư Bộ Xây dựng công bố (không gồm chi phí san lấp, lấn biển). Nếu chậm nộp phải nộp tiền chậm nộp theo pháp luật quản lý thuế.',
+        '<b>Hạch toán tiền nhận chuyển nhượng quyền SDĐ (Khoản 2, 3 Điều 11 NQ 201/2025/QH15):</b> Trường hợp CĐT có quyền SDĐ do thỏa thuận nhận chuyển nhượng hoặc đang có quyền SDĐ thì được tính vào chi phí đầu tư của dự án số tiền tương ứng tiền SDĐ/tiền thuê đất theo bảng giá đất tại thời điểm nhận chuyển nhượng/chuyển mục đích.'
+      ],
+      cites: [{d:'nd261', t:'Điều 1. Sửa đổi, bổ sung một số điều của Nghị định số 100/2024/NĐ-CP ngày 26 tháng 7 năm 2024 của Chính phủ quy định chi tiết một số điều của Luật Nhà (phần 1)'}, {d:'nq201', t:'Điều 11. Bồi thường, hỗ trợ, tái định cư, đầu tư hệ thống hạ tầng kỹ thuật, tạo quỹ đất phát triển nhà ở xã hội'}]
+    },
+    {
+      q: 'Quỹ đất NOXH trong dự án nhà ở thương mại, khu đô thị và các quy định chuyển tiếp xử lý thế nào?',
+      kws: ['chuyen tiep', 'nha o thuong mai', 'khu do thi', 'dieu 12', 'dieu 17', 'dau gia', 'ban giao quy dat'],
+      bullets: [
+        '<b>Quỹ đất NOXH trong dự án nhà ở thương mại, khu đô thị (Khoản 4, 5 Điều 12 NQ 201 & Khoản 4 Điều 17 NĐ 192 do NĐ 261 sửa đổi):</b> Nếu CĐT dự án nhà ở thương mại, khu đô thị đề xuất trực tiếp đầu tư xây dựng NOXH và đủ điều kiện thì giao CĐT theo khoản 1 Điều 6 NĐ 192 (chưa có thông tin dự án thì đề xuất theo khoản 2 Điều 7); nếu không đề xuất hoặc không đủ điều kiện thì Sở Xây dựng lập, trình công bố thông tin dự án trong 30 ngày để giao CĐT khác hoặc đấu giá quyền SDĐ làm nhà ở thương mại.',
+        '<b>Xử lý hồ sơ chuyển tiếp (Điều 12 NQ 201, Điều 17 NĐ 192 & Điều 3 NĐ 261):</b> Hồ sơ đã trình thẩm định CTĐT theo Luật Đầu tư trước 01/7/2025 mà chưa có quyết định thì dừng và chuyển sang chấp thuận CTĐT đồng thời giao CĐT theo NĐ 192. Hồ sơ đã trình thẩm định BCNCKT chưa có kết quả được quyền chọn tiếp tục theo pháp luật xây dựng hoặc chuyển sang thực hiện theo NQ 201 & NĐ 192.'
+      ],
+      cites: [{d:'nq201', t:'Điều 12. Điều khoản chuyển tiếp (phần 1)'}, {d:'nd192', t:'Điều 17. Quy định xử lý chuyển tiếp (phần 1)'}, {d:'nd261', t:'Điều 2. Sửa đổi, bổ sung một số điều của Nghị định số 192/2025/NĐ-CP (phần 2)'}, {d:'nd261', t:'Điều 3. Điều khoản chuyển tiếp'}]
+    },
+    {
+      q: 'Doanh nghiệp, cơ quan nhà nước thuê NOXH cho người lao động và Quỹ nhà ở quốc gia (Điều 4, Điều 10 NQ 201)?',
+      kws: ['doanh nghiep thue', 'nguoi nuoc ngoai', 'chi phi san xuat', 'quy nha o quoc gia', 'dieu 4', 'dieu 10 nq 201', 'nha luu tru'],
+      bullets: [
+        '<b>Doanh nghiệp, cơ quan được thuê NOXH cho người lao động (Điều 10 NQ 201/2025/QH15):</b> Doanh nghiệp, hợp tác xã, cơ quan nhà nước, đơn vị sự nghiệp công lập được thuê NOXH của CĐT để bố trí cho cán bộ, công chức, viên chức, công nhân, người lao động (<b>bao gồm cả công nhân, người lao động là người nước ngoài</b>). Doanh nghiệp sản xuất trong KCN được thuê nhà lưu trú công nhân trong KCN.',
+        '<b>Hạch toán chi phí & ngân sách (Khoản 3 Điều 10 NQ 201):</b> Doanh nghiệp, đơn vị sự nghiệp công lập được hạch toán chi phí thuê nhà vào chi phí sản xuất, kinh doanh hoặc chi thường xuyên; cơ quan nhà nước được bố trí ngân sách theo dự toán được duyệt.',
+        '<b>Quỹ nhà ở quốc gia (Điều 4 NQ 201/2025/QH15):</b> Là quỹ tài chính nhà nước ngoài ngân sách hoạt động không vì mục đích lợi nhuận (gồm Quỹ trung ương và Quỹ địa phương do UBND tỉnh thành lập) để đầu tư xây dựng, tạo lập NOXH cho thuê, nhà ở cho cán bộ, công chức, viên chức, người lao động thuê.'
+      ],
+      cites: [{d:'nq201', t:'Điều 4. Quỹ nhà ở quốc gia'}, {d:'nq201', t:'Điều 10. Thuê nhà ở xã hội, nhà lưu trú công nhân trong khu công nghiệp'}]
+    },
+    {
+      q: 'Kiểm soát chất lượng công trình, kiểm tra giá bán và thu hồi/đình chỉ quyết định giao CĐT (Điều 14–16 NĐ 192)?',
+      kws: ['dieu 14', 'dieu 15', 'dieu 16', 'kiem soat', 'chat luong', 'thu hoi', 'dinh chi', 'cham tien do', 'thanh tra'],
+      bullets: [
+        '<b>Trách nhiệm pháp lý (Điều 14 NĐ 192/2025/NĐ-CP):</b> Chủ đầu tư chịu trách nhiệm toàn diện về tính chính xác của hồ sơ giao CĐT, quyết định giá bán/thuê mua, tiến độ và chất lượng công trình; tổ chức kiểm toán và tư vấn thẩm tra giá chịu trách nhiệm trước pháp luật về kết quả kiểm toán, thẩm tra.',
+        '<b>Thu hồi, đình chỉ quyết định giao CĐT & giá bán (Khoản 7 Điều 14 & Khoản 1, 4 Điều 16 NĐ 192):</b> Cơ quan có thẩm quyền giao CĐT có trách nhiệm rà soát, kiểm tra và <b>thu hồi hoặc đình chỉ</b> quyết định giao CĐT, quyết định chấp thuận CTĐT đồng thời giao CĐT nếu phát hiện sai phạm không bảo đảm cạnh tranh, công bằng, minh bạch hoặc sai lệch kết quả. UBND tỉnh chỉ đạo Sở Xây dựng tạm dừng hoặc đình chỉ quyết định phê duyệt giá bán/thuê mua nếu CĐT phê duyệt không đúng pháp luật.',
+        '<b>Kiểm định chất lượng (Điều 15 NĐ 192):</b> Khi phát hiện công trình NOXH có dấu hiệu nguy hiểm, không bảo đảm an toàn khai thác, chính quyền địa phương tổ chức kiểm định và xử lý theo pháp luật về quản lý chất lượng công trình xây dựng.'
+      ],
+      cites: [{d:'nd192', t:'Điều 14. Kiểm soát, kiểm tra, phòng ngừa sơ hở, tham nhũng, tiêu cực, trục lợi chính sách'}, {d:'nd192', t:'Điều 15. Kiểm soát, kiểm tra, kiểm định chất lượng công trình nhà ở xã hội'}, {d:'nd192', t:'Điều 16. Trách nhiệm tổ chức thực hiện'}]
     }
   ];
+
+  const INV_STOP = new Set(['la','gi','cua','va','cac','cho','de','co','duoc','khong','nao','bao','nhieu','nhung','ai','o','tai','ve','theo','trong','voi','thi','neu','khi','nhu','the','hay','hoac','mot','nha','xa','hoi','noxh','toi','ban','minh','can','phai','biet','hoi','quy','dinh','truong','hop','nay','du','an','dau','tu','chu']);
 
   function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d'); }
   function esc(s){ return String(s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
@@ -2037,19 +2297,33 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
   }
 
   function searchChunksForInvestor(q){
-    const kws = norm(q).replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(w=>w.length>=2);
+    const nq = norm(q);
+    const artM = nq.match(/dieu\s+\d+/);
+    const artPhrase = artM ? artM[0] : '';
+    const wants192 = nq.includes('192');
+    const wants201 = nq.includes('201');
+    const wants261 = nq.includes('261');
+    const kws = nq.replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(w=>w.length>=2 && !INV_STOP.has(w));
     const scored = CHUNKS.map(c=>{
-      const hay = norm(c.t + ' ' + c.x);
+      const nt = norm(c.t), nx = norm(c.x);
       let sc = 0;
-      kws.forEach(k=>{ if(hay.includes(k)) sc += 1; });
-      if(c.d === 'nd192' || c.d === 'nq201') sc *= 1.6;
-      else if(c.d === 'luat' || c.d === 'nd100' || c.d === 'nd261') sc *= 1.2;
+      if(artPhrase && nt.includes(artPhrase)) sc += 8;
+      else if(artPhrase && nx.includes(artPhrase)) sc += 3;
+      kws.forEach(k=>{
+        if(nt.includes(k)) sc += 3;
+        if(nx.includes(k)) sc += 1;
+      });
+      if(wants192 && c.d==='nd192') sc *= 1.8;
+      if(wants201 && c.d==='nq201') sc *= 1.8;
+      if(wants261 && c.d==='nd261') sc *= 1.8;
+      if(c.d === 'nd192' || c.d === 'nq201' || c.d === 'nd261') sc *= 1.45;
+      else if(c.d === 'luat' || c.d === 'nd100') sc *= 1.15;
       return { c, sc };
     }).filter(x=>x.sc > 0).sort((a,b)=>b.sc - a.sc).slice(0, 4);
 
     if(!scored.length){
       return {
-        bullets: ['Chưa tìm thấy điều khoản khớp trực tiếp với từ khóa của bạn. Bạn có thể hỏi cụ thể hơn về: <i>giao chủ đầu tư (Điều 5–7 NĐ 192)</i>, <i>quy hoạch 1/500 (Điều 6 NQ 201)</i>, <i>cấp phép xây dựng lồng ghép PCCC (Điều 11 NĐ 192)</i>, hoặc <i>giá bán NOXH (Điều 13 NĐ 192)</i>.'],
+        bullets: ['Chưa tìm thấy điều khoản khớp trực tiếp với từ khóa của bạn. Bạn có thể hỏi cụ thể hơn về: <i>Điều 5–7 NĐ 192 (giao CĐT)</i>, <i>Điều 10 NĐ 192 (điều chỉnh CTĐT)</i>, <i>Điều 11–12 NĐ 192 (GPXD, thiết kế mẫu)</i>, <i>Điều 13 NĐ 192 & NĐ 261 (giá bán, ứng trước GPMB)</i>, hoặc <i>Điều 19 NĐ 100 (tiền tương đương quỹ đất 20%)</i>.'],
         cites: []
       };
     }
@@ -2057,7 +2331,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       bullets: scored.map(x=>{
         const dName = (DOCS[x.c.d] && DOCS[x.c.d].name) || x.c.d;
         const lines = x.c.x.split('\n').filter(Boolean);
-        const preview = lines.slice(1, 4).join(' ').slice(0, 260);
+        const preview = lines.slice(1, 5).join(' ').slice(0, 320);
         return `<b>${esc(dName)} — ${esc(x.c.t)}:</b> ${esc(preview)}…`;
       }),
       cites: scored.map(x=>({d: x.c.d, t: x.c.t, x: x.c.x}))
@@ -2109,8 +2383,14 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     inp.value = '';
     appendUser(q);
     const nq = norm(q);
-    const hit = INV_FAQ.find(f=>norm(f.q) === nq || (nq.includes('dieu 7') && nq.includes('192')) || nq.includes('37 ngay') || nq.includes('52 ngay'));
-    const res = hit ? { bullets: hit.bullets, cites: hit.cites } : searchChunksForInvestor(q);
+    let bestFaq = null, bestSc = 0;
+    INV_FAQ.forEach(f=>{
+      if(norm(f.q) === nq){ bestFaq = f; bestSc = 999; return; }
+      let sc = 0;
+      (f.kws || []).forEach(kw=>{ if(nq.includes(kw)) sc += (kw.includes(' ') ? 2 : 1); });
+      if(sc > bestSc){ bestSc = sc; bestFaq = f; }
+    });
+    const res = (bestFaq && bestSc >= 2) ? { bullets: bestFaq.bullets, cites: bestFaq.cites } : searchChunksForInvestor(q);
     appendAnswer(res);
   }
 
