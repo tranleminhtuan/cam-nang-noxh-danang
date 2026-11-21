@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.0)</title>
+<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.1)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
@@ -202,7 +202,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 <nav class="sb" id="sb" aria-label="Điều hướng chính">
   <div class="sb-brand">
     <div class="sb-logo">ĐN</div>
-    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.0 · QHC 2050 & CSDL động</small></div>
+    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.1 · QHC 2050 & CSDL động</small></div>
   </div>
   <div class="sb-grp">Dành cho người dân</div>
   <div class="sb-nav" role="tablist">
@@ -1437,7 +1437,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       <div class="box" style="margin:12px 0;background:var(--bg)">
         <div class="row" style="margin-top:0;justify-content:space-between">
           <h3 style="margin:0">${grpMeta.title}</h3>
-          <span class="note">Đồng bộ 1 chiều từ CSDL gốc (v6.0)</span>
+          <span class="note">Đồng bộ 1 chiều từ CSDL gốc (v6.1)</span>
         </div>
         <div class="tw" style="margin-top:8px">
           <table class="kv">
@@ -1459,7 +1459,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
 
     const imgs = galTab === '3d' ? (p.img3d || []) : (p.imgReal || []);
     const galBody = imgs.length
-      ? `<div class="gal-grid">${imgs.map((im,i)=>`<div class="gal-item" data-idx="${i}"><img src="${esc(im.url)}" alt="${esc(im.cap||'Ảnh dự án')}"><div class="gal-cap">${esc(im.cap||(galTab==='3d'?'Phối cảnh 3D':'Ảnh thực tế'))}</div></div>`).join('')}</div>`
+      ? `<div class="gal-grid">${imgs.map((im,i)=>`<div class="gal-item" data-idx="${i}"><img src="${esc(im.url)}" loading="lazy" referrerpolicy="no-referrer" alt="${esc(im.cap||'Ảnh dự án')}"><div class="gal-cap">${esc(im.cap||(galTab==='3d'?'Phối cảnh 3D':'Ảnh thực tế'))}</div></div>`).join('')}</div>`
       : `<div class="gal-empty">Chưa cập nhật ${galTab==='3d'?'hình ảnh phối cảnh 3D':'hình ảnh thực tế thi công'} cho dự án này trong CSDL.</div>`;
 
     w.innerHTML = `
@@ -1587,8 +1587,33 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     if(cur !== '' || row.length){ row.push(cur); rows.push(row); }
     return rows;
   }
+  function toDirectImgUrl(u){
+    const s = String(u || '').trim();
+    const m = s.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=view&)?id=)([a-zA-Z0-9_-]{20,})/i);
+    if(m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1200';
+    return s;
+  }
   function splitLinks(s){
-    return String(s || '').split(/[\n;|]+/).map(x=>x.trim()).filter(x=>/^https?:\/\//i.test(x)).map(u=>({url:u, cap:'Ảnh từ Google Sheets'}));
+    return String(s || '').split(/[\n;|]+/).map(x=>x.trim()).filter(x=>/^https?:\/\//i.test(x)).map(u=>({url:toDirectImgUrl(u), rawUrl:u, cap:'Ảnh từ CSDL NOXH'}));
+  }
+  function parseCoordDN(rawVal, isLat){
+    if(rawVal === '' || rawVal === null || rawVal === undefined) return NaN;
+    const s = String(rawVal).trim().replace(/\s+/g, '');
+    if(!s) return NaN;
+    let num;
+    const dotCnt = (s.match(/\./g) || []).length;
+    const comCnt = (s.match(/,/g) || []).length;
+    if(dotCnt >= 2 || (dotCnt >= 1 && comCnt >= 1)){
+      num = parseFloat(s.replace(/[^\d-]/g, ''));
+    } else {
+      num = parseFloat(s.replace(',', '.'));
+    }
+    if(isNaN(num)) return NaN;
+    const minV = isLat ? 14.5 : 107.0;
+    const maxV = isLat ? 17.0 : 109.5;
+    let g = 0;
+    while(Math.abs(num) > maxV && g < 12){ num /= 10; g++; }
+    return (num >= minV && num <= maxV) ? Number(num.toFixed(6)) : NaN;
   }
   function normLatLngPair(a, b){
     // Khu vực Đà Nẵng: lat ~ 15.x - 16.x, lng ~ 107.x - 108.x. Nếu số đầu > 90 (vd 108.21...) thì tự đảo [lat, lng]
@@ -1672,8 +1697,13 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
           const ban = Number(String(r[10]||'').replace(/[^\d.-]/g,'')) || 0;
           const thue = Number(String(r[11]||'').replace(/[^\d.-]/g,'')) || 0;
           const tinhtrang = String(r[12] || '').trim();
-          const lat = parseFloat(String(r[13]||'').replace(',','.'));
-          const lng = parseFloat(String(r[14]||'').replace(',','.'));
+          let lat = parseCoordDN(r[13], true);
+          let lng = parseCoordDN(r[14], false);
+          if(isNaN(lat) && isNaN(lng)){
+            const swLat = parseCoordDN(r[14], true);
+            const swLng = parseCoordDN(r[13], false);
+            if(!isNaN(swLat) && !isNaN(swLng)){ lat = swLat; lng = swLng; }
+          }
           const polyRaw = String(r[15] || '').trim();
           const poly = parsePolyStr(polyRaw);
           if(/^https?:\/\//i.test(polyRaw)){
