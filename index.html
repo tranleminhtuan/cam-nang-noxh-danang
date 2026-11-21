@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v5.4)</title>
+<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.0)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
@@ -202,7 +202,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 <nav class="sb" id="sb" aria-label="Điều hướng chính">
   <div class="sb-brand">
     <div class="sb-logo">ĐN</div>
-    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v5.4 · QHC 2050 & CSDL động</small></div>
+    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.0 · QHC 2050 & CSDL động</small></div>
   </div>
   <div class="sb-grp">Dành cho người dân</div>
   <div class="sb-nav" role="tablist">
@@ -584,7 +584,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
       <div class="tw"><table class="admt" id="admtb"></table></div>
       <h2>Văn bản, biểu mẫu bổ sung</h2>
       <div class="box">
-        <div class="row" style="margin-top:0"><input type="file" id="upfile" accept=".pdf,.txt,.md,.csv,.json" class="grow"><input type="text" id="upnote" class="grow" placeholder="Ghi chú: văn bản gì, cần so với mục nào"></div>
+        <div class="row" style="margin-top:0"><input type="file" id="upfile" accept=".pdf,.doc,.docx,image/*,.txt,.md,.csv,.json" class="grow"><input type="text" id="upnote" class="grow" placeholder="Ghi chú: văn bản gì, cần so với mục nào"></div>
         <input type="text" id="ptname" style="margin-top:8px" placeholder="Tên văn bản (khi dán nội dung)"><textarea id="ptext" style="margin-top:6px;min-height:90px" placeholder="Dán nội dung văn bản hoặc biểu mẫu"></textarea>
         <div class="row"><button class="go" id="ptgo">Lưu nội dung đã dán</button><span class="msg" id="upmsg"></span></div>
       </div>
@@ -654,11 +654,33 @@ $('admcsv').onclick=async()=>{const q=v=>'"'+String(v==null?'':v).replace(/"/g,'
  const blob=new Blob(['\ufeff'+rows.map(r=>r.map(q).join(',')).join('\r\n')],{type:'text/csv'});
  if(!DL){$('admmsg').textContent='Chưa bật tải về trong chế độ xem này.';return}
  try{await DL.save({filename:'nhat-ky-ra-soat-'+new Date().toISOString().slice(0,10)+'.csv',data:blob});$('admmsg').textContent='Đã gửi tệp'}catch(e){$('admmsg').textContent=e&&e.code==='declined'?'Bạn đã hủy tải về.':'Không tải được ('+((e&&e.code)||'lỗi')+')'}};
-$('upfile').onchange=async e=>{const f=e.target.files[0];if(!f)return;const ext=(f.name.split('.').pop()||'').toLowerCase(),T={pdf:'application/pdf',txt:'text/plain',md:'text/markdown',csv:'text/csv',json:'application/json'},m=$('upmsg');
- if(!T[ext]){m.textContent='Chỉ tải lên được PDF, TXT, MD, CSV, JSON.';return}if(!ASSETS){m.textContent='Chưa có quyền tải tệp lên.';return}
- m.textContent='Đang tải lên…';try{const r=await ASSETS.upload(f,{type:T[ext]});await DB.collection('uploads').doc().set({kind:'file',name:f.name,assetId:r.id,url:r.url,size:r.sizeBytes,type:r.contentType,note:$('upnote').value.trim(),by:ME.id,byName:ME.name,at:Date.now()});m.textContent='Đã tải lên '+f.name;$('upnote').value='';e.target.value=''}catch(er){m.textContent='Không tải lên được ('+((er&&er.code)||'lỗi')+')'}};
-$('ptgo').onclick=async()=>{const n=$('ptname').value.trim(),c=$('ptext').value,m=$('upmsg');if(!n||!c.trim()){m.textContent='Nhập tên văn bản và nội dung.';return}if(c.length>180000){m.textContent='Nội dung quá dài (tối đa khoảng 180.000 ký tự), hãy tách thành nhiều phần.';return}
- try{await DB.collection('uploads').doc().set({kind:'text',name:n,content:c,note:$('upnote').value.trim(),by:ME.id,byName:ME.name,at:Date.now()});m.textContent='Đã lưu '+n;$('ptname').value='';$('ptext').value=''}catch(er){m.textContent='Không lưu được ('+((er&&er.code)||'lỗi')+')'}};
+$('upfile').onchange=async e=>{const f=e.target.files[0];if(!f)return;const ext=(f.name.split('.').pop()||'').toLowerCase(),T={pdf:'application/pdf',doc:'application/msword',docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',txt:'text/plain',md:'text/markdown',csv:'text/csv',json:'application/json',png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg'},m=$('upmsg');
+ if(!T[ext]){m.textContent='Chỉ tải lên được PDF, DOC/DOCX, Ảnh, TXT, MD, CSV, JSON.';return}
+ if(f.size>15*1024*1024){m.textContent='Tệp vượt quá 15 MB. Hãy nén nhẹ trước khi tải lên.';return}
+ const endpoint=window.NOXH_CONFIG&&window.NOXH_CONFIG.formActionUrl;
+ if(!endpoint){m.textContent='Chưa gắn URL Apps Script (NOXH_CONFIG.formActionUrl).';return}
+ m.textContent='⏳ Đang tải tệp lên thư mục Drive "CSDL NOXH DA NANG"...';
+ const rd=new FileReader();
+ rd.onload=async ev=>{
+  try{
+   const b64=String(ev.target.result||'').split(',')[1]||'';
+   const userEmail=($('auth_name')&&$('auth_name').textContent)||'WebApp_Admin';
+   await fetch(endpoint,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'upload_webapp',kind:'file',fileName:f.name,mime:T[ext],b64:b64,note:$('upnote').value.trim(),byEmail:userEmail})});
+   m.textContent='✅ Đã gửi tệp "'+f.name+'" vào thư mục Google Drive: CSDL NOXH DA NANG/_WEB_APP_DOI_CHIEU!';
+   $('upnote').value='';e.target.value='';
+  }catch(er){m.textContent='❌ Không tải lên được ('+((er&&er.message)||'lỗi kết nối')+')';}
+ };
+ rd.readAsDataURL(f);};
+$('ptgo').onclick=async()=>{const n=$('ptname').value.trim(),c=$('ptext').value,m=$('upmsg');if(!n||!c.trim()){m.textContent='Nhập tên văn bản và nội dung.';return}if(c.length>180000){m.textContent='Nội dung quá dài (tối đa khoảng 180.000 ký tự).';return}
+ const endpoint=window.NOXH_CONFIG&&window.NOXH_CONFIG.formActionUrl;
+ if(!endpoint){m.textContent='Chưa gắn URL Apps Script (NOXH_CONFIG.formActionUrl).';return}
+ m.textContent='⏳ Đang lưu văn bản vào thư mục Drive "CSDL NOXH DA NANG"...';
+ try{
+  const userEmail=($('auth_name')&&$('auth_name').textContent)||'WebApp_Admin';
+  await fetch(endpoint,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'upload_webapp',kind:'text',fileName:n,content:c,note:$('upnote').value.trim(),byEmail:userEmail})});
+  m.textContent='✅ Đã lưu văn bản "'+n+'" vào thư mục Google Drive: CSDL NOXH DA NANG/_WEB_APP_DOI_CHIEU!';
+  $('ptname').value='';$('ptext').value='';
+ }catch(er){m.textContent='❌ Không lưu được ('+((er&&er.message)||'lỗi kết nối')+')';}};
 (async()=>{let U=null;try{DB=await window.claude.use('db');U=await window.claude.use('user')}catch(e){DB=null}
  if(!DB)return;try{if(U){ME=await U.me();IS_ADMIN=await U.canEdit()}}catch(e){}
  sync('reviews',REV);
@@ -997,36 +1019,43 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     rHtml += `<tr style="background:var(--bg);font-weight:700"><td>2026–2030</td><td>${k.giao_tong.toLocaleString('vi-VN')}</td><td>${k.dk_tong.toLocaleString('vi-VN')}</td><td>${k.giao_ban.toLocaleString('vi-VN')} / ${k.dk_ban.toLocaleString('vi-VN')}</td><td>${k.giao_thue.toLocaleString('vi-VN')} / ${k.dk_thue.toLocaleString('vi-VN')}</td></tr>`;
     $('ov_rep_tb').innerHTML = rHtml;
 
-    // Ward density aggregation
+    // Ward density aggregation (tách bạch S2 thực tế vs S3/S3_QH dự kiến, tránh hiểu lầm mật độ sẵn có)
     const wMap = {};
     PRJ_ALL.forEach(p=>{
       const w = p.phuong || 'Khác';
-      if(!wMap[w]) wMap[w] = {ward:w, db:p.diaban, lat:p.lat, lng:p.lng, s2:0, s3:0, can:0, ban:0, thue:0};
-      if(p.group==='s2') wMap[w].s2++; else wMap[w].s3++;
-      wMap[w].can += p.can; wMap[w].ban += p.ban; wMap[w].thue += p.thue;
+      if(!wMap[w]) wMap[w] = {ward:w, db:p.diaban, lat:p.lat, lng:p.lng, s2:0, s3:0, s3qh:0, canS2:0, banS2:0, thueS2:0, canDK:0, can:0, ban:0, thue:0};
+      if(p.group==='s2'){
+        wMap[w].s2++; wMap[w].canS2 += (p.can||0); wMap[w].banS2 += (p.ban||0); wMap[w].thueS2 += (p.thue||0);
+      } else if(p.group==='s3_qh'){
+        wMap[w].s3qh++; wMap[w].canDK += (p.can||0);
+      } else {
+        wMap[w].s3++; wMap[w].canDK += (p.can||0);
+      }
+      wMap[w].can += (p.can||0); wMap[w].ban += (p.ban||0); wMap[w].thue += (p.thue||0);
     });
-    const wards = Object.values(wMap).sort((a,b)=>b.can - a.can);
-    const maxCan = Math.max(...wards.map(w=>w.can), 1);
+    const wards = Object.values(wMap).sort((a,b)=>(b.canS2 - a.canS2) || (b.canDK - a.canDK));
+    const maxCan = Math.max(...wards.map(w=>w.canS2 + w.canDK), 1);
 
     // Populate radius center selector
-    $('rad_center').innerHTML = wards.map(w=>`<option value="${w.lat},${w.lng}|${esc(w.ward)}">${esc(w.ward)} (${w.s2+w.s3} vị trí · ${w.can.toLocaleString('vi-VN')} căn)</option>`).join('');
+    $('rad_center').innerHTML = wards.map(w=>`<option value="${w.lat},${w.lng}|${esc(w.ward)}">${esc(w.ward)} (${w.s2} DA: ${w.canS2.toLocaleString('vi-VN')} căn · ${w.s3+w.s3qh} vị trí DK: ${w.canDK.toLocaleString('vi-VN')} căn)</option>`).join('');
     // Default select Hòa Xuân if exists
     const hxOpt = [...$('rad_center').options].find(o=>o.textContent.startsWith('Hòa Xuân'));
     if(hxOpt){ $('rad_center').value = hxOpt.value; const [ll, nm] = hxOpt.value.split('|'); const [la, ln] = ll.split(',').map(Number); RAD_LAT=la; RAD_LNG=ln; RAD_NAME=nm; }
 
-    // Ward density table
-    let wHtml = '<tr><th>Phường, xã</th><th>Địa bàn</th><th>Đã CTĐT (S2)</th><th>Đang làm TT (S3)</th><th>Tổng quy mô (căn)</th><th>Bán / Thuê</th><th style="min-width:140px">Mật độ tập trung</th></tr>';
+    // Ward density table (tách bạch số căn thực tế S2 và số căn dự kiến S3/QH)
+    let wHtml = '<tr><th>Phường, xã</th><th>Địa bàn</th><th>Đã CTĐT (S2)</th><th>Đang TT / QH (S3)</th><th>Quy mô thực tế S2</th><th>Quy mô dự kiến S3</th><th style="min-width:140px">Mật độ (Xanh: S2 · Xám: Dự kiến)</th></tr>';
     wards.forEach(w=>{
-      const pct = Math.max(4, Math.round(w.can/maxCan*100));
-      const bPct = w.can>0 ? Math.round(w.ban/w.can*100) : 0;
-      const tPct = w.can>0 ? (100 - bPct) : 0;
+      const totW = w.canS2 + w.canDK;
+      const pct = Math.max(4, Math.round(totW/maxCan*100));
+      const s2Pct = totW>0 ? Math.round(w.canS2/totW*100) : 0;
+      const dkPct = totW>0 ? (100 - s2Pct) : 0;
       wHtml += `<tr style="cursor:pointer" data-w="${w.lat},${w.lng}|${esc(w.ward)}">
         <td><b>${esc(w.ward)}</b></td>
         <td><span class="dn">${w.db.includes('Quảng Nam')?'Quảng Nam cũ':'Đà Nẵng cũ'}</span></td>
-        <td>${w.s2}</td><td>${w.s3}</td>
-        <td><b>${w.can.toLocaleString('vi-VN')}</b></td>
-        <td>${w.ban.toLocaleString('vi-VN')} bán · <span style="color:var(--wa)">${w.thue.toLocaleString('vi-VN')} thuê</span></td>
-        <td><div class="wbar" style="width:${pct}%"><div style="width:${bPct}%;background:var(--acc)"></div><div style="width:${tPct}%;background:#e69b00"></div></div></td>
+        <td>${w.s2}</td><td>${w.s3 + w.s3qh}</td>
+        <td><b>${w.canS2.toLocaleString('vi-VN')} căn</b><div class="dn">${w.banS2.toLocaleString('vi-VN')} bán · <span style="color:var(--wa)">${w.thueS2.toLocaleString('vi-VN')} thuê</span></div></td>
+        <td><span style="color:var(--mut)">${w.canDK ? (w.canDK.toLocaleString('vi-VN') + ' căn dự kiến') : '—'}</span></td>
+        <td><div class="wbar" style="width:${pct}%"><div style="width:${s2Pct}%;background:var(--acc)" title="Thực tế S2"></div><div style="width:${dkPct}%;background:#94a3b8" title="Dự kiến S3"></div></div></td>
       </tr>`;
     });
     $('ward_tb').innerHTML = wHtml;
@@ -1077,18 +1106,19 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     if($('qhc_cuc')) $('qhc_cuc').onchange = e=>{ if(e.target.checked) lyrCuc.addTo(OVMAP); else OVMAP.removeLayer(lyrCuc); };
     if($('qhc_truc')) $('qhc_truc').onchange = e=>{ if(e.target.checked) lyrTruc.addTo(OVMAP); else OVMAP.removeLayer(lyrTruc); };
     if($('qhc_dl')) $('qhc_dl').onchange = e=>{ if(e.target.checked) lyrDl.addTo(OVMAP); else OVMAP.removeLayer(lyrDl); };
-    // Draw ward bubbles
+    // Draw ward bubbles (kích thước & màu theo dự án S2 thực tế; S3 chỉ ghi chú số căn dự kiến)
     const wMap = {};
     PRJ_ALL.forEach(p=>{
       const w = p.phuong || 'Khác';
-      if(!wMap[w]) wMap[w] = {ward:w, lat:p.lat, lng:p.lng, cnt:0, can:0, ban:0, thue:0};
-      wMap[w].cnt++; wMap[w].can += p.can; wMap[w].ban += p.ban; wMap[w].thue += p.thue;
+      if(!wMap[w]) wMap[w] = {ward:w, lat:p.lat, lng:p.lng, s2:0, s3:0, canS2:0, banS2:0, thueS2:0, canDK:0};
+      if(p.group==='s2'){ wMap[w].s2++; wMap[w].canS2 += (p.can||0); wMap[w].banS2 += (p.ban||0); wMap[w].thueS2 += (p.thue||0); }
+      else { wMap[w].s3++; wMap[w].canDK += (p.can||0); }
     });
     Object.values(wMap).forEach(w=>{
-      const r = Math.min(28, Math.max(7, Math.sqrt(w.can)/4.2));
-      const col = w.can >= 4000 ? '#c83228' : (w.can >= 1500 ? '#d97706' : '#1e7f8c');
+      const r = Math.min(28, Math.max(7, Math.sqrt(w.canS2 || (w.canDK*0.35))/4.2));
+      const col = w.canS2 >= 4000 ? '#c83228' : (w.canS2 >= 1500 ? '#d97706' : (w.canS2 > 0 ? '#1e7f8c' : '#64748b'));
       const cm = L.circleMarker([w.lat, w.lng], {radius:r, color:'#fff', weight:2, fillColor:col, fillOpacity:0.78}).addTo(OVMAP);
-      cm.bindPopup(`<b>${esc(w.ward)}</b><br>${w.cnt} dự án/vị trí · <b>${w.can.toLocaleString('vi-VN')} căn</b><br>Bán: ${w.ban.toLocaleString('vi-VN')} · Thuê: ${w.thue.toLocaleString('vi-VN')}`);
+      cm.bindPopup(`<b>${esc(w.ward)}</b><br><b>Dự án S2 (thực tế):</b> ${w.s2} DA · <b>${w.canS2.toLocaleString('vi-VN')} căn</b> (Bán: ${w.banS2.toLocaleString('vi-VN')} · Thuê: ${w.thueS2.toLocaleString('vi-VN')})<br><span style="color:#64748b">Đang làm TT / QH (dự kiến): ${w.s3} vị trí · ${w.canDK.toLocaleString('vi-VN')} căn dự kiến</span>`);
       cm.on('click', ()=>{ RAD_LAT=w.lat; RAD_LNG=w.lng; RAD_NAME=w.ward; updateRadiusAnalysis(false); });
       OV_BUBBLES.push(cm);
     });
@@ -1104,20 +1134,29 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     const km = Number($('rad_km').value);
     $('rad_lbl').textContent = km + ' km';
     const inRad = PRJ_ALL.filter(p=>p.lat!=null && haversineKm(RAD_LAT, RAD_LNG, p.lat, p.lng) <= km);
-    const s2c = inRad.filter(p=>p.group==='s2').length, s3c = inRad.filter(p=>p.group==='s3').length;
-    const totCan = inRad.reduce((s,p)=>s+p.can,0), totBan = inRad.reduce((s,p)=>s+p.ban,0), totThue = inRad.reduce((s,p)=>s+p.thue,0);
-    const rentOnlyCnt = inRad.filter(p=>p.rentOnly).length;
+    const s2List = inRad.filter(p=>p.group==='s2');
+    const s3List = inRad.filter(p=>p.group==='s3');
+    const s3qhList = inRad.filter(p=>p.group==='s3_qh');
+    const s2Can = s2List.reduce((s,p)=>s+(p.can||0),0), s2Ban = s2List.reduce((s,p)=>s+(p.ban||0),0), s2Thue = s2List.reduce((s,p)=>s+(p.thue||0),0);
+    const dkCan = s3List.concat(s3qhList).reduce((s,p)=>s+(p.can||0),0);
+    const rentOnlyCnt = s2List.filter(p=>p.rentOnly).length;
 
     $('rad_out').innerHTML = `
       <div style="font-size:13px"><b>Tâm khảo sát:</b> ${esc(RAD_NAME)} · <b>Bán kính ${km} km</b></div>
       <div class="rad-nums">
-        <div class="rad-box"><b>${inRad.length} vị trí</b><span>${s2c} đã CTĐT · ${s3c} đang làm TT</span></div>
-        <div class="rad-box"><b>${totCan.toLocaleString('vi-VN')} căn</b><span>Tổng quy mô trong bán kính</span></div>
-        <div class="rad-box"><b style="color:var(--ok)">${totBan.toLocaleString('vi-VN')}</b><span>Căn hộ để bán</span></div>
-        <div class="rad-box"><b style="color:var(--wa)">${totThue.toLocaleString('vi-VN')}</b><span>Căn hộ cho thuê (${rentOnlyCnt} DA chỉ thuê)</span></div>
+        <div class="rad-box"><b>${inRad.length} vị trí</b><span>${s2List.length} DA S2 · ${s3List.length} đang TT · ${s3qhList.length} QH</span></div>
+        <div class="rad-box"><b style="color:var(--ok)">${s2Can.toLocaleString('vi-VN')} căn</b><span>Dự án thực tế S2 (Bán: ${s2Ban.toLocaleString('vi-VN')} · Thuê: ${s2Thue.toLocaleString('vi-VN')})</span></div>
+        <div class="rad-box"><b style="color:var(--mut)">${dkCan.toLocaleString('vi-VN')} căn DK</b><span>Quy mô dự kiến S3 (chưa hình thành DA)</span></div>
+        <div class="rad-box"><b style="color:var(--wa)">${rentOnlyCnt} dự án</b><span>Dự án S2 chỉ cho thuê (không bán)</span></div>
       </div>
       <div style="margin-top:8px;max-height:175px;overflow-y:auto;font-size:12.5px">
-        ${inRad.length ? inRad.map(p=>`<div style="padding:4px 0;border-bottom:1px solid var(--line)">• <b>${esc(p.name)}</b> (${esc(p.phuong)}) — ${p.can.toLocaleString('vi-VN')} căn ${p.rentOnly?'<span class="st rent">Chỉ thuê</span>':''}</div>`).join('') : '<span class="note">Không có dự án nào trong bán kính này.</span>'}
+        ${inRad.length ? inRad.map(p=>{
+          const isS2 = p.group === 's2';
+          const qmLbl = isS2
+            ? `<b>${(p.can||0).toLocaleString('vi-VN')} căn</b>`
+            : `<span style="color:var(--mut)">${(p.can||0).toLocaleString('vi-VN')} căn dự kiến (${p.group==='s3_qh'?'đã có QH':'đang làm TT'})</span>`;
+          return `<div style="padding:4px 0;border-bottom:1px solid var(--line)">• <b>${esc(p.name)}</b> (${esc(p.phuong)}) — ${qmLbl} ${p.rentOnly?'<span class="st rent">Chỉ thuê</span>':''}</div>`;
+        }).join('') : '<span class="note">Không có dự án nào trong bán kính này.</span>'}
       </div>
     `;
     if(OVMAP){
@@ -1271,17 +1310,35 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     const s = String(v == null ? '' : v).trim().toLowerCase();
     return !s || s === '-' || s === 'n/a' || /^chưa cập nhật$/.test(s) || /^đang cập nhật(\s+từ hồ sơ.*)?$/.test(s);
   }
+  function parseDocLinks(raw){
+    const out = [];
+    String(raw || '').split(/\s*;\s*|\r?\n/).map(s=>s.trim()).filter(Boolean).forEach(part=>{
+      const m = part.match(/^\[([^\]]+)\]\s*(https?:\/\/\S+)/i);
+      if(m){ out.push({ label: m[1].trim(), url: m[2].trim() }); return; }
+      const u = part.match(/https?:\/\/\S+/i);
+      if(u){ out.push({ label: 'Tài liệu pháp lý (.pdf)', url: u[0].trim() }); }
+    });
+    return out;
+  }
+  function extractLabeledLine(multiline, prefixRegex){
+    const lines = String(multiline || '').split(/\r?\n|\s*\|\s*/).map(s=>s.trim()).filter(Boolean);
+    for(const l of lines){
+      const m = l.match(prefixRegex);
+      if(m && m[1] && !isBlankVal(m[1])) return m[1].trim();
+    }
+    return '';
+  }
   function renderPDetail(p){
     const w = $('pdetail');
     const scopeVal = (p.diaban || '').includes('Quảng Nam') ? 'Quảng Nam cũ (trước hợp nhất)' : 'Đà Nẵng cũ (trước hợp nhất)';
     const grpMeta = p.group === 's2'
       ? { badge: '<span class="st ok">Thông tin Dự án (Đã có CĐT / QĐ CTĐT)</span>', title: '🏗️ Thông tin chi tiết Dự án & QĐ Chấp thuận chủ trương đầu tư', grpText: 'Đã chấp thuận chủ trương đầu tư / Đang triển khai' }
       : p.group === 's3_qh'
-      ? { badge: '<span class="st" style="background:#f3e8ff;color:#6b21a8">Đã có Quy hoạch, chưa đầu tư (Kêu gọi NĐT)</span>', title: '🗺️ Thông tin chi tiết Quy hoạch khu đất (Đã có QH, chưa đầu tư)', grpText: 'Đã có quy hoạch, chưa đầu tư (Kêu gọi nhà đầu tư)' }
-      : { badge: '<span class="st kiem">Thông tin Quy hoạch & Quỹ đất (Đang làm TT)</span>', title: '📐 Thông tin chi tiết Quy hoạch & Thủ tục đầu tư (Đang làm thủ tục)', grpText: 'Đang làm thủ tục chấp thuận, giao chủ đầu tư' };
+      ? { badge: '<span class="st" style="background:#f3e8ff;color:#6b21a8">Đã có Quy hoạch, chưa đầu tư (Kêu gọi NĐT)</span>', title: '🗺️ Thông tin chi tiết Quy hoạch & Hiện trạng khu đất (Đã có QH, chưa đầu tư)', grpText: 'Đã có quy hoạch, chưa đầu tư (Kêu gọi nhà đầu tư)' }
+      : { badge: '<span class="st kiem">Thông tin Quy hoạch & Quỹ đất (Đang làm TT)</span>', title: '📐 Thông tin chi tiết Quy hoạch & Hiện trạng khu đất (Đang làm thủ tục)', grpText: 'Đang làm thủ tục chấp thuận, giao chủ đầu tư' };
     const rentBanner = p.rentNote ? `<div class="rent-alert"><b>${p.rentOnly ? '🔒 LƯU Ý QUAN TRỌNG — DỰ ÁN CHỈ CHO THUÊ:' : 'ℹ️ Thông tin quỹ nhà:'}</b> ${esc(p.rentNote)}</div>` : '';
 
-    // Hợp nhất các cặp khóa-giá trị từ p.rows và cột tóm tắt đồng bộ từ CSDL gốc (không để "Chưa cập nhật" ghi đè dữ liệu thật)
+    // Hợp nhất trường cấu trúc v6 (cột U..AB) và dữ liệu p.rows (tương thích ngược bản cũ)
     const kv = {};
     (p.rows || []).forEach(([a, b])=>{
       const k = String(a || '').trim().toLowerCase();
@@ -1301,57 +1358,78 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
           if(kk.includes(k) && !isBlankVal(kv[kk])) return kv[kk];
         }
       }
-      return !isBlankVal(fallback) ? String(fallback).trim() : 'Chưa cập nhật';
+      return !isBlankVal(fallback) ? String(fallback).trim() : '';
     };
 
+    const v6 = p.v6 || {};
     const nguonFull = !isBlankVal(p.nguon_ten)
       ? (p.nguon_ma && !String(p.nguon_ten).includes(p.nguon_ma) ? (p.nguon_ma + ' — ' + p.nguon_ten) : p.nguon_ten)
       : pickField(['nguồn đầu tư'], p.nguon_ma || '');
 
+    // Danh sách nhiều file pháp lý (hỗ trợ cả cột S đa file v6 và link đơn bản cũ)
+    const docLinks = parseDocLinks(p.docLinksRaw || p.ctdtPdf || p.planPdf || pickField(['văn bản qđ ctđt', 'hồ sơ / bản vẽ quy hoạch'], ''));
+    const docsCell = docLinks.length ? { docs: docLinks } : 'Chưa cập nhật';
+
     let detailRows = [];
     if(p.group === 's2'){
-      const tdDuKien = pickField(['tiến độ dự kiến', 'dự kiến hoàn thành'], '');
-      const tdThucTe = pickField(['tiến độ triển khai', 'tình trạng hiện tại', 'tiến độ thực hiện'], '');
-      const tdParts = [];
-      if(!isBlankVal(tdDuKien)) tdParts.push(tdDuKien);
-      if(!isBlankVal(tdThucTe) && tdThucTe !== tdDuKien && tdThucTe !== p.tinhtrang) tdParts.push(tdThucTe);
-      const tdMerged = tdParts.length ? tdParts.join('\n') : 'Chưa cập nhật';
-      const pdfLink = p.ctdtPdf || (function(){ const u = pickField(['văn bản qđ ctđt'], ''); return /^https?:\/\//i.test(u) ? u : ''; })();
+      const phapLy = !isBlankVal(v6.phaply) ? v6.phaply : pickField(['căn cứ pháp lý', 'số / trích yếu qđ'], '');
+      const dienTich = !isBlankVal(v6.dientich) ? (String(v6.dientich).includes('ha') ? v6.dientich : (v6.dientich + ' ha')) : pickField(['diện tích đất', 'diện tích khu đất', 'diện tích'], p.dientich ? (p.dientich + ' ha') : '');
+      const quyMoXD = !isBlankVal(v6.quymoXD) ? v6.quymoXD : pickField(['sơ bộ quy mô dự án', 'chi tiết quy mô xây dựng', 'quy mô noxh', 'quy mô dự án'], '');
+      const thuongMai = !isBlankVal(v6.thuongMai) ? v6.thuongMai : pickField(['hạng mục thương mại'], '');
+      const tongVon = !isBlankVal(v6.tongVon) ? v6.tongVon : pickField(['tổng mức đầu tư', 'sơ bộ tổng mức đầu tư'], '');
+      const quyHoach = !isBlankVal(v6.quyhoach) ? v6.quyhoach : pickField(['quy hoạch'], '');
+      const tdRaw = !isBlankVal(v6.tiendoVm) ? v6.tiendoVm : (function(){
+        const tdDuKien = pickField(['tiến độ dự kiến', 'dự kiến hoàn thành'], '');
+        const tdThucTe = pickField(['tiến độ triển khai', 'tình trạng hiện tại', 'tiến độ thực hiện'], '');
+        const vm = pickField(['tồn tại, vướng mắc', 'vướng mắc'], '');
+        return [tdDuKien, (tdThucTe && tdThucTe !== tdDuKien && tdThucTe !== p.tinhtrang) ? tdThucTe : '', vm ? ('Tồn tại, vướng mắc: ' + vm) : ''].filter(Boolean).join('\n');
+      })();
 
       detailRows = [
         ['Mã định danh & Nhóm hồ sơ', `${p.id} · ${grpMeta.grpText}`],
-        ['Căn cứ pháp lý / QĐ CTĐT', pickField(['căn cứ pháp lý', 'số / trích yếu qđ'], '')],
-        ['Chủ đầu tư', !isBlankVal(p.cdt) ? p.cdt : pickField(['chủ đầu tư'], '')],
-        ['Nguồn đầu tư', nguonFull],
-        ['Địa điểm thực hiện', pickField(['địa điểm', 'vị trí / địa điểm', 'vị trí'], p.phuong ? ('Phường/xã ' + p.phuong + ' (' + (p.diaban||'') + ')') : '')],
-        ['Diện tích đất', pickField(['diện tích đất', 'diện tích khu đất', 'diện tích'], p.dientich ? (p.dientich + ' ha') : '')],
+        ['Căn cứ pháp lý / QĐ CTĐT', phapLy || 'Chưa cập nhật'],
+        ['Chủ đầu tư', !isBlankVal(p.cdt) ? p.cdt : (pickField(['chủ đầu tư'], '') || 'Chưa cập nhật')],
+        ['Nguồn đầu tư', nguonFull || 'Chưa cập nhật'],
+        ['Địa điểm thực hiện', pickField(['địa điểm', 'vị trí / địa điểm', 'vị trí'], p.phuong ? ('Phường/xã ' + p.phuong + ' (' + (p.diaban||'') + ')') : '') || 'Chưa cập nhật'],
+        ['Diện tích đất', dienTich || 'Chưa cập nhật'],
         ['Quy mô căn hộ (bán / thuê)', p.can ? (p.can.toLocaleString('vi-VN') + ' căn (Để bán: ' + (p.ban||0).toLocaleString('vi-VN') + ' · Cho thuê: ' + (p.thue||0).toLocaleString('vi-VN') + ')') : 'Chưa cập nhật'],
-        ['Chi tiết quy mô xây dựng', pickField(['chi tiết quy mô xây dựng', 'quy mô noxh', 'quy mô dự án', 'sơ bộ quy mô'], '')],
-        ['Hạng mục thương mại / dịch vụ', pickField(['hạng mục thương mại'], '')],
-        ['Sơ bộ tổng mức đầu tư', pickField(['tổng mức đầu tư'], '')],
-        ['Tình trạng thực hiện', !isBlankVal(p.tinhtrang) ? p.tinhtrang : pickField(['tình trạng thực hiện'], '')],
-        ['Tiến độ triển khai chi tiết', tdMerged],
-        ['Văn bản QĐ CTĐT (.pdf)', pdfLink ? { link: pdfLink, label: '📄 Mở xem file PDF QĐ CTĐT ↗' } : 'Chưa cập nhật']
+        ['Sơ bộ quy mô dự án (số tòa, tầng, m² sàn...)', quyMoXD || 'Chưa cập nhật'],
+        ['Hạng mục thương mại / dịch vụ', thuongMai || 'Chưa cập nhật'],
+        ['Sơ bộ tổng mức đầu tư', tongVon || 'Chưa cập nhật'],
+        ['Thông tin quy hoạch', quyHoach || 'Chưa cập nhật'],
+        ['Tình trạng thực hiện', !isBlankVal(p.tinhtrang) ? p.tinhtrang : (pickField(['tình trạng thực hiện'], '') || 'Chưa cập nhật')],
+        ['Tiến độ chi tiết (theo QĐ & thực tế) / Vướng mắc', tdRaw || 'Chưa cập nhật'],
+        ['Hồ sơ pháp lý dự án (.pdf)', docsCell]
       ];
     } else {
-      const pdfLink = p.planPdf || (function(){ const u = pickField(['hồ sơ / bản vẽ quy hoạch', 'văn bản quy hoạch'], ''); return /^https?:\/\//i.test(u) ? u : ''; })();
+      const dienTich = !isBlankVal(v6.dientich) ? (String(v6.dientich).includes('ha') ? v6.dientich : (v6.dientich + ' ha')) : pickField(['diện tích đất', 'diện tích khu đất', 'diện tích'], p.dientich ? (p.dientich + ' ha') : '');
+      const quyHoach = !isBlankVal(v6.quyhoach) ? v6.quyhoach : pickField(['quy hoạch (căn cứ, chức năng, chỉ tiêu)', 'chỉ tiêu quy hoạch', 'thông tin quy hoạch', 'tên quy hoạch'], '');
+      const htBlock = v6.hientrangBlock || '';
+      const hienTrang = extractLabeledLine(htBlock, /^Hiện trạng đất\s*:\s*(.+)/i) || pickField(['hiện trạng đất'], '');
+      const gpmb = extractLabeledLine(htBlock, /^(?:Giải phóng mặt bằng|GPMB)\s*:\s*(.+)/i) || pickField(['giải phóng mặt bằng', 'gpmb'], '');
+      const haTang = extractLabeledLine(htBlock, /^Hạ tầng kết nối\s*:\s*(.+)/i) || pickField(['hạ tầng kết nối', 'hạ tầng'], '');
+      const tdBlock = v6.tiendoVm || '';
+      const thuTuc = extractLabeledLine(tdBlock, /^Thủ tục đang thực hiện\s*:\s*(.+)/i) || pickField(['thủ tục đang thực hiện', 'tình hình/thủ tục'], '');
+      const vuongMac = extractLabeledLine(tdBlock, /^(?:Tồn tại,\s*)?Vướng mắc\s*:\s*(.+)/i) || pickField(['vướng mắc'], '');
       const qmText = p.can
-        ? (p.can.toLocaleString('vi-VN') + ' căn (Dự kiến bán: ' + (p.ban||0).toLocaleString('vi-VN') + ' · Dự kiến thuê: ' + (p.thue||0).toLocaleString('vi-VN') + ')')
+        ? (p.can.toLocaleString('vi-VN') + ' căn hộ dự kiến (chưa hình thành dự án)')
         : 'Chưa cập nhật';
 
       detailRows = [
         ['Mã định danh & Nhóm hồ sơ', `${p.id} · ${grpMeta.grpText}`],
-        ['Tên Quy hoạch (QHPK, QHCT...)', pickField(['tên quy hoạch', 'căn cứ quy hoạch'], '')],
-        ['Ký hiệu Ô quy hoạch / Vị trí', pickField(['ký hiệu ô quy hoạch', 'vị trí / ô quy hoạch', 'vị trí / ô đất', 'vị trí'], p.name || '')],
-        ['Phường, xã & Địa bàn', p.phuong ? (p.phuong + (p.diaban ? ' (' + p.diaban + ')' : '')) : pickField(['phường, xã'], '')],
-        ['Nguồn đầu tư dự kiến', nguonFull],
-        ['Diện tích đất', pickField(['diện tích đất', 'diện tích khu đất', 'diện tích'], p.dientich ? (p.dientich + ' ha') : '')],
-        ['Chức năng sử dụng đất', pickField(['chức năng sử dụng đất', 'chức năng'], '')],
-        ['Chỉ tiêu quy hoạch (mật độ, hệ số, tầng cao...)', pickField(['chỉ tiêu quy hoạch', 'thông tin quy hoạch', 'mật độ'], '')],
-        ['Quy mô căn hộ dự kiến (bán / thuê)', qmText],
-        ['Tình trạng thực hiện', !isBlankVal(p.tinhtrang) ? p.tinhtrang : pickField(['tình trạng thủ tục', 'tình trạng'], '')],
-        ['Thủ tục đang thực hiện / Ghi chú tiến độ', pickField(['thủ tục đang thực hiện', 'tình hình/thủ tục'], '')],
-        ['Hồ sơ / Bản vẽ Quy hoạch (.pdf)', pdfLink ? { link: pdfLink, label: '📄 Mở xem file PDF Quy hoạch ↗' } : 'Chưa cập nhật']
+        ['Vị trí / Ô quy hoạch', pickField(['vị trí / ô quy hoạch', 'ký hiệu ô quy hoạch', 'vị trí / ô đất', 'vị trí'], p.name || '') || 'Chưa cập nhật'],
+        ['Phường, xã & Địa bàn', p.phuong ? (p.phuong + (p.diaban ? ' (' + p.diaban + ')' : '')) : (pickField(['phường, xã'], '') || 'Chưa cập nhật')],
+        ['Nguồn đầu tư dự kiến', nguonFull || 'Chưa cập nhật'],
+        ['Diện tích đất', dienTich || 'Chưa cập nhật'],
+        ['Quy hoạch: căn cứ, chức năng, chỉ tiêu', quyHoach || 'Chưa cập nhật'],
+        ['Hiện trạng đất', hienTrang || 'Chưa cập nhật'],
+        ['Giải phóng mặt bằng', gpmb || 'Chưa cập nhật'],
+        ['Hạ tầng kết nối', haTang || 'Chưa cập nhật'],
+        ['Quy mô căn hộ dự kiến', qmText],
+        ['Tình trạng thực hiện', !isBlankVal(p.tinhtrang) ? p.tinhtrang : (pickField(['tình trạng thủ tục', 'tình trạng'], '') || 'Chưa cập nhật')],
+        ['Thủ tục đang thực hiện, tiến độ', thuTuc || 'Chưa cập nhật'],
+        ['Vướng mắc (nếu có)', vuongMac || 'Chưa cập nhật'],
+        ['Hồ sơ pháp lý & Quy hoạch (.pdf)', docsCell]
       ];
     }
 
@@ -1359,11 +1437,15 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       <div class="box" style="margin:12px 0;background:var(--bg)">
         <div class="row" style="margin-top:0;justify-content:space-between">
           <h3 style="margin:0">${grpMeta.title}</h3>
-          <span class="note">Cập nhật đồng bộ 1 chiều từ CSDL gốc</span>
+          <span class="note">Đồng bộ 1 chiều từ CSDL gốc (v6.0)</span>
         </div>
         <div class="tw" style="margin-top:8px">
           <table class="kv">
             ${detailRows.map(([lbl, val])=>{
+              if(val && typeof val === 'object' && val.docs){
+                const btns = val.docs.map(d=>`<a class="sm pri" style="margin:2px 6px 2px 0" href="${esc(d.url)}" target="_blank" rel="noopener">📄 ${esc(d.label)} ↗</a>`).join('');
+                return `<tr><td>${esc(lbl)}</td><td>${btns}</td></tr>`;
+              }
               if(val && typeof val === 'object' && val.link){
                 return `<tr><td>${esc(lbl)}</td><td><a class="sm pri" href="${esc(val.link)}" target="_blank" rel="noopener">${esc(val.label)}</a></td></tr>`;
               }
@@ -1610,6 +1692,16 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
           const ireal = splitLinks(r[17]);
           const pdf = String(r[18] || '').trim();
           const tomtat = String(r[19] || '').trim();
+          const v6Obj = {
+            phaply: String(r[20] || '').trim(),
+            dientich: String(r[21] || '').trim(),
+            tongVon: String(r[22] || '').trim(),
+            quymoXD: String(r[23] || '').trim(),
+            thuongMai: String(r[24] || '').trim(),
+            quyhoach: String(r[25] || '').trim(),
+            hientrangBlock: String(r[26] || '').trim(),
+            tiendoVm: String(r[27] || '').trim()
+          };
 
           let p = PRJ_ALL.find(x=>x.id.toUpperCase() === id);
           if(!p){
@@ -1638,12 +1730,21 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
             if(exIdx >= 0) p.rows[exIdx][1] = tomtat;
             else p.rows.push([lblSum, tomtat]);
           }
-          if(pdf && /^https?:\/\//i.test(pdf)){
-            if(grp === 's2') p.ctdtPdf = pdf;
-            else p.planPdf = pdf;
-            const exPdfIdx = p.rows.findIndex(rw=>rw[0]===lblPdf);
-            if(exPdfIdx >= 0) p.rows[exPdfIdx][1] = pdf;
-            else p.rows.push([lblPdf, pdf]);
+          p.v6 = v6Obj;
+          if(v6Obj.dientich){
+            const dtNum = parseFloat(String(v6Obj.dientich).replace(/\./g,'').replace(',','.'));
+            if(!isNaN(dtNum) && dtNum > 0) p.dientich = dtNum;
+          }
+          if(pdf){
+            p.docLinksRaw = pdf;
+            const firstUrl = (pdf.match(/https?:\/\/\S+/i) || [''])[0];
+            if(firstUrl){
+              if(grp === 's2') p.ctdtPdf = firstUrl;
+              else p.planPdf = firstUrl;
+              const exPdfIdx = p.rows.findIndex(rw=>rw[0]===lblPdf);
+              if(exPdfIdx >= 0) p.rows[exPdfIdx][1] = firstUrl;
+              else p.rows.push([lblPdf, firstUrl]);
+            }
           }
           updated++;
         }
