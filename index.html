@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v5.3)</title>
+<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v5.4)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
@@ -202,11 +202,12 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 <nav class="sb" id="sb" aria-label="Điều hướng chính">
   <div class="sb-brand">
     <div class="sb-logo">ĐN</div>
-    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v5.3 · QHC 2050 & CSDL động</small></div>
+    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v5.4 · QHC 2050 & CSDL động</small></div>
   </div>
   <div class="sb-grp">Dành cho người dân</div>
   <div class="sb-nav" role="tablist">
     <button class="tab" role="tab" aria-selected="true" data-p="p0" data-t="Tổng quan & Phân bố cung – cầu NOXH"><span class="ic">📊</span>Tổng quan & Phân bố</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="p11" data-t="Giới thiệu tổng quan và chức năng phần mềm"><span class="ic">ℹ️</span>Giới thiệu & Chức năng</button>
     <button class="tab" role="tab" aria-selected="false" data-p="p9" data-t="Bản đồ & Danh mục dự án/vị trí NOXH"><span class="ic">🗺️</span>Bản đồ & Dự án<span class="bdg" id="bdg_prj">0</span></button>
     <button class="tab" role="tab" aria-selected="false" data-p="p8" data-t="Kiểm tra sơ bộ điều kiện"><span class="ic">✅</span>Kiểm tra điều kiện</button>
     <button class="tab" role="tab" aria-selected="false" data-p="p3" data-t="Biểu mẫu hồ sơ"><span class="ic">📋</span>Biểu mẫu</button>
@@ -251,12 +252,11 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
       <div class="hero">
         <span class="tag" id="ov_cancu">Nghị quyết số 303/NQ-CP ngày 30/9/2026 của Chính phủ</span>
         <h2>Tổng quan Nhà ở xã hội, Nhà ở cho thuê TP. Đà Nẵng (2026–2030)</h2>
-        <p>Chỉ tiêu Chính phủ giao so với tổng thể <b>58 dự án/vị trí</b> đang triển khai & làm thủ tục trên địa bàn thành phố. Hỗ trợ phân tích mật độ phân bố nguồn cung theo khu vực và bán kính để cân đối cung – cầu.</p>
       </div>
       <div class="kpis" id="ov_kpis"></div>
 
       <div class="box" style="margin-bottom:14px">
-        <h3>Cơ cấu 58 dự án/vị trí đang triển khai & làm thủ tục</h3>
+        <h3 id="ov_struct_title">Cơ cấu dự án/vị trí đang theo dõi theo tình trạng</h3>
         <div class="prog-bar" id="ov_pbar"></div>
         <div class="prog-leg" id="ov_pleg"></div>
       </div>
@@ -308,7 +308,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 
       <!-- BẢNG MẬT ĐỘ THEO PHƯỜNG / XÃ -->
       <div class="box" style="margin-bottom:14px">
-        <h3>Mật độ tập trung nguồn cung theo Phường, xã (58 dự án/vị trí)</h3>
+        <h3 id="ov_ward_title">Mật độ tập trung nguồn cung theo Phường, xã</h3>
         <p class="note" style="margin:0 0 10px">Sắp xếp theo tổng quy mô căn hộ từ cao đến thấp — giúp đối chiếu nhanh khu vực nào đang tập trung dày đặc nguồn cung bán/thuê và khu vực nào còn thiếu.</p>
         <div class="tw"><table id="ward_tb"></table></div>
       </div>
@@ -320,6 +320,55 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
           <div class="tw"><table id="ov_rep_tb"></table></div>
         </div>
       </details>
+    </section>
+
+
+    <!-- P11: GIỚI THIỆU TỔNG QUAN & CHỨC NĂNG PHẦN MỀM -->
+    <section class="pane" id="p11" hidden>
+      <div class="hero">
+        <span class="tag">Sở Xây dựng TP. Đà Nẵng · Phòng Quản lý nhà và Thị trường bất động sản</span>
+        <h2>Giới thiệu tổng quan & Chức năng Cẩm nang Nhà ở xã hội TP. Đà Nẵng</h2>
+        <p>Hệ thống tra cứu số hóa kết nối đồng bộ 1 chiều từ Cơ sở dữ liệu (CSDL) gốc, phục vụ song hành công tác quản lý nhà nước, hỗ trợ người dân tiếp cận chính sách và cung cấp thông tin quỹ đất cho nhà đầu tư.</p>
+      </div>
+
+      <div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+        <div class="kpi">
+          <div class="kl">🏛️ Phục vụ Công tác Quản lý nhà nước</div>
+          <p style="font-size:13.5px;margin:8px 0 0;line-height:1.55">
+            • <b>Theo dõi tập trung & đồng bộ 1 chiều:</b> Cập nhật số liệu trực tiếp từ CSDL gốc (<code>CSDL_NOXH_Da_Nang_v3</code>), bảo toàn công thức và kiểm soát lỗi tự động.<br>
+            • <b>Phân tích mật độ cung – cầu:</b> Bản đồ phân bố theo phường/xã và công cụ đo bán kính (3–20 km) gắn với lớp Quy hoạch chung 2050.<br>
+            • <b>Quản trị & đối chiếu pháp lý:</b> Phân quyền truy cập qua Google OAuth, đối chiếu quy định địa phương với 23 văn bản pháp luật hiện hành.
+          </p>
+        </div>
+        <div class="kpi">
+          <div class="kl">👨‍👩‍👧‍👦 Hỗ trợ Người dân</div>
+          <p style="font-size:13.5px;margin:8px 0 0;line-height:1.55">
+            • <b>Tra cứu Bản đồ & Dự án:</b> Xem vị trí, ranh giới, quy mô căn hộ (để bán / cho thuê), tiến độ và cảnh báo rõ các dự án <i>Chỉ cho thuê</i>.<br>
+            • <b>Kiểm tra sơ bộ điều kiện:</b> Tự kiểm tra điều kiện về đối tượng, nhà ở (kể cả trường hợp xa nơi làm việc) và mức thu nhập theo quy định mới nhất.<br>
+            • <b>Biểu mẫu, Quy trình & Hỏi đáp:</b> Tải đúng mẫu hồ sơ theo từng đối tượng, xem quy trình xét duyệt, hỏi đáp pháp luật có trích dẫn nguyên văn và đăng ký nhận thông tin mở bán.
+          </p>
+        </div>
+        <div class="kpi">
+          <div class="kl">🏢 Hỗ trợ Nhà đầu tư</div>
+          <p style="font-size:13.5px;margin:8px 0 0;line-height:1.55">
+            • <b>Tra cứu quỹ đất kêu gọi đầu tư:</b> Phân tách rõ nhóm <i>Đang làm thủ tục giao CĐT</i> và nhóm <i>Đã có quy hoạch, chưa đầu tư</i> kèm chỉ tiêu quy hoạch (mật độ, tầng cao, diện tích, hồ sơ PDF).<br>
+            • <b>Sơ đồ quy trình đầu tư rút gọn:</b> Hướng dẫn trình tự thực hiện dự án NOXH theo Nghị quyết 201/2025/QH15 & Nghị định 192/2025/NĐ-CP.<br>
+            • <b>Hỏi đáp pháp luật đầu tư:</b> Tra cứu nhanh cơ chế giao chủ đầu tư, ưu đãi và xác định giá bán NOXH.
+          </p>
+        </div>
+      </div>
+
+      <div class="box">
+        <h3>Cấu trúc phân nhóm dữ liệu & Nguyên tắc vận hành</h3>
+        <div class="tw" style="margin-top:8px">
+          <table class="kv">
+            <tr><td>Nhóm 1 — Đã chấp thuận & Đang triển khai (S2)</td><td>Các dự án đã có quyết định chấp thuận chủ trương đầu tư / đã giao chủ đầu tư, hiển thị đầy đủ căn cứ pháp lý, quy mô căn hộ (bán/thuê), tổng mức đầu tư và tiến độ thực tế.</td></tr>
+            <tr><td>Nhóm 2 — Đang làm thủ tục chấp thuận, giao CĐT (S3)</td><td>Các vị trí/khu đất đang trong quá trình thẩm định, hoàn thiện thủ tục chấp thuận chủ trương đầu tư và lựa chọn/giao chủ đầu tư.</td></tr>
+            <tr><td>Nhóm 3 — Đã có quy hoạch, chưa đầu tư (S3_QH)</td><td>Các khu đất đã xác định trong quy hoạch nhưng chưa triển khai đầu tư, phục vụ công khai quỹ đất và kêu gọi nhà đầu tư.</td></tr>
+            <tr><td>Nguyên tắc đồng bộ dữ liệu</td><td>Dữ liệu được nhập và kiểm soát tập trung tại CSDL gốc trên Google Sheets, sau đó xuất bản 1 chiều lên Web App. Thông tin đăng ký nhận tin của người dân được ghi nhận 1 chiều về bảng tổng hợp nhu cầu.</td></tr>
+          </table>
+        </div>
+      </div>
     </section>
 
     <!-- P9: BẢN ĐỒ & 58 DỰ ÁN / VỊ TRÍ (2 TAB CON) -->
@@ -521,7 +570,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
         <div style="font-size:13px;line-height:1.7">
           <div>• <b>Quản trị viên (Admin):</b> <code id="adm_list_view">tranleminhtuan@gmail.com, quanlynoxh@gmail.com</code> — Toàn quyền mở tab Quản trị, truy cập Google Sheets CSDL gốc, bật chế độ rà soát quy định và thêm/bớt Editor tạm thời trên trình duyệt.</div>
           <div>• <b>Biên tập viên / Chuyên viên (Editor/Staff):</b> <code id="ed_list_view">(Chưa cấu hình — cập nhật trong mã nguồn hoặc thêm tạm bên dưới)</code> — Được xem tab Quản trị, Đối chiếu và mở CSDL gốc; không thay đổi quyền hệ thống.</div>
-          <div>• <b>Người dân / Khách (Public):</b> Không cần đăng nhập — Tra cứu đầy đủ 58 dự án, bản đồ, kiểm tra điều kiện, biểu mẫu, hỏi đáp pháp lý và đăng ký nhận tin.</div>
+          <div>• <b>Người dân / Khách (Public):</b> Không cần đăng nhập — Tra cứu đầy đủ danh mục dự án/vị trí, bản đồ, kiểm tra điều kiện, biểu mẫu, hỏi đáp pháp lý và đăng ký nhận tin.</div>
         </div>
         <div class="row" id="admin_only_controls" style="margin-top:10px" hidden>
           <input type="email" id="new_ed_email" class="grow" placeholder="Nhập email Gmail cán bộ cần cấp quyền Editor (lưu cục bộ trên trình duyệt này)…">
@@ -896,18 +945,49 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
   function renderOverview(){
     $('ov_cancu').textContent = OV.can_cu;
     const k = OV.kpi;
-    const s2 = PRJ_ALL.filter(x=>x.group==='s2'), s3 = PRJ_ALL.filter(x=>x.group==='s3' || x.group==='s3_qh');
-    const s2Can = s2.reduce((s,x)=>s+x.can,0), s2Ban = s2.reduce((s,x)=>s+x.ban,0), s2Thue = s2.reduce((s,x)=>s+x.thue,0);
-    const s3Can = s3.reduce((s,x)=>s+x.can,0), s3Thue = s3.reduce((s,x)=>s+x.thue,0);
+    const s2 = PRJ_ALL.filter(x=>x.group==='s2');
+    const s3 = PRJ_ALL.filter(x=>x.group==='s3');
+    const s3qh = PRJ_ALL.filter(x=>x.group==='s3_qh');
+    const s2Can = s2.reduce((s,x)=>s+(x.can||0),0), s2Ban = s2.reduce((s,x)=>s+(x.ban||0),0), s2Thue = s2.reduce((s,x)=>s+(x.thue||0),0);
+    const s3Can = s3.reduce((s,x)=>s+(x.can||0),0), s3Thue = s3.reduce((s,x)=>s+(x.thue||0),0);
+    const s3qhCan = s3qh.reduce((s,x)=>s+(x.can||0),0);
+    const totalCan = s2Can + s3Can + s3qhCan;
+
+    $('ov_kpis').style.gridTemplateColumns = 'repeat(auto-fit,minmax(200px,1fr))';
     $('ov_kpis').innerHTML = `
       <div class="kpi"><div class="kl">Chỉ tiêu Chính phủ giao (2026–2030)</div><div class="kv-num">${k.giao_tong.toLocaleString('vi-VN')} căn</div><div class="ks">Để bán: <b>${k.giao_ban.toLocaleString('vi-VN')}</b> · Cho thuê: <b>${k.giao_thue.toLocaleString('vi-VN')}</b></div></div>
       <div class="kpi"><div class="kl">Đã chấp thuận & Đang triển khai</div><div class="kv-num">${s2.length} dự án</div><div class="ks">Quy mô: <b>${s2Can.toLocaleString('vi-VN')} căn</b> (Bán: ${s2Ban.toLocaleString('vi-VN')} · Thuê: ${s2Thue.toLocaleString('vi-VN')})</div></div>
-      <div class="kpi"><div class="kl">Đang làm thủ tục chấp thuận, giao CĐT</div><div class="kv-num">${s3.length} vị trí</div><div class="ks">Quy mô dự kiến: <b>${s3Can.toLocaleString('vi-VN')} căn</b> (gồm ${s3Thue.toLocaleString('vi-VN')} căn thuê NSNN)</div></div>
-      <div class="kpi"><div class="kl">Tổng thể nguồn cung đang theo dõi</div><div class="kv-num">${PRJ_ALL.length} vị trí</div><div class="ks">Tổng quy mô: <b>${(s2Can+s3Can).toLocaleString('vi-VN')} căn</b> trên toàn địa bàn TP</div></div>
+      <div class="kpi"><div class="kl">Đang làm thủ tục chấp thuận, giao CĐT</div><div class="kv-num">${s3.length} vị trí</div><div class="ks">Quy mô dự kiến: <b>${s3Can.toLocaleString('vi-VN')} căn</b>${s3Thue ? ` (gồm ${s3Thue.toLocaleString('vi-VN')} căn thuê)` : ''}</div></div>
+      <div class="kpi"><div class="kl">Đã có quy hoạch, chưa đầu tư</div><div class="kv-num">${s3qh.length} khu đất</div><div class="ks">${s3qhCan ? `Quy mô dự kiến: <b>${s3qhCan.toLocaleString('vi-VN')} căn</b>` : 'Quỹ đất sạch kêu gọi nhà đầu tư'}</div></div>
+      <div class="kpi"><div class="kl">Tổng thể nguồn cung đang theo dõi</div><div class="kv-num">${PRJ_ALL.length} vị trí</div><div class="ks">Tổng quy mô: <b>${totalCan.toLocaleString('vi-VN')} căn</b> trên toàn địa bàn TP</div></div>
     `;
-    const totDa = OV.status.reduce((s,x)=>s+x.da, 0);
-    $('ov_pbar').innerHTML = OV.status.map(x=>`<div style="width:${(x.da/totDa*100).toFixed(1)}%;background:${x.color}" title="${x.label}: ${x.da} dự án (${x.can.toLocaleString('vi-VN')} căn)"></div>`).join('');
-    $('ov_pleg').innerHTML = OV.status.map(x=>`<span><i class="dot" style="background:${x.color}"></i><b>${x.label}:</b> ${x.da} (${x.can.toLocaleString('vi-VN')} căn)</span>`).join('');
+
+    if($('ov_struct_title')) $('ov_struct_title').textContent = `Cơ cấu ${PRJ_ALL.length} dự án/vị trí đang theo dõi theo tình trạng`;
+    if($('ov_ward_title')) $('ov_ward_title').textContent = `Mật độ tập trung nguồn cung theo Phường, xã (${PRJ_ALL.length} dự án/vị trí)`;
+
+    // Tính cơ cấu động trực tiếp từ PRJ_ALL (tách riêng 5 nhóm tình trạng, khớp với 3 tab con Bản đồ & Dự án)
+    const buckets = [
+      { key: '1', label: '1. Đã hoàn thành', color: '#1b7a46', da: 0, can: 0 },
+      { key: '2', label: '2. Đang xây dựng', color: '#2463a6', da: 0, can: 0 },
+      { key: '3', label: '3. Đã chấp thuận, chưa khởi công', color: '#d98218', da: 0, can: 0 },
+      { key: '4', label: '4. Đang làm thủ tục chấp thuận, giao CĐT', color: '#6b7a8c', da: 0, can: 0 },
+      { key: '5', label: '5. Đã có quy hoạch, chưa đầu tư', color: '#7e22ce', da: 0, can: 0 }
+    ];
+    PRJ_ALL.forEach(p=>{
+      const tt = String(p.tinhtrang || '').toLowerCase();
+      let b = buckets[2];
+      if(p.group === 's3_qh') b = buckets[4];
+      else if(p.group === 's3') b = buckets[3];
+      else if(tt.startsWith('1.') || tt.includes('hoàn thành')) b = buckets[0];
+      else if(tt.startsWith('2.') || tt.includes('đang xây')) b = buckets[1];
+      else b = buckets[2];
+      b.da++;
+      b.can += (p.can || 0);
+    });
+    const activeBuckets = buckets.filter(x=>x.da > 0);
+    const totDa = activeBuckets.reduce((s,x)=>s+x.da, 0) || 1;
+    $('ov_pbar').innerHTML = activeBuckets.map(x=>`<div style="width:${(x.da/totDa*100).toFixed(1)}%;background:${x.color}" title="${x.label}: ${x.da} vị trí (${x.can.toLocaleString('vi-VN')} căn)"></div>`).join('');
+    $('ov_pleg').innerHTML = activeBuckets.map(x=>`<span><i class="dot" style="background:${x.color}"></i><b>${x.label}:</b> ${x.da}${x.can ? ` (${x.can.toLocaleString('vi-VN')} căn)` : ''}</span>`).join('');
 
     // Report table (collapsed inside <details>)
     let rHtml = '<tr><th>Năm</th><th>Chỉ tiêu giao (Tổng)</th><th>Dự kiến HT (Tổng)</th><th>Bán (Giao / Dự kiến)</th><th>Thuê (Giao / Dự kiến)</th></tr>';
