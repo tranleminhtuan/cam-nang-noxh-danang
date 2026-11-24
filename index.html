@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.2.4)</title>
+<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.2.5)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
@@ -182,6 +182,15 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .ward-lbl{background:rgba(255,255,255,.92);color:#132942;border:1px solid #b8c9dc;border-radius:4px;padding:1px 5px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.18);pointer-events:none}
 .ward-lbl.dark-bg{background:rgba(19,41,66,.86);color:#fff;border-color:rgba(255,255,255,.35)}
 
+
+/* Modal Xem 3D nhẹ (Lazy-load MapLibre GL JS) */
+.m3d{display:none;position:fixed;inset:0;background:rgba(10,18,28,.82);z-index:120;align-items:center;justify-content:center;padding:12px}
+.m3d.open{display:flex}
+.m3d-card{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:14px;width:96vw;max-width:1180px;height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.5)}
+.m3d-hd{padding:10px 14px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;background:var(--card)}
+.m3d-bar{padding:8px 14px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--bg);font-size:12.5px}
+.m3d-map{flex:1;position:relative;min-height:300px;background:#0b1520}
+.m3d-stat{position:absolute;left:12px;bottom:12px;z-index:5;background:rgba(15,23,42,.86);color:#fff;padding:7px 12px;border-radius:8px;font-size:12.5px;max-width:85%;pointer-events:none;line-height:1.45}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" crossorigin=""></script>
@@ -198,11 +207,43 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 <div class="overlay" id="ov"></div>
 <div class="amod" id="amod"><div class="amod-card"><div class="amod-hd"><b id="amod_t"></b><button class="sm" id="amod_x">✕ Đóng</button></div><div class="amod-bd" id="amod_b"></div></div></div>
 <div class="lb" id="lb"><img id="lb_img" alt=""><div class="lb-bar"><span id="lb_cap"></span><button class="sm" id="lb_close">✕ Đóng</button></div></div>
+<div class="m3d" id="m3d" aria-hidden="true">
+  <div class="m3d-card">
+    <div class="m3d-hd">
+      <div><b id="m3d_t" style="color:var(--pri);font-size:15px">🌐 Xem 3D vị trí dự án</b><div class="dn" id="m3d_sub"></div></div>
+      <div class="row" style="margin-top:0">
+        <button class="sm" id="m3d_spin">🔄 Xoay 360°</button>
+        <button class="sm" id="m3d_admin">🗺️ Ranh giới 94 xã/phường</button>
+        <button class="sm" id="m3d_kmz" hidden style="background:#eef2ff;border-color:#818cf8;color:#3730a3">🌍 Xuất .KMZ (Admin)</button>
+        <button class="sm pri" id="m3d_close">✕ Đóng 3D</button>
+      </div>
+    </div>
+    <div class="m3d-bar">
+      <b>🛣️ Nối đường thực tế (OSRM):</b>
+      <select id="m3d_dest" style="max-width:250px;padding:4px 8px;font-size:12.5px">
+        <option value="">-- Chọn điểm mốc kết nối --</option>
+        <option value="16.0774,108.2225">Trung tâm Hành chính TP. Đà Nẵng</option>
+        <option value="16.0544,108.1995">Sân bay Quốc tế Đà Nẵng</option>
+        <option value="16.0752,108.1518">KCN Hòa Khánh</option>
+        <option value="16.0086,108.1795">KCN Hòa Cầm</option>
+        <option value="16.1225,108.1285">Cảng Liên Chiểu (đang đầu tư)</option>
+        <option value="15.8801,108.3380">Phố cổ Hội An</option>
+        <option value="15.5736,108.4740">Trung tâm Tam Kỳ</option>
+        <option value="15.4150,108.6550">Khu Kinh tế mở Chu Lai</option>
+      </select>
+      <button class="sm" id="m3d_route_go">Vẽ tuyến đường</button>
+      <button class="sm" id="m3d_route_clr">Xóa tuyến</button>
+      <span id="m3d_route_info" class="note" style="font-weight:600;color:var(--pri)"></span>
+    </div>
+    <div class="m3d-map" id="m3d_canvas"><div class="m3d-stat" id="m3d_stat">Đang tải mô hình 3D…</div></div>
+  </div>
+</div>
+
 <div class="app">
 <nav class="sb" id="sb" aria-label="Điều hướng chính">
   <div class="sb-brand">
     <div class="sb-logo">ĐN</div>
-    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.2.4 · QHC 2050 & Ranh giới 94 xã/phường</small></div>
+    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.2.5 · QHC 2050 & Ranh giới 94 xã/phường</small></div>
   </div>
   <div class="sb-grp">Dành cho người dân</div>
   <div class="sb-nav" role="tablist">
@@ -1510,6 +1551,8 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       <div class="row" style="margin:8px 0 12px">
         <button class="sm pri" id="btn_chk_prj">✅ ${p.rentOnly ? 'Kiểm tra điều kiện THUÊ dự án này' : 'Kiểm tra điều kiện mua/thuê dự án này'}</button>
         <button class="sm" id="btn_reg_prj">🔔 Đăng ký nhận tin dự án này</button>
+        ${p.lat!=null?`<button class="sm" id="btn_view_3d" style="background:#ecfeff;border-color:#22d3ee;color:#0e7490;font-weight:600">🌐 Xem 3D dự án</button>`:''}
+        ${p.lat!=null?`<button class="sm admin-kmz-btn" id="btn_dl_kmz" ${(window.NOXH_USER_ROLE==='admin')?'':'hidden'} style="background:#eef2ff;border-color:#818cf8;color:#3730a3;font-weight:600">🌍 Tải bay 3D Google Earth (.kmz)</button>`:''}
         ${p.lat!=null?`<a class="sm" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}">🗺️ Mở Google Maps ${p.hasExactGeo?'':'(ước tính)'}</a>`:''}
       </div>
       ${unifiedCardHtml}
@@ -1547,6 +1590,8 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       if(p.rentOnly) $('reg_need').value = 'Thuê nhà ở xã hội';
       goTab('p10');
     };
+    if($('btn_view_3d')) $('btn_view_3d').onclick = ()=>{ if(window.openProject3DModal) window.openProject3DModal(p); };
+    if($('btn_dl_kmz')) $('btn_dl_kmz').onclick = ()=>{ if(window.exportProject3DKmz) window.exportProject3DKmz(p, $('btn_dl_kmz')); };
   }
 
   $('prj_subtabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{
@@ -2107,6 +2152,8 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       if(admTab) admTab.hidden = true;
       if(admBox) admBox.hidden = true;
       if(admCtrl) admCtrl.hidden = true;
+      window.NOXH_USER_ROLE = 'public';
+      document.querySelectorAll('.admin-kmz-btn,#m3d_kmz').forEach(el=>{ el.hidden = true; });
       if(statusTxt) statusTxt.textContent = 'Chế độ Khách (Public) — Chưa đăng nhập';
       // Nếu đang ở tab Quản trị thì chuyển về Tổng quan
       const p7 = document.getElementById('p7');
@@ -2141,6 +2188,8 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
 
     // Đồng bộ biến toàn cục cho các hàm quản trị sẵn có
     window.IS_ADMIN_GOOGLE = isStaff;
+    window.NOXH_USER_ROLE = role;
+    document.querySelectorAll('.admin-kmz-btn,#m3d_kmz').forEach(el=>{ el.hidden = (role !== 'admin'); });
     if(typeof IS_ADMIN !== 'undefined'){
       try{
         IS_ADMIN = isStaff;
@@ -2608,6 +2657,337 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       btn.style.color = '#ffffff';
     }
   });
+})();
+</script>
+
+
+<script>
+/* ========== MODULE XEM 3D SIÊU NHẸ (LAZY-LOAD MAPLIBRE) & XUẤT KMZ 3D (ADMIN ONLY) - v6.2.5 ========== */
+(function(){
+  let mlLoaded = false, mlPromise = null, map3d = null, spinRaf = null, isSpinning = false, curPrj3d = null, adminOn3d = false;
+
+  function loadMapLibre(){
+    if(mlLoaded && window.maplibregl) return Promise.resolve();
+    if(mlPromise) return mlPromise;
+    mlPromise = new Promise((resolve, reject)=>{
+      const css = document.createElement('link');
+      css.rel = 'stylesheet';
+      css.href = 'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css';
+      document.head.appendChild(css);
+      const sc = document.createElement('script');
+      sc.src = 'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js';
+      sc.onload = ()=>{ mlLoaded = true; resolve(); };
+      sc.onerror = ()=>reject(new Error('Không tải được thư viện MapLibre GL JS'));
+      document.head.appendChild(sc);
+    });
+    return mlPromise;
+  }
+
+  // Tạo đa giác [lng, lat] cho dự án (ưu tiên polygon thật, nếu chưa có thì dựng hình lục giác mô phỏng quanh tâm)
+  function getProjectRingLngLat(p){
+    if(p.polygon && p.polygon.length >= 3){
+      const ring = p.polygon.map(pt=>[Number(pt[1]), Number(pt[0])]);
+      const f = ring[0], l = ring[ring.length-1];
+      if(f[0] !== l[0] || f[1] !== l[1]) ring.push([f[0], f[1]]);
+      return ring;
+    }
+    const lat = Number(p.lat), lng = Number(p.lng);
+    const rLat = 0.00065, rLng = 0.00068; // ~70m mô phỏng
+    const ring = [];
+    for(let i=0; i<=6; i++){
+      const ang = (i * 60) * Math.PI / 180;
+      ring.push([Number((lng + rLng*Math.cos(ang)).toFixed(6)), Number((lat + rLat*Math.sin(ang)).toFixed(6))]);
+    }
+    return ring;
+  }
+
+  function stopSpin(){
+    isSpinning = false;
+    if(spinRaf){ cancelAnimationFrame(spinRaf); spinRaf = null; }
+    const b = document.getElementById('m3d_spin');
+    if(b){ b.textContent = '🔄 Xoay 360°'; b.classList.remove('pri'); }
+  }
+  function startSpin(){
+    if(!map3d) return;
+    isSpinning = true;
+    const b = document.getElementById('m3d_spin');
+    if(b){ b.textContent = '⏸️ Dừng xoay'; b.classList.add('pri'); }
+    let last = performance.now();
+    function step(now){
+      if(!isSpinning || !map3d) return;
+      const dt = (now - last) / 1000;
+      last = now;
+      map3d.setBearing((map3d.getBearing() + dt * 12) % 360);
+      spinRaf = requestAnimationFrame(step);
+    }
+    spinRaf = requestAnimationFrame(step);
+  }
+
+  function close3DModal(){
+    stopSpin();
+    const m = document.getElementById('m3d');
+    if(m){ m.classList.remove('open'); m.setAttribute('aria-hidden','true'); }
+    if(map3d){ try{ map3d.remove(); }catch(e){} map3d = null; }
+    adminOn3d = false;
+    const ba = document.getElementById('m3d_admin');
+    if(ba){ ba.classList.remove('pri'); ba.textContent = '🗺️ Ranh giới 94 xã/phường'; }
+  }
+
+  async function fetchOsrmRoute(lat1, lng1, lat2, lng2){
+    const url = `https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=full&geometries=geojson`;
+    const ctrl = new AbortController();
+    const t = setTimeout(()=>ctrl.abort(), 5000);
+    try{
+      const res = await fetch(url, { signal: ctrl.signal });
+      clearTimeout(t);
+      if(!res.ok) return null;
+      const data = await res.json();
+      if(!data.routes || !data.routes.length) return null;
+      const rt = data.routes[0];
+      return {
+        coords: rt.geometry.coordinates, // [[lng,lat],...]
+        km: (rt.distance / 1000).toFixed(1),
+        min: Math.max(1, Math.round(rt.duration / 60))
+      };
+    }catch(e){ clearTimeout(t); return null; }
+  }
+
+  window.openProject3DModal = async function(p){
+    if(!p || p.lat == null || p.lng == null) return;
+    curPrj3d = p;
+    const m = document.getElementById('m3d');
+    const stat = document.getElementById('m3d_stat');
+    document.getElementById('m3d_t').textContent = '🌐 Xem 3D: ' + (p.name || p.id);
+    document.getElementById('m3d_sub').textContent = (p.phuong || '') + (p.can ? (' · ' + p.can.toLocaleString('vi-VN') + ' căn') : '') + (p.hasExactGeo ? ' · Tọa độ/ranh giới thực tế' : ' · Vị trí mô phỏng theo tâm phường/xã');
+    document.getElementById('m3d_route_info').textContent = '';
+    document.getElementById('m3d_dest').value = '';
+    const kmzBtn = document.getElementById('m3d_kmz');
+    if(kmzBtn) kmzBtn.hidden = (window.NOXH_USER_ROLE !== 'admin');
+    stat.textContent = '⏳ Đang khởi tạo góc nhìn vệ tinh 3D…';
+    m.classList.add('open');
+    m.setAttribute('aria-hidden','false');
+
+    try{
+      await loadMapLibre();
+    }catch(err){
+      stat.textContent = '❌ Không tải được thư viện 3D (kiểm tra kết nối Internet).';
+      return;
+    }
+
+    if(map3d){ try{ map3d.remove(); }catch(e){} map3d = null; }
+    const ring = getProjectRingLngLat(p);
+    const col = p.rentOnly ? '#ef4444' : (p.group === 's2' ? '#06b6d4' : '#f59e0b');
+    const extrudeH = p.group === 's2' ? 55 : 30;
+
+    map3d = new maplibregl.Map({
+      container: 'm3d_canvas',
+      style: {
+        version: 8,
+        sources: {
+          'esri-sat': {
+            type: 'raster',
+            tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+            tileSize: 256,
+            attribution: 'Esri World Imagery'
+          }
+        },
+        layers: [{ id: 'esri-sat-lyr', type: 'raster', source: 'esri-sat' }]
+      },
+      center: [Number(p.lng), Number(p.lat)],
+      zoom: 13.5,
+      pitch: 0,
+      bearing: 0,
+      antialias: true
+    });
+    map3d.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
+
+    map3d.on('load', ()=>{
+      map3d.addSource('prj-poly', {
+        type: 'geojson',
+        data: { type: 'Feature', properties: { name: p.name }, geometry: { type: 'Polygon', coordinates: [ring] } }
+      });
+      map3d.addLayer({
+        id: 'prj-extrude',
+        type: 'fill-extrusion',
+        source: 'prj-poly',
+        paint: {
+          'fill-extrusion-color': col,
+          'fill-extrusion-height': extrudeH,
+          'fill-extrusion-base': 0,
+          'fill-extrusion-opacity': 0.55
+        }
+      });
+      map3d.addLayer({
+        id: 'prj-outline',
+        type: 'line',
+        source: 'prj-poly',
+        paint: { 'line-color': '#ffffff', 'line-width': 2.5 }
+      });
+
+      new maplibregl.Marker({ color: col })
+        .setLngLat([Number(p.lng), Number(p.lat)])
+        .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML(`<b>${p.name}</b><br><small>${p.phuong || ''}${p.can ? ' · ' + p.can.toLocaleString('vi-VN') + ' căn' : ''}</small>`))
+        .addTo(map3d);
+
+      map3d.flyTo({ center: [Number(p.lng), Number(p.lat)], zoom: p.hasExactGeo ? 16.2 : 14.8, pitch: 60, bearing: -25, duration: 2200, essential: true });
+      stat.innerHTML = `<b>${p.name}</b> · Kéo chuột phải (hoặc 2 ngón tay) để xoay/nghiêng 3D · Bấm <b>Xoay 360°</b> để xem toàn cảnh.`;
+    });
+  };
+
+  // Nút sự kiện trong Modal 3D
+  document.addEventListener('click', async function(ev){
+    const t = ev.target;
+    if(!t) return;
+    if(t.id === 'm3d_close' || t.id === 'm3d'){ close3DModal(); return; }
+    if(t.id === 'm3d_spin'){ if(isSpinning) stopSpin(); else startSpin(); return; }
+    if(t.id === 'm3d_kmz' && curPrj3d){ window.exportProject3DKmz(curPrj3d, t); return; }
+    if(t.id === 'm3d_admin' && map3d){
+      if(!map3d.getSource('admin94-3d')){
+        const el = document.getElementById('admin94-geojson');
+        if(el){
+          try{
+            const gj = JSON.parse(el.textContent);
+            map3d.addSource('admin94-3d', { type: 'geojson', data: gj });
+            map3d.addLayer({ id: 'admin94-3d-line', type: 'line', source: 'admin94-3d', paint: { 'line-color': '#38bdf8', 'line-width': 1.8, 'line-dasharray': [3, 2] } }, 'prj-extrude');
+            adminOn3d = true;
+            t.classList.add('pri'); t.textContent = '✅ Đang hiện 94 xã/phường';
+          }catch(e){}
+        }
+      } else {
+        adminOn3d = !adminOn3d;
+        map3d.setLayoutProperty('admin94-3d-line', 'visibility', adminOn3d ? 'visible' : 'none');
+        t.classList.toggle('pri', adminOn3d);
+        t.textContent = adminOn3d ? '✅ Đang hiện 94 xã/phường' : '🗺️ Ranh giới 94 xã/phường';
+      }
+      return;
+    }
+    if(t.id === 'm3d_route_clr' && map3d){
+      if(map3d.getLayer('osrm-route-lyr')) map3d.removeLayer('osrm-route-lyr');
+      if(map3d.getSource('osrm-route')) map3d.removeSource('osrm-route');
+      document.getElementById('m3d_route_info').textContent = '';
+      return;
+    }
+    if(t.id === 'm3d_route_go' && map3d && curPrj3d){
+      const destSel = document.getElementById('m3d_dest');
+      const val = destSel.value;
+      const info = document.getElementById('m3d_route_info');
+      if(!val){ info.textContent = 'Vui lòng chọn điểm mốc.'; return; }
+      const [dLat, dLng] = val.split(',').map(Number);
+      const destName = destSel.options[destSel.selectedIndex].text;
+      info.textContent = '⏳ Đang tính tuyến đường thật (OSRM)…';
+      const rt = await fetchOsrmRoute(curPrj3d.lat, curPrj3d.lng, dLat, dLng);
+      if(!rt){ info.textContent = '⚠️ Không kết nối được máy chủ OSRM.'; return; }
+      if(map3d.getLayer('osrm-route-lyr')) map3d.removeLayer('osrm-route-lyr');
+      if(map3d.getSource('osrm-route')) map3d.removeSource('osrm-route');
+      map3d.addSource('osrm-route', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: rt.coords } } });
+      map3d.addLayer({ id: 'osrm-route-lyr', type: 'line', source: 'osrm-route', paint: { 'line-color': '#fb923c', 'line-width': 4.5, 'line-opacity': 0.92 } });
+      const b = new maplibregl.LngLatBounds();
+      rt.coords.forEach(c=>b.extend(c));
+      map3d.fitBounds(b, { padding: 60, pitch: 52, duration: 1500 });
+      info.textContent = `🚗 Đến ${destName}: ${rt.km} km (~${rt.min} phút lái xe)`;
+    }
+  });
+
+  // Cách 2: Xuất gói bay 3D Google Earth Pro (.kmz) - Chỉ Admin mới được quyền khởi tạo & tải
+  function xmlEsc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  window.exportProject3DKmz = async function(p, btnEl){
+    if(window.NOXH_USER_ROLE !== 'admin'){
+      alert('Tính năng xuất gói bay 3D Google Earth (.kmz) chỉ dành cho tài khoản Quản trị viên (Admin).');
+      return;
+    }
+    if(typeof JSZip === 'undefined'){
+      alert('Chưa tải xong thư viện nén JSZip, vui lòng thử lại sau 2 giây.');
+      return;
+    }
+    const origTxt = btnEl ? btnEl.textContent : '';
+    if(btnEl){ btnEl.disabled = true; btnEl.textContent = '⏳ Đang tạo gói .KMZ 3D…'; }
+    try{
+      const lat = Number(p.lat), lng = Number(p.lng);
+      const ring = getProjectRingLngLat(p);
+      const alt = p.group === 's2' ? 55 : 30;
+      const coordStr = ring.map(pt=>`${pt[0]},${pt[1]},${alt}`).join(' ');
+      const fillAbgr = p.rentOnly ? '882832c8' : (p.group === 's2' ? '888c7f1e' : '880677d9');
+
+      // Thử nối tuyến đường thực tế đến Trung tâm Hành chính TP. Đà Nẵng (không bắt buộc nếu offline)
+      const rt = await fetchOsrmRoute(lat, lng, 16.0774, 108.2225);
+      const routeKml = rt ? `
+      <Placemark>
+        <name>Tuyến đường đến Trung tâm Hành chính TP (${rt.km} km · ~${rt.min} phút)</name>
+        <Style><LineStyle><color>ff3c92fb</color><width>4</width></LineStyle></Style>
+        <LineString><tessellate>1</tessellate><coordinates>${rt.coords.map(c=>`${c[0]},${c[1]},0`).join(' ')}</coordinates></LineString>
+      </Placemark>` : '';
+
+      // Tạo kịch bản bay 3D điện ảnh <gx:Tour> xoay 360° quanh lô đất
+      let flySteps = `
+        <gx:FlyTo><gx:duration>3.5</gx:duration><gx:flyToMode>smooth</gx:flyToMode>
+          <LookAt><longitude>${lng}</longitude><latitude>${lat}</latitude><altitude>0</altitude><heading>0</heading><tilt>58</tilt><range>950</range><altitudeMode>relativeToGround</altitudeMode></LookAt>
+        </gx:FlyTo>`;
+      for(let h = 45; h <= 360; h += 45){
+        flySteps += `
+        <gx:FlyTo><gx:duration>2.2</gx:duration><gx:flyToMode>smooth</gx:flyToMode>
+          <LookAt><longitude>${lng}</longitude><latitude>${lat}</latitude><altitude>0</altitude><heading>${h%360}</heading><tilt>62</tilt><range>720</range><altitudeMode>relativeToGround</altitudeMode></LookAt>
+        </gx:FlyTo>`;
+      }
+
+      const kml = `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+  <Document>
+    <name>${xmlEsc(p.name)} (${xmlEsc(p.id)}) — 3D NOXH Đà Nẵng</name>
+    <open>1</open>
+    <Style id="noxh3d">
+      <LineStyle><color>ffffffff</color><width>2.5</width></LineStyle>
+      <PolyStyle><color>${fillAbgr}</color><fill>1</fill><outline>1</outline></PolyStyle>
+    </Style>
+    <Folder>
+      <name>1. Khối 3D &amp; Thông tin dự án</name>
+      <Placemark>
+        <name>${xmlEsc(p.name)}</name>
+        <description><![CDATA[
+          <b>Mã định danh:</b> ${xmlEsc(p.id)}<br/>
+          <b>Phường, xã:</b> ${xmlEsc(p.phuong)}<br/>
+          <b>Chủ đầu tư:</b> ${xmlEsc(p.cdt)}<br/>
+          <b>Quy mô:</b> ${p.can ? p.can.toLocaleString('vi-VN') + ' căn' : 'Đang xác định'} (Bán: ${(p.ban||0).toLocaleString('vi-VN')} · Thuê: ${(p.thue||0).toLocaleString('vi-VN')})<br/>
+          <b>Tình trạng:</b> ${xmlEsc(p.tinhtrang)}
+        ]]></description>
+        <Point><altitudeMode>relativeToGround</altitudeMode><coordinates>${lng},${lat},${alt+15}</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Khối ranh giới 3D — ${xmlEsc(p.name)}</name>
+        <styleUrl>#noxh3d</styleUrl>
+        <Polygon>
+          <extrude>1</extrude>
+          <tessellate>1</tessellate>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <outerBoundaryIs><LinearRing><coordinates>${coordStr}</coordinates></LinearRing></outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      ${routeKml}
+    </Folder>
+    <gx:Tour>
+      <name>▶ Bay 3D toàn cảnh 360° — ${xmlEsc(p.name)}</name>
+      <gx:Playlist>${flySteps}
+      </gx:Playlist>
+    </gx:Tour>
+  </Document>
+</kml>`;
+
+      const zip = new JSZip();
+      zip.file('doc.kml', kml);
+      const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      const safeId = String(p.id || 'NOXH').replace(/[^A-Za-z0-9_-]/g, '_');
+      a.download = `NOXH_3D_${safeId}.kmz`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    }catch(err){
+      alert('Lỗi khi tạo tệp .KMZ: ' + (err && err.message ? err.message : err));
+    }finally{
+      if(btnEl){ btnEl.disabled = false; btnEl.textContent = origTxt; }
+    }
+  };
 })();
 </script>
 
