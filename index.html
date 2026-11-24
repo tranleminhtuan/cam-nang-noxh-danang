@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.2.6)</title>
+<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.2.7)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
@@ -183,7 +183,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .ward-lbl.dark-bg{background:rgba(19,41,66,.86);color:#fff;border-color:rgba(255,255,255,.35)}
 
 
-/* Modal Xem 3D nhẹ (Lazy-load MapLibre GL JS) - v6.2.6 */
+/* Modal Xem 3D nhẹ (Lazy-load MapLibre GL JS) - v6.2.7 */
 .m3d{display:none;position:fixed;inset:0;background:rgba(10,18,28,.82);z-index:120;align-items:center;justify-content:center;padding:12px}
 .m3d.open{display:flex}
 .m3d-card{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:14px;width:96vw;max-width:1220px;height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.5)}
@@ -266,7 +266,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 <nav class="sb" id="sb" aria-label="Điều hướng chính">
   <div class="sb-brand">
     <div class="sb-logo">ĐN</div>
-    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.2.6 · QHC 2050 & Ranh giới 94 xã/phường</small></div>
+    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.2.7 · QHC 2050 & Ranh giới 94 xã/phường</small></div>
   </div>
   <div class="sb-grp">Dành cho người dân</div>
   <div class="sb-nav" role="tablist">
@@ -2685,7 +2685,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
 
 
 <script>
-/* ========== MODULE XEM 3D SIÊU NHẸ (LAZY-LOAD MAPLIBRE) + 3 MỐC & TIỆN ÍCH GẦN NHẤT + KMZ ADMIN - v6.2.6 ========== */
+/* ========== MODULE XEM 3D SIÊU NHẸ (LAZY-LOAD MAPLIBRE) + 3 MỐC & TIỆN ÍCH GẦN NHẤT + KMZ ADMIN - v6.2.7 ========== */
 (function(){
   let mlLoaded = false, mlPromise = null, map3d = null, spinRaf = null, isSpinning = false, curPrj3d = null;
   let adminOn3d = false, wardLblOn3d = true, autoHubOn3d = false;
@@ -2862,19 +2862,58 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     }catch(e){ clearTimeout(t); return null; }
   }
 
-  // Truy vấn tiện ích thiết yếu gần nhất (Trường học, Bệnh viện/Y tế, Chợ/Siêu thị) từ OpenStreetMap Overpass API (miễn phí, không cần API key)
-  async function fetchEssentialPois(lat, lng, radiusM){
-    const q = `[out:json][timeout:10];(
-      nwr["amenity"~"^(school|kindergarten|college|university|hospital|clinic|marketplace)$"]["name"](around:${radiusM},${lat},${lng});
-      nwr["shop"="supermarket"]["name"](around:${radiusM},${lat},${lng});
+  // Truy vấn tiện ích thiết yếu bán kính 5 km từ 2 nguồn song song:
+  // (1) Esri ArcGIS World Geocoding (dữ liệu thương mại phong phú tại VN, phản hồi < 300ms, không cần API key)
+  // (2) OpenStreetMap Overpass tối ưu theo bbox (bổ sung chợ truyền thống, trường mầm non/tiểu học, trạm y tế)
+  async function fetchArcgisPois(lat, lng, radiusKm){
+    const dLat = radiusKm / 111.0;
+    const dLng = radiusKm / (111.0 * Math.cos(lat * Math.PI / 180));
+    const extent = `${(lng - dLng).toFixed(5)},${(lat - dLat).toFixed(5)},${(lng + dLng).toFixed(5)},${(lat + dLat).toFixed(5)}`;
+    const groups = [
+      { cat: 'edu', ic: '🏫', categories: 'School,College,University', max: 18 },
+      { cat: 'med', ic: '🏥', categories: 'Hospital,Medical Clinic', max: 12 },
+      { cat: 'mkt', ic: '🛒', categories: 'Grocery,Supermarket,Shopping Center,Department Store,Farmers Market', max: 12 }
+    ];
+    const results = await Promise.all(groups.map(async g=>{
+      const url = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?f=json&forStorage=false&langCode=vi&sourceCountry=VNM&category=${encodeURIComponent(g.categories)}&location=${lng},${lat}&searchExtent=${encodeURIComponent(extent)}&maxLocations=${g.max}&outFields=PlaceName,Type`;
+      const ctrl = new AbortController();
+      const t = setTimeout(()=>ctrl.abort(), 5000);
+      try{
+        const res = await fetch(url, { signal: ctrl.signal });
+        clearTimeout(t);
+        if(!res.ok) return [];
+        const data = await res.json();
+        return (data.candidates || []).map(c=>{
+          const name = String((c.attributes && c.attributes.PlaceName) || c.address || '').split(',')[0].trim();
+          const la = c.location && c.location.y, ln = c.location && c.location.x;
+          if(!name || la == null || ln == null) return null;
+          const d = distKm3d(lat, lng, la, ln);
+          if(d > radiusKm) return null;
+          return { name, lat: la, lng: ln, cat: g.cat, ic: g.ic, d, src: 'esri' };
+        }).filter(Boolean);
+      }catch(e){ clearTimeout(t); return []; }
+    }));
+    return results.flat();
+  }
+
+  async function fetchOverpassPoisBbox(lat, lng, radiusKm){
+    const dLat = radiusKm / 111.0;
+    const dLng = radiusKm / (111.0 * Math.cos(lat * Math.PI / 180));
+    const bbox = `${(lat - dLat).toFixed(5)},${(lng - dLng).toFixed(5)},${(lat + dLat).toFixed(5)},${(lng + dLng).toFixed(5)}`;
+    const q = `[out:json][timeout:8];(
+      node["amenity"~"^(school|kindergarten|college|university|hospital|clinic|marketplace)$"]["name"](${bbox});
+      way["amenity"~"^(school|kindergarten|college|university|hospital|clinic|marketplace)$"]["name"](${bbox});
+      node["shop"~"^(supermarket|mall)$"]["name"](${bbox});
+      way["shop"~"^(supermarket|mall)$"]["name"](${bbox});
     );out center 80;`;
     const endpoints = [
       'https://overpass-api.de/api/interpreter',
-      'https://overpass.kumi.systems/api/interpreter'
+      'https://overpass.kumi.systems/api/interpreter',
+      'https://lz4.overpass-api.de/api/interpreter'
     ];
     for(const ep of endpoints){
       const ctrl = new AbortController();
-      const t = setTimeout(()=>ctrl.abort(), 8000);
+      const t = setTimeout(()=>ctrl.abort(), 5500);
       try{
         const res = await fetch(ep, {
           method: 'POST',
@@ -2885,42 +2924,49 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
         clearTimeout(t);
         if(!res.ok) continue;
         const json = await res.json();
-        const els = json.elements || [];
-        const raw = [];
-        els.forEach(el=>{
+        return (json.elements || []).map(el=>{
           const tags = el.tags || {};
           const name = String(tags.name || '').trim();
-          if(!name) return;
           const la = el.lat != null ? el.lat : (el.center && el.center.lat);
           const ln = el.lon != null ? el.lon : (el.center && el.center.lon);
-          if(la == null || ln == null) return;
+          if(!name || la == null || ln == null) return null;
+          const d = distKm3d(lat, lng, la, ln);
+          if(d > radiusKm) return null;
           const am = tags.amenity || '';
           let cat = 'edu', ic = '🏫';
           if(am === 'hospital' || am === 'clinic'){ cat = 'med'; ic = '🏥'; }
-          else if(am === 'marketplace' || tags.shop === 'supermarket'){ cat = 'mkt'; ic = '🛒'; }
-          raw.push({ name, lat: la, lng: ln, cat, ic, d: distKm3d(lat, lng, la, ln) });
-        });
-        raw.sort((a,b)=>a.d - b.d);
-
-        // Lọc trùng tên & giãn cách không gian (>= 180m) để bản đồ thoáng, cân đối 3 nhóm (tối đa 5 trường, 3 y tế, 3 chợ/siêu thị)
-        const limits = { edu: 5, med: 3, mkt: 3 };
-        const counts = { edu: 0, med: 0, mkt: 0 };
-        const seenNames = new Set();
-        const picked = [];
-        for(const item of raw){
-          if(counts[item.cat] >= limits[item.cat]) continue;
-          const nk = item.name.toLowerCase();
-          if(seenNames.has(nk)) continue;
-          if(item.d < 0.08) continue; // Tránh trùng đè ngay lõi dự án
-          if(picked.some(x=>distKm3d(x.lat, x.lng, item.lat, item.lng) < 0.18)) continue;
-          seenNames.add(nk);
-          counts[item.cat]++;
-          picked.push(item);
-        }
-        return picked;
+          else if(am === 'marketplace' || tags.shop === 'supermarket' || tags.shop === 'mall'){ cat = 'mkt'; ic = '🛒'; }
+          return { name, lat: la, lng: ln, cat, ic, d, src: 'osm' };
+        }).filter(Boolean);
       }catch(e){ clearTimeout(t); }
     }
     return [];
+  }
+
+  async function fetchEssentialPois(lat, lng, radiusKm){
+    const [esriList, osmList] = await Promise.all([
+      fetchArcgisPois(lat, lng, radiusKm),
+      fetchOverpassPoisBbox(lat, lng, radiusKm)
+    ]);
+    // Ưu tiên danh sách hợp nhất, sắp xếp theo khoảng cách gần nhất
+    const raw = esriList.concat(osmList).sort((a,b)=>a.d - b.d);
+
+    // Lọc trùng tên & giãn cách không gian (>= 220m) để bản đồ gọn, cân đối 3 nhóm (tối đa 6 trường, 4 y tế, 4 chợ/siêu thị)
+    const limits = { edu: 6, med: 4, mkt: 4 };
+    const counts = { edu: 0, med: 0, mkt: 0 };
+    const seenNames = new Set();
+    const picked = [];
+    for(const item of raw){
+      if(counts[item.cat] >= limits[item.cat]) continue;
+      const nk = item.name.toLowerCase().replace(/^(trường|bệnh viện|chợ|siêu thị)\s+/i,'').trim();
+      if(!nk || seenNames.has(nk)) continue;
+      if(item.d < 0.08) continue;
+      if(picked.some(x=>distKm3d(x.lat, x.lng, item.lat, item.lng) < 0.22)) continue;
+      seenNames.add(nk);
+      counts[item.cat]++;
+      picked.push(item);
+    }
+    return picked;
   }
 
   async function runAuto3HubsAndPois(){
@@ -2952,7 +2998,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     // Chạy song song: 3 tuyến OSRM + 1 truy vấn tiện ích thiết yếu quanh 2.5km
     const [routes, pois] = await Promise.all([
       Promise.all(top3.map(lm=>fetchOsrmRoute(pLat, pLng, lm.lat, lm.lng))),
-      fetchEssentialPois(pLat, pLng, 2500)
+      fetchEssentialPois(pLat, pLng, 5.0)
     ]);
 
     if(!map3d) return; // User closed modal while fetching
@@ -3047,7 +3093,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     const leg = document.getElementById('m3d_legend');
     if(leg) leg.hidden = (pois.length === 0);
     info.textContent = '📍 3 mốc gần nhất: ' + summaryParts.join(' · ');
-    stat.innerHTML = `<b>${esc3d(curPrj3d.name)}</b> · Đã nối <b>3 mốc kết nối gần nhất</b> và hiển thị <b>${pois.length} tiện ích thiết yếu</b> (trường học, chợ, y tế trong bán kính 2,5 km — dữ liệu OpenStreetMap).`;
+    stat.innerHTML = `<b>${esc3d(curPrj3d.name)}</b> · Đã nối <b>3 mốc kết nối gần nhất</b> và hiển thị <b>${pois.length} tiện ích thiết yếu</b> (trường học, chợ/siêu thị, bệnh viện trong bán kính 5 km — hợp nhất dữ liệu Esri ArcGIS & OpenStreetMap).`;
   }
 
   window.openProject3DModal = async function(p){
