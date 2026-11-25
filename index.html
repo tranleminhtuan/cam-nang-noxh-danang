@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.3)</title>
+<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.3.3)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
@@ -183,7 +183,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .ward-lbl.dark-bg{background:rgba(19,41,66,.86);color:#fff;border-color:rgba(255,255,255,.35)}
 
 
-/* Modal Xem 3D nhẹ (Lazy-load MapLibre GL JS) - v6.3 */
+/* Modal Xem 3D nhẹ (Lazy-load MapLibre GL JS) - v6.3.3 */
 .m3d{display:none;position:fixed;inset:0;background:rgba(10,18,28,.82);z-index:120;align-items:center;justify-content:center;padding:12px}
 .m3d.open{display:flex}
 .m3d-card{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:14px;width:96vw;max-width:1220px;height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.5)}
@@ -208,7 +208,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .m3d-prj-card .tag{background:rgba(255,255,255,.18);padding:1px 6px;border-radius:4px;font-weight:700;color:#fef08a}
 .m3d-legend{position:absolute;right:10px;bottom:12px;z-index:10;background:rgba(15,23,42,.82);color:#e2e8f0;padding:6px 9px;border-radius:8px;font-size:10.5px;line-height:1.5;pointer-events:none;backdrop-filter:blur(3px)}
 
-/* Khối Thông tin Mở bán công khai & Máy tính trả góp NOXH (v6.3) */
+/* Khối Thông tin Mở bán công khai & Máy tính trả góp NOXH (v6.3.3) */
 .sale-box{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0 14px;background:var(--card)}
 .sale-box.open{border-color:#16a34a;background:linear-gradient(180deg,rgba(22,163,74,.07),transparent 70%)}
 .sale-box.soon{border-color:#d97706;background:linear-gradient(180deg,rgba(217,119,6,.07),transparent 70%)}
@@ -293,7 +293,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 <nav class="sb" id="sb" aria-label="Điều hướng chính">
   <div class="sb-brand">
     <div class="sb-logo">ĐN</div>
-    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.3 · QHC 2050 & Ranh giới 94 xã/phường</small></div>
+    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.3.3 · QHC 2050 & Ranh giới 94 xã/phường</small></div>
   </div>
   <div class="sb-grp">Dành cho người dân</div>
   <div class="sb-nav" role="tablist">
@@ -303,8 +303,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
     <button class="tab" role="tab" aria-selected="false" data-p="p8" data-t="Kiểm tra sơ bộ điều kiện"><span class="ic">✅</span>Kiểm tra điều kiện</button>
     <button class="tab" role="tab" aria-selected="false" data-p="p3" data-t="Biểu mẫu hồ sơ"><span class="ic">📋</span>Biểu mẫu</button>
     <button class="tab" role="tab" aria-selected="false" data-p="p5" data-t="Quy trình xét duyệt"><span class="ic">🔄</span>Quy trình</button>
-    <button class="tab" role="tab" aria-selected="false" data-p="p1" data-t="Hỏi nhanh pháp luật"><span class="ic">💬</span>Hỏi nhanh</button>
-    <button class="tab" role="tab" aria-selected="false" data-p="p2" data-t="Tìm kiếm toàn văn"><span class="ic">🔍</span>Tìm theo từ khóa</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="p1" data-t="Hỏi đáp &amp; Tra cứu văn bản"><span class="ic">💬</span>Hỏi đáp &amp; Tra cứu</button>
     <button class="tab" role="tab" aria-selected="false" data-p="p10" data-t="Đăng ký nhận thông tin dự án"><span class="ic">🔔</span>Đăng ký nhận tin</button>
   </div>
   <div class="sb-grp">Nghiệp vụ & Quản trị</div>
@@ -520,8 +519,10 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
         <div><label>Hình thức đăng ký</label><select id="e_how"><option value="mua">Mua</option><option value="thuemua">Thuê mua</option><option value="thue">Thuê</option></select></div>
         <div><label>Ngày kiểm tra (để chọn mức quy định theo thời điểm)</label><input type="text" id="e_date" placeholder="AAAA-MM-DD"></div>
         <div><label>Phạm vi xét điều kiện nhà ở</label><select id="e_scope"><option value="Đà Nẵng cũ (trước hợp nhất)">Dự án thuộc Đà Nẵng cũ (ví dụ Hòa Phước)</option><option value="Quảng Nam cũ (trước hợp nhất)">Dự án thuộc Quảng Nam cũ</option></select></div>
-        <div id="r_used"><label>Đã mua, thuê mua nhà ở xã hội hoặc đã được hưởng hỗ trợ nhà ở (dưới mọi hình thức) tại phạm vi này chưa?</label><select id="e_used"><option value="chua">Chưa</option><option value="co">Rồi</option></select></div>
-        <div id="r_house"><label>Tình trạng nhà ở của bạn (và vợ hoặc chồng)</label><select id="e_house"><option value="chua">Chưa có nhà ở thuộc sở hữu trong phạm vi này</option><option value="duoi15">Có nhà ở, diện tích bình quân dưới 15 m² sàn/người</option><option value="tren15">Có nhà ở, diện tích bình quân từ 15 m² sàn/người trở lên</option><option value="xa">Có nhà ở nhưng cách xa nơi làm việc</option></select></div>
+        <div id="r_used"><label>Đã từng mua hoặc thuê mua nhà ở xã hội chưa?</label><select id="e_used"><option value="chua">Chưa</option><option value="co">Rồi</option></select></div>
+        <div id="r_used_sc"><label id="lbl_used_sc">Đã được hưởng chính sách hỗ trợ nhà ở dưới mọi hình thức tại phạm vi dự án này chưa?</label><select id="e_used_sc"><option value="chua">Chưa</option><option value="co">Rồi</option></select></div>
+        <div id="r_hloc"><label>Nhà ở thuộc sở hữu của bạn (và vợ hoặc chồng) hiện nằm ở đâu?</label><select id="e_hloc"><option value="none">Chưa có nhà ở thuộc sở hữu</option><option value="dn">Có nhà ở tại khu vực Đà Nẵng cũ (trước hợp nhất)</option><option value="qn">Có nhà ở tại khu vực Quảng Nam cũ (trước hợp nhất)</option><option value="both">Có nhà ở tại cả Đà Nẵng cũ và Quảng Nam cũ</option><option value="other">Có nhà ở tại tỉnh/TP khác (ngoài Đà Nẵng &amp; Quảng Nam)</option></select><div id="e_hloc_note" class="dn" style="color:var(--ok);font-weight:600;margin-top:4px" hidden></div></div>
+        <div id="r_house"><label>Tình trạng nhà ở hiện có trong phạm vi dự án</label><select id="e_house"><option value="duoi15">Diện tích bình quân dưới 15 m² sàn/người (tính người thường trú tại căn nhà đó)</option><option value="tren15">Diện tích bình quân từ 15 m² sàn/người trở lên</option><option value="xa">Có nhà ở nhưng cách xa địa điểm làm việc (20 km miền núi/vùng sâu/hải đảo; 30 km còn lại)</option></select></div>
         <div id="r_dist" hidden><label>Nhà ở cách nơi làm việc (km, theo đường bộ ngắn nhất)</label><input type="text" id="e_d1" inputmode="decimal"><label style="margin-top:6px">Dự án cách nơi làm việc (km)</label><input type="text" id="e_d2" inputmode="decimal"><label style="margin-top:6px">Nhà ở cách dự án (km)</label><input type="text" id="e_d3" inputmode="decimal"><label class="k" style="margin-top:6px"><input type="checkbox" id="e_mtn"> Khu vực miền núi, vùng sâu, vùng xa, hải đảo của thành phố</label></div>
         <div id="r_mar" hidden><label>Tình trạng hôn nhân</label><select id="e_mar"><option value="doc">Độc thân</option><option value="con">Độc thân, đang nuôi con dưới 18 tuổi</option><option value="kh">Đã kết hôn</option></select></div>
         <div id="r_inc" hidden><label>Thu nhập bình quân hàng tháng thực nhận (triệu đồng). Đã kết hôn: tổng hai vợ chồng</label><input type="text" id="e_inc" inputmode="decimal" placeholder="ví dụ 18"></div>
@@ -532,37 +533,42 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 
     <!-- P1: HỎI ĐÁP PHÁP LUẬT -->
     <section class="pane" id="p1" hidden>
-      <div class="row" style="margin-top:0;margin-bottom:10px;justify-content:space-between">
-        <div>
-          <h2 style="margin:0">Hỏi đáp về pháp luật Nhà ở xã hội</h2>
-          <p class="note" style="margin:2px 0 0">Đặt câu hỏi bằng tiếng Việt. Hệ thống trả lời ngắn gọn kèm đoạn trích nguyên văn và điều khoản từ 23 văn bản để đối chiếu.</p>
-        </div>
-        <button class="sm" id="qa_clear">🗑️ Xóa hội thoại</button>
+      <div class="subtabs" id="law_subtabs" style="margin-bottom:12px">
+        <button class="stab on" data-lt="qa">💬 Hỏi đáp nhanh</button>
+        <button class="stab" data-lt="kw">🔍 Tìm theo từ khóa &amp; số Điều</button>
       </div>
-      <div class="qa-box">
-        <div class="qa-log" id="qa_log"></div>
-        <div class="qa-sugs" id="qa_sugs"></div>
-        <div class="qa-bar">
-          <input type="text" id="qa_in" placeholder="Hỏi ví dụ: Mức thu nhập tối đa để mua NOXH hiện nay là bao nhiêu?">
-          <button class="go" id="qa_go">Gửi</button>
+      <div id="law_qa">
+        <div class="row" style="margin-top:0;margin-bottom:10px;justify-content:space-between">
+          <div>
+            <h2 style="margin:0">Hỏi đáp về pháp luật Nhà ở xã hội</h2>
+            <p class="note" style="margin:2px 0 0">Đặt câu hỏi bằng tiếng Việt. Hệ thống trả lời ngắn gọn kèm đoạn trích nguyên văn và điều khoản từ 23 văn bản để đối chiếu.</p>
+          </div>
+          <button class="sm" id="qa_clear">🗑️ Xóa hội thoại</button>
         </div>
-      </div>
-      <div hidden><div id="faq"></div><div id="aibox"><textarea id="q"></textarea><button id="go"></button><div id="chips"></div></div><div id="out"></div></div>
-    </section>
-
-    <!-- P2: TÌM THEO TỪ KHÓA -->
-    <section class="pane" id="p2" hidden>
-      <div class="box">
-        <input type="text" id="kq" placeholder="Từ khóa, ví dụ: thu nhập  hoặc  “bình quân đầu người”  hoặc  thuê mua">
-        <div class="row">
-          <select id="kmode" class="grow" style="max-width:240px"><option value="all">Có đủ tất cả các từ</option><option value="any">Có ít nhất một từ</option></select>
-          <input type="text" id="kno" class="grow" style="max-width:200px" placeholder="Số Điều (ví dụ 30) hoặc Mẫu">
-          <label class="k"><input type="checkbox" id="kacc"> Phân biệt dấu</label>
-          <button class="go" id="kgo">Tìm</button>
+        <div class="qa-box">
+          <div class="qa-log" id="qa_log"></div>
+          <div class="qa-sugs" id="qa_sugs"></div>
+          <div class="qa-bar">
+            <input type="text" id="qa_in" placeholder="Hỏi ví dụ: Mức thu nhập tối đa để mua NOXH hiện nay là bao nhiêu?">
+            <button class="go" id="qa_go">Gửi</button>
+          </div>
         </div>
-        <div class="chips" id="kdocs"></div>
+        <div hidden><div id="faq"></div><div id="aibox"><textarea id="q"></textarea><button id="go"></button><div id="chips"></div></div><div id="out"></div></div>
       </div>
-      <div id="kout"></div>
+      <div id="law_kw" hidden>
+        <div class="box">
+          <p class="note" style="margin:0 0 8px">Tra cứu nguyên văn cụm từ, số Điều hoặc lọc trực tiếp theo từng văn bản pháp luật (23 văn bản).</p>
+          <input type="text" id="kq" placeholder="Từ khóa, ví dụ: thu nhập  hoặc  “bình quân đầu người”  hoặc  thuê mua">
+          <div class="row">
+            <select id="kmode" class="grow" style="max-width:240px"><option value="all">Có đủ tất cả các từ</option><option value="any">Có ít nhất một từ</option></select>
+            <input type="text" id="kno" class="grow" style="max-width:200px" placeholder="Số Điều (ví dụ 30) hoặc Mẫu">
+            <label class="k"><input type="checkbox" id="kacc"> Phân biệt dấu</label>
+            <button class="go" id="kgo">Tìm</button>
+          </div>
+          <div class="chips" id="kdocs"></div>
+        </div>
+        <div id="kout"></div>
+      </div>
     </section>
 
     <!-- P3: BIỂU MẪU -->
@@ -633,8 +639,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
           <div><label>Họ và tên *</label><input type="text" id="reg_name" placeholder="Nguyễn Văn A"></div>
           <div><label>Số điện thoại / Zalo *</label><input type="tel" id="reg_phone" placeholder="09xx xxx xxx"></div>
           <div><label>Email</label><input type="email" id="reg_email" placeholder="email@domain.com"></div>
-          <div><label>Nhóm người dùng</label><select id="reg_grp"><option>Người dân có nhu cầu mua/thuê NOXH</option><option>Cán bộ, công chức, viên chức</option><option>Công nhân, người lao động KCN</option><option>Lực lượng vũ trang</option><option>Nhà đầu tư / Doanh nghiệp</option><option>Cơ quan quản lý / Nghiên cứu</option></select></div>
-          <div><label>Nhu cầu chính</label><select id="reg_need"><option>Mua nhà ở xã hội</option><option>Thuê mua nhà ở xã hội</option><option>Thuê nhà ở xã hội</option><option>Tìm hiểu chính sách / đầu tư</option></select></div>
+          <div><label>Nhu cầu chính</label><select id="reg_need"><option>Mua nhà ở xã hội</option><option>Thuê mua nhà ở xã hội</option><option>Thuê nhà ở xã hội</option><option>Nhà ở cho Lực lượng vũ trang (LLVT)</option><option>Tìm hiểu chính sách / Đầu tư dự án</option></select></div>
           <div><label>Dự án / Vị trí quan tâm</label><select id="reg_prj"><option value="">Chưa chọn dự án cụ thể</option></select></div>
         </div>
         <div style="margin-top:10px"><label class="k"><input type="checkbox" id="reg_ok"> Tôi đồng ý cho đơn vị sử dụng thông tin trên để gửi thông báo chính sách và lịch mở bán NOXH.</label></div>
@@ -931,12 +936,29 @@ function gsearch(d){return 'https://www.google.com/search?q='+encodeURIComponent
    const a=document.createElement('a');a.className='sm';a.href=gsearch(d);a.target='_blank';a.rel='noopener';a.textContent='Tìm văn bản gốc trên Google';r.appendChild(a);o.appendChild(r)}}
  $('bvsel').onchange=fill;$('bvart').onchange=show;fill()})();
 /* --- kiểm tra sơ bộ --- */
-const E={};['k','how','date','mar','inc','house','d1','d2','d3','mtn','used','poor','scope'].forEach(x=>E[x]=$('e_'+x));
+const E={};['k','how','date','mar','inc','house','hloc','d1','d2','d3','mtn','used','used_sc','poor','scope'].forEach(x=>E[x]=$('e_'+x));
 FM.objs.forEach(o=>{const op=document.createElement('option');op.value=o.k;op.textContent='Khoản '+o.k+' – '+o.name;E.k.appendChild(op)});
 E.k.value='5';E.date.value=new Date().toISOString().slice(0,10);
 const NHA_K=[1,4,5,6,7,8,9,10];
-function eVis(){const k=+E.k.value,mua=E.how.value!=='thue',n=mua&&NHA_K.includes(k);$('r_used').hidden=!n;$('r_house').hidden=!n;$('r_dist').hidden=!(n&&E.house.value==='xa');$('r_mar').hidden=!(mua&&[5,6,8].includes(k));$('r_inc').hidden=$('r_mar').hidden;$('r_poor').hidden=!(mua&&k===4)}
-['k','how','house'].forEach(x=>E[x].onchange=eVis);eVis();
+function isHouseInScope(){const scQn=String(E.scope.value||'').includes('Quảng Nam'),loc=E.hloc?E.hloc.value:'none';return loc==='both'||(scQn&&loc==='qn')||(!scQn&&loc==='dn')}
+function eVis(){
+  const k=+E.k.value,mua=E.how.value!=='thue',n=mua&&NHA_K.includes(k),inSc=isHouseInScope(),sc=E.scope.value;
+  $('r_used').hidden=!n;
+  if($('r_used_sc'))$('r_used_sc').hidden=!n;
+  if($('lbl_used_sc'))$('lbl_used_sc').textContent='Đã được hưởng chính sách hỗ trợ nhà ở dưới mọi hình thức tại '+sc+' chưa?';
+  if($('r_hloc'))$('r_hloc').hidden=!n;
+  if($('e_hloc_note')){
+    const outOfScope=n&&E.hloc&&E.hloc.value!=='none'&&!inSc;
+    $('e_hloc_note').hidden=!outOfScope;
+    if(outOfScope)$('e_hloc_note').textContent='✅ Nhà ở hiện có nằm ngoài phạm vi '+sc+' → đạt điều kiện chưa có nhà ở tại khu vực đăng ký mua (không cần xét diện tích 15 m²/người hay khoảng cách).';
+  }
+  $('r_house').hidden=!(n&&inSc);
+  $('r_dist').hidden=!(n&&inSc&&E.house.value==='xa');
+  $('r_mar').hidden=!(mua&&[5,6,8].includes(k));
+  $('r_inc').hidden=$('r_mar').hidden;
+  $('r_poor').hidden=!(mua&&k===4);
+}
+['k','how','scope','hloc','house'].forEach(x=>{if(E[x])E[x].onchange=eVis});eVis();
 const thr=d=>d>='2026-04-07'?[25,35,50,'NĐ 136/2026 (từ 07/4/2026)']:d>='2025-10-10'?[20,30,40,'NĐ 261/2025 (từ 10/10/2025)']:[15,15,30,'NĐ 100/2024 bản gốc (trước 10/10/2025)'];
 const num=v=>{const x=parseFloat(String(v).replace(',','.'));return isNaN(x)?null:x};
 function evalElig(){const k=+E.k.value,how=E.how.value,d=(E.date.value||'').trim()||new Date().toISOString().slice(0,10),mua=how!=='thue',R=[],o=FM.objs.find(x=>x.k===k);
@@ -953,12 +975,16 @@ function evalElig(){const k=+E.k.value,how=E.how.value,d=(E.date.value||'').trim
  else if(NHA_K.includes(k)){
   if(k===10&&d<='2027-02-28')add('ok','Nhà ở và thu nhập','Hộ bị thu hồi đất được mua, thuê mua không phải đáp ứng điều kiện về nhà ở, thu nhập và không phải bốc thăm (đến hết 28/02/2027).','NQ 66.15/2026/NQ-CP, Điều 2');
   else{const sc=E.scope.value;
-   if(E.used.value==='co')add('no','Chưa hưởng chính sách','Đã mua, thuê mua nhà ở xã hội hoặc đã hưởng hỗ trợ nhà ở tại tỉnh, thành phố nơi có dự án thì chưa đủ điều kiện.','Luật Nhà ở, Điều 78 khoản 1a');
-   else add('ok','Chưa hưởng chính sách','Chưa mua, thuê mua nhà ở xã hội và chưa hưởng hỗ trợ nhà ở (cơ quan có thẩm quyền sẽ kiểm tra).','Luật Nhà ở, Điều 78 khoản 1a');
-   const hv=E.house.value;
-   if(hv==='chua')add('ok','Nhà ở','Chưa có nhà ở thuộc sở hữu (cả vợ hoặc chồng) trong phạm vi '+sc+'. Cần Mẫu số 02 do Văn phòng Đăng ký đất đai xác nhận.','NĐ 100/2024, Điều 29 khoản 1; NQ 201/2025, Điều 9 khoản 1');
-   else if(hv==='duoi15')add('ok','Nhà ở','Có nhà ở nhưng diện tích bình quân dưới 15 m² sàn/người (tính gồm người đứng đơn, vợ hoặc chồng, cha mẹ, các con đăng ký thường trú tại căn nhà đó). Cần Mẫu số 03 do UBND cấp xã xác nhận.','NĐ 100/2024, Điều 29 khoản 2');
-   else if(hv==='tren15')add('no','Nhà ở','Có nhà ở với diện tích bình quân từ 15 m² sàn/người trở lên: chưa đủ điều kiện, trừ khi nhà ở cách xa nơi làm việc theo QĐ 29/2025/QĐ-UBND.','NĐ 100/2024, Điều 29 khoản 2; QĐ 29/2025/QĐ-UBND');
+   if(E.used.value==='co')add('no','Chưa mua/thuê mua NOXH','Đã từng mua hoặc thuê mua nhà ở xã hội thì không đủ điều kiện mua, thuê mua thêm.','Luật Nhà ở, Điều 78 khoản 1a');
+   else add('ok','Chưa mua/thuê mua NOXH','Chưa từng mua hoặc thuê mua nhà ở xã hội (cơ quan có thẩm quyền sẽ hậu kiểm).','Luật Nhà ở, Điều 78 khoản 1a');
+   if(E.used_sc&&E.used_sc.value==='co')add('no','Hỗ trợ nhà ở tại phạm vi dự án','Đã được hưởng chính sách hỗ trợ nhà ở dưới mọi hình thức tại '+sc+' thì chưa đủ điều kiện.','Luật Nhà ở, Điều 78 khoản 1a; NQ 201/2025, Điều 9 khoản 1');
+   else add('ok','Hỗ trợ nhà ở tại phạm vi dự án','Chưa được hưởng chính sách hỗ trợ nhà ở dưới mọi hình thức tại '+sc+'.','Luật Nhà ở, Điều 78 khoản 1a; NQ 201/2025, Điều 9 khoản 1');
+   const loc=E.hloc?E.hloc.value:'none',inSc=isHouseInScope(),hv=E.house.value;
+   const locTxt=loc==='dn'?'Đà Nẵng cũ (trước hợp nhất)':loc==='qn'?'Quảng Nam cũ (trước hợp nhất)':loc==='other'?'tỉnh/TP khác':'';
+   if(loc==='none')add('ok','Nhà ở','Chưa có nhà ở thuộc sở hữu (cả vợ hoặc chồng) trong phạm vi '+sc+'. Cần Mẫu số 02 do Văn phòng Đăng ký đất đai xác nhận.','NĐ 100/2024, Điều 29 khoản 1; NQ 201/2025, Điều 9 khoản 1');
+   else if(!inSc)add('ok','Nhà ở','Nhà ở thuộc sở hữu hiện tại nằm tại '+locTxt+' (ngoài phạm vi '+sc+'), nên được tính là chưa có nhà ở thuộc sở hữu tại khu vực đăng ký mua. Cần Mẫu số 02 do Văn phòng Đăng ký đất đai tại phạm vi dự án xác nhận.','NĐ 100/2024, Điều 29 khoản 1; NQ 201/2025, Điều 9 khoản 1');
+   else if(hv==='duoi15')add('ok','Nhà ở','Có nhà ở trong phạm vi '+sc+' nhưng diện tích bình quân dưới 15 m² sàn/người (bao gồm người đứng đơn, vợ/chồng, cha mẹ và các con đăng ký thường trú tại căn nhà đó). Cần Mẫu số 03 do UBND cấp xã xác nhận.','NĐ 100/2024, Điều 29 khoản 2');
+   else if(hv==='tren15')add('no','Nhà ở','Có nhà ở trong phạm vi '+sc+' với diện tích bình quân từ 15 m² sàn/người trở lên: chưa đủ điều kiện, trừ khi nhà ở cách xa địa điểm làm việc (từ 20 km miền núi/vùng sâu/hải đảo hoặc từ 30 km khu vực còn lại) theo QĐ 29/2025/QĐ-UBND.','NĐ 100/2024, Điều 29 khoản 2; QĐ 29/2025/QĐ-UBND');
    else{const d1=num(E.d1.value),d2=num(E.d2.value),d3=num(E.d3.value),m=E.mtn.checked,T1=m?20:30,T2=m?10:15;
     if(d1===null||d2===null||d3===null)add('ask','Nhà ở cách xa nơi làm việc','Nhập đủ 3 khoảng cách để kiểm tra.','QĐ 29/2025/QĐ-UBND, Điều 3');
     else{const bad=[];if(d1<T1)bad.push('nhà ở cách nơi làm việc '+d1+' km, cần từ '+T1+' km');if(d3<T2)bad.push('nhà ở cách dự án '+d3+' km, cần từ '+T2+' km');if(!(d2<d1))bad.push('dự án phải gần nơi làm việc hơn nhà ở hiện tại');
@@ -1675,13 +1701,21 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
         <div class="row" style="margin-top:0">${grpMeta.badge} ${p.rentOnly?'<span class="st rent">🔒 Chỉ cho thuê</span>':''}</div>
       </div>
       ${rentBanner}
-      <div class="row" style="margin:8px 0 12px">
-        <button class="sm pri" id="btn_chk_prj">✅ ${p.rentOnly ? 'Kiểm tra điều kiện THUÊ dự án này' : 'Kiểm tra điều kiện mua/thuê dự án này'}</button>
-        <button class="sm" id="btn_reg_prj">🔔 Đăng ký nhận tin dự án này</button>
-        ${p.lat!=null?`<button class="sm" id="btn_view_3d" style="background:#ecfeff;border-color:#22d3ee;color:#0e7490;font-weight:600">🌐 Xem 3D dự án</button>`:''}
-        ${p.lat!=null?`<button class="sm admin-kmz-btn" id="btn_dl_kmz" ${(window.NOXH_USER_ROLE==='admin')?'':'hidden'} style="background:#eef2ff;border-color:#818cf8;color:#3730a3;font-weight:600">🌍 Tải bay 3D Google Earth (.kmz)</button>`:''}
-        ${p.lat!=null?`<a class="sm" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}">🗺️ Mở Google Maps ${p.hasExactGeo?'':'(ước tính)'}</a>`:''}
-      </div>
+      ${(function(){
+        const hasSales = (p.group === 's2' || (p.salesRounds && p.salesRounds.length > 0));
+        const spatialBtns = (p.lat != null) ? `
+          <button class="sm" id="btn_view_3d" style="background:#ecfeff;border-color:#22d3ee;color:#0e7490;font-weight:600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Xem 3D dự án</button>
+          <button class="sm admin-kmz-btn" id="btn_dl_kmz" ${(window.NOXH_USER_ROLE==='admin')?'':'hidden'} style="background:#eef2ff;border-color:#818cf8;color:#3730a3;font-weight:600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Tải bay 3D (.kmz)</button>
+          <a class="sm" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Mở Google Maps ${p.hasExactGeo?'':'(ước tính)'}</a>` : '';
+        if(hasSales){
+          return spatialBtns ? `<div class="row" style="margin:8px 0 10px">${spatialBtns}</div>` : '';
+        }
+        return `<div class="row" style="margin:8px 0 12px">
+          <button class="sm pri" id="btn_chk_prj">✅ ${p.rentOnly ? 'Kiểm tra điều kiện THUÊ dự án này' : 'Kiểm tra điều kiện mua/thuê dự án này'}</button>
+          <button class="sm" id="btn_reg_prj">🔔 Đăng ký nhận tin dự án này</button>
+          ${spatialBtns}
+        </div>`;
+      })()}
       ${(function(){
         if(p.group !== 's2' && !(p.salesRounds && p.salesRounds.length)) return '';
         const si = evalProjectSales(p);
@@ -1699,7 +1733,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
           bodyHtml = `<div style="font-size:13px;color:var(--mut);line-height:1.5">Dự án hiện chưa có thông báo tiếp nhận hồ sơ mở bán chính thức từ Chủ đầu tư / Sở Xây dựng. Người dân có thể <b>đăng ký nhận tin</b> để được thông báo khi có đợt mở bán mới, tuyệt đối không đặt cọc/giữ chỗ qua môi giới.</div>
             <div class="row" style="margin-top:8px">
               <button class="sm pri" id="btn_sale_reg">🔔 Đăng ký nhận tin khi có thông báo mở bán</button>
-              <button class="sm" id="btn_sale_chk">✅ Kiểm tra trước điều kiện</button>
+              <button class="sm" id="btn_sale_chk">✅ ${p.rentOnly ? 'Kiểm tra trước điều kiện THUÊ' : 'Kiểm tra trước điều kiện mua/thuê'}</button>
             </div>`;
         } else {
           const warnHtml = si.status === 'closed'
@@ -1788,8 +1822,9 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     $('gal_tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{ galTab = b.dataset.gt; renderPDetail(p); });
     w.querySelectorAll('.gal-item').forEach(el=>el.onclick=()=>{ const im = imgs[+el.dataset.idx]; if(im) openLB(im.url, im.cap); });
 
-    $('btn_chk_prj').onclick = ()=>{
+    const goCheckElig = ()=>{
       $('e_scope').value = scopeVal;
+      $('e_scope').dispatchEvent(new Event('change'));
       $('e_how').value = p.rentOnly ? 'thue' : 'mua';
       $('e_how').dispatchEvent(new Event('change'));
       const noteBox = $('e_ctx_note');
@@ -1801,15 +1836,17 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       }
       goTab('p8');
     };
-    $('btn_reg_prj').onclick = ()=>{
+    const goRegPrj = ()=>{
       $('reg_prj').value = p.id;
       if(p.rentOnly) $('reg_need').value = 'Thuê nhà ở xã hội';
       goTab('p10');
     };
+    if($('btn_chk_prj')) $('btn_chk_prj').onclick = goCheckElig;
+    if($('btn_reg_prj')) $('btn_reg_prj').onclick = goRegPrj;
     if($('btn_view_3d')) $('btn_view_3d').onclick = ()=>{ if(window.openProject3DModal) window.openProject3DModal(p); };
     if($('btn_dl_kmz')) $('btn_dl_kmz').onclick = ()=>{ if(window.exportProject3DKmz) window.exportProject3DKmz(p, $('btn_dl_kmz')); };
-    if($('btn_sale_chk')) $('btn_sale_chk').onclick = ()=>$('btn_chk_prj').click();
-    if($('btn_sale_reg')) $('btn_sale_reg').onclick = ()=>$('btn_reg_prj').click();
+    if($('btn_sale_chk')) $('btn_sale_chk').onclick = goCheckElig;
+    if($('btn_sale_reg')) $('btn_sale_reg').onclick = goRegPrj;
     if($('btn_sale_bm')) $('btn_sale_bm').onclick = ()=>{
       if($('ohow')){ $('ohow').value = p.rentOnly ? 'thue' : 'mua'; $('ohow').dispatchEvent(new Event('change')); }
       goTab('p3');
@@ -1845,6 +1882,17 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     }
   }
 
+  if($('law_subtabs')){
+    $('law_subtabs').querySelectorAll('button').forEach(b=>{
+      b.onclick = ()=>{
+        const lt = b.dataset.lt || 'qa';
+        $('law_subtabs').querySelectorAll('button').forEach(x=>x.classList.toggle('on', x === b));
+        if($('law_qa')) $('law_qa').hidden = (lt !== 'qa');
+        if($('law_kw')) $('law_kw').hidden = (lt !== 'kw');
+        if(lt === 'kw' && $('kq')) setTimeout(()=>$('kq').focus(), 40);
+      };
+    });
+  }
   if($('sale_flt_bar')){
     $('sale_flt_bar').querySelectorAll('.sflt-chip').forEach(b=>{
       b.onclick = ()=>{
@@ -1899,7 +1947,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     const msg = $('reg_msg');
     if(!name || !phone){ msg.style.color='var(--er)'; msg.textContent='Vui lòng nhập Họ tên và Số điện thoại.'; return; }
     if(!ok){ msg.style.color='var(--er)'; msg.textContent='Vui lòng đánh dấu đồng ý xử lý thông tin.'; return; }
-    const payload = {name, phone, email:$('reg_email').value.trim(), grp:$('reg_grp').value, need:$('reg_need').value, prj:$('reg_prj').value, at:new Date().toISOString()};
+    const payload = {name, phone, email:$('reg_email').value.trim(), grp:($('reg_grp') ? $('reg_grp').value : ''), need:$('reg_need').value, prj:$('reg_prj').value, at:new Date().toISOString()};
     if(window.NOXH_CONFIG && window.NOXH_CONFIG.formActionUrl){
       msg.style.color='var(--mut)'; msg.textContent='Đang gửi…';
       fetch(window.NOXH_CONFIG.formActionUrl, {method:'POST', mode:'no-cors', body:JSON.stringify(payload)})
@@ -2931,7 +2979,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
 
 
 <script>
-/* ========== MODULE XEM 3D SIÊU NHẸ (LAZY-LOAD MAPLIBRE) + 3 MỐC & TIỆN ÍCH GẦN NHẤT + KMZ ADMIN - v6.3 ========== */
+/* ========== MODULE XEM 3D SIÊU NHẸ (LAZY-LOAD MAPLIBRE) + 3 MỐC & TIỆN ÍCH GẦN NHẤT + KMZ ADMIN - v6.3.3 ========== */
 (function(){
   let mlLoaded = false, mlPromise = null, map3d = null, spinRaf = null, isSpinning = false, curPrj3d = null;
   let adminOn3d = false, wardLblOn3d = true, autoHubOn3d = false;
