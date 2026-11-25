@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.2.7)</title>
+<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.3)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
@@ -183,7 +183,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .ward-lbl.dark-bg{background:rgba(19,41,66,.86);color:#fff;border-color:rgba(255,255,255,.35)}
 
 
-/* Modal Xem 3D nhẹ (Lazy-load MapLibre GL JS) - v6.2.7 */
+/* Modal Xem 3D nhẹ (Lazy-load MapLibre GL JS) - v6.3 */
 .m3d{display:none;position:fixed;inset:0;background:rgba(10,18,28,.82);z-index:120;align-items:center;justify-content:center;padding:12px}
 .m3d.open{display:flex}
 .m3d-card{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:14px;width:96vw;max-width:1220px;height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.5)}
@@ -207,6 +207,33 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .m3d-prj-card .m{font-size:11px;color:#e0f2fe;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .m3d-prj-card .tag{background:rgba(255,255,255,.18);padding:1px 6px;border-radius:4px;font-weight:700;color:#fef08a}
 .m3d-legend{position:absolute;right:10px;bottom:12px;z-index:10;background:rgba(15,23,42,.82);color:#e2e8f0;padding:6px 9px;border-radius:8px;font-size:10.5px;line-height:1.5;pointer-events:none;backdrop-filter:blur(3px)}
+
+/* Khối Thông tin Mở bán công khai & Máy tính trả góp NOXH (v6.3) */
+.sale-box{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0 14px;background:var(--card)}
+.sale-box.open{border-color:#16a34a;background:linear-gradient(180deg,rgba(22,163,74,.07),transparent 70%)}
+.sale-box.soon{border-color:#d97706;background:linear-gradient(180deg,rgba(217,119,6,.07),transparent 70%)}
+.sale-box.closed{border-color:#dc2626;background:linear-gradient(180deg,rgba(220,38,38,.06),transparent 70%)}
+.sale-box.none{border-color:var(--line);background:var(--bg)}
+.sale-hd{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px}
+.sale-bdg{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.sale-bdg.open{background:#dcfce7;color:#15803d}
+.sale-bdg.soon{background:#fef3c7;color:#b45309}
+.sale-bdg.closed{background:#fee2e2;color:#b91c1c}
+.sale-bdg.none{background:#e2e8f0;color:#475569}
+.sale-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:8px;margin:8px 0}
+.sale-kv{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12.5px}
+.sale-kv b{display:block;font-size:11px;color:var(--mut);text-transform:uppercase;margin-bottom:2px}
+.sale-warn{font-size:12px;padding:7px 10px;border-radius:8px;background:rgba(217,119,6,.10);border-left:3px solid #d97706;color:var(--tx);margin:8px 0}
+.sale-warn.red{background:rgba(220,38,38,.09);border-left-color:#dc2626}
+.calc-box{margin-top:10px;padding:12px;border:1px dashed var(--acc);border-radius:10px;background:var(--bg)}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:8px}
+.calc-res{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.calc-kpi{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.calc-kpi small{display:block;font-size:11px;color:var(--mut)}
+.calc-kpi b{font-size:14.5px;color:var(--pri)}
+.sflt-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+.sflt-chip{padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--tx);font-size:12px;font-weight:600;cursor:pointer}
+.sflt-chip.on{background:var(--pri);color:#fff;border-color:var(--pri)}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" crossorigin=""></script>
@@ -266,7 +293,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 <nav class="sb" id="sb" aria-label="Điều hướng chính">
   <div class="sb-brand">
     <div class="sb-logo">ĐN</div>
-    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.2.7 · QHC 2050 & Ranh giới 94 xã/phường</small></div>
+    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.3 · QHC 2050 & Ranh giới 94 xã/phường</small></div>
   </div>
   <div class="sb-grp">Dành cho người dân</div>
   <div class="sb-nav" role="tablist">
@@ -462,6 +489,12 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
             <option value="LLVT">LLVT – Lực lượng vũ trang</option>
           </select>
           <input type="text" id="f_q" class="grow" placeholder="Tìm tên dự án, vị trí, chủ đầu tư, mã...">
+        </div>
+        <div class="sflt-bar" id="sale_flt_bar">
+          <span style="font-size:12px;font-weight:700;color:var(--mut)">🏷️ Trạng thái mở bán:</span>
+          <button type="button" class="sflt-chip on" data-sf="">Tất cả</button>
+          <button type="button" class="sflt-chip" data-sf="open">🟢 Đang nhận hồ sơ <span id="cnt_sf_open">(0)</span></button>
+          <button type="button" class="sflt-chip" data-sf="soon">🟡 Sắp mở bán <span id="cnt_sf_soon">(0)</span></button>
         </div>
         <p class="note" id="p9_hint" style="margin:8px 0 0"></p>
       </div>
@@ -990,6 +1023,56 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
   const OV = JSON.parse(document.getElementById('overview_data').textContent);
   let PRJ_ALL = JSON.parse(document.getElementById('all_58_projects').textContent);
   let CUR_GRP = 's2';
+  let CUR_SALE_FILTER = '';
+
+  function parseDateVN(s){
+    const txt = String(s || '').trim();
+    if(!txt) return null;
+    let m = txt.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/);
+    if(m) return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+    m = txt.match(/^(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})$/);
+    if(m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    return null;
+  }
+
+  function evalRoundStatus(r, today){
+    const soldOut = /hết\s*(quỹ|căn|chỗ)/i.test(String(r.tinh_trang || ''));
+    if(soldOut) return { status: 'closed', soldOut: true, daysLeft: 0, daysToStart: 0 };
+    const d1 = parseDateVN(r.tu);
+    const d2 = parseDateVN(r.den);
+    if(d1 && today < d1){
+      const dts = Math.ceil((d1.getTime() - today.getTime()) / 86400000);
+      return { status: 'soon', soldOut: false, daysLeft: 0, daysToStart: dts };
+    }
+    if(d2 && today > d2){
+      return { status: 'closed', soldOut: false, daysLeft: 0, daysToStart: 0 };
+    }
+    if(d1 || d2){
+      const dl = d2 ? Math.max(0, Math.ceil((d2.getTime() - today.getTime()) / 86400000)) : null;
+      return { status: 'open', soldOut: false, daysLeft: dl, daysToStart: 0 };
+    }
+    return { status: 'soon', soldOut: false, daysLeft: 0, daysToStart: 0 };
+  }
+
+  function evalProjectSales(p){
+    const rounds = Array.isArray(p.salesRounds) ? p.salesRounds : [];
+    if(!rounds.length) return { status: 'none', activeRound: null, historyRounds: [], daysLeft: null, daysToStart: null, soldOut: false };
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const evaluated = rounds.map((r, idx)=>Object.assign({ _idx: idx }, r, evalRoundStatus(r, today)));
+    const active = evaluated.find(x=>x.status === 'open')
+      || evaluated.find(x=>x.status === 'soon')
+      || evaluated[evaluated.length - 1];
+    const history = evaluated.filter(x=>x._idx !== active._idx).reverse();
+    return {
+      status: active.status,
+      activeRound: active,
+      historyRounds: history,
+      daysLeft: active.daysLeft,
+      daysToStart: active.daysToStart,
+      soldOut: active.soldOut
+    };
+  }
   let CUR_ID = PRJ_ALL[0] ? PRJ_ALL[0].id : null;
   let LMAP = null, TILE_SAT = null, TILE_OSM = null, IS_SAT = true, MARKERS = [], POLY_LAYER = null;
   let OVMAP = null, OV_BUBBLES = [], RAD_CIRCLE = null, RAD_PIN = null;
@@ -1305,6 +1388,17 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     $('cnt_s3').textContent = nS3;
     if($('cnt_s3qh')) $('cnt_s3qh').textContent = nS3qh;
     $('bdg_prj').textContent = PRJ_ALL.length;
+    const sfBar = $('sale_flt_bar');
+    if(sfBar){
+      sfBar.hidden = (CUR_GRP !== 's2');
+      if(CUR_GRP !== 's2') CUR_SALE_FILTER = '';
+      const s2All = PRJ_ALL.filter(p=>p.group === 's2');
+      const nOpen = s2All.filter(p=>evalProjectSales(p).status === 'open').length;
+      const nSoon = s2All.filter(p=>evalProjectSales(p).status === 'soon').length;
+      if($('cnt_sf_open')) $('cnt_sf_open').textContent = '(' + nOpen + ')';
+      if($('cnt_sf_soon')) $('cnt_sf_soon').textContent = '(' + nSoon + ')';
+      sfBar.querySelectorAll('.sflt-chip').forEach(b=>b.classList.toggle('on', (b.dataset.sf||'') === CUR_SALE_FILTER));
+    }
     $('p9_hint').innerHTML = CUR_GRP === 's2'
       ? `Đang xem <b>${nS2} dự án đã chấp thuận chủ trương đầu tư / đang xây dựng / đã hoàn thành</b> (hiển thị thông tin dự án trích xuất từ QĐ CTĐT). Các dự án chỉ có quỹ nhà cho thuê được gắn nhãn đỏ cảnh báo.`
       : CUR_GRP === 's3'
@@ -1322,6 +1416,10 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       if(tp === 'thue' && !(p.thue > 0)) return false;
       if(tp === 'rentonly' && !p.rentOnly) return false;
       if(ng && p.nguon_ma !== ng) return false;
+      if(CUR_GRP === 's2' && CUR_SALE_FILTER){
+        const st = evalProjectSales(p).status;
+        if(st !== CUR_SALE_FILTER) return false;
+      }
       if(q && !norm(p.name+' '+p.cdt+' '+p.id+' '+p.phuong+' '+p.nguon_ma).includes(q)) return false;
       return true;
     });
@@ -1368,7 +1466,13 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       const d = document.createElement('div');
       d.className = 'pitem' + (p.id === CUR_ID ? ' on' : '');
       const geoIc = p.hasExactGeo ? '📍' : '○';
-      d.innerHTML = `<div class="pn">${geoIc} ${esc(p.name)} ${p.featured?'<span class="st ok">Mẫu chi tiết</span>':''} ${p.rentOnly?'<span class="st rent">Chỉ cho thuê</span>':''}</div>
+      const sInfo = (p.group === 's2' || (p.salesRounds && p.salesRounds.length)) ? evalProjectSales(p) : null;
+      const salePill = !sInfo ? ''
+        : sInfo.status === 'open' ? '<span class="st ok">🟢 Đang nhận HS</span>'
+        : sInfo.status === 'soon' ? '<span class="st kiem">🟡 Sắp mở bán</span>'
+        : sInfo.status === 'closed' ? '<span class="st rent">🔴 Hết hạn ' + esc(sInfo.activeRound.dot) + '</span>'
+        : '';
+      d.innerHTML = `<div class="pn">${geoIc} ${esc(p.name)} ${salePill} ${p.featured?'<span class="st ok">Mẫu chi tiết</span>':''} ${p.rentOnly?'<span class="st rent">Chỉ cho thuê</span>':''}</div>
         <div class="pm"><span>${esc(p.phuong)}</span> · <b>${p.can ? p.can.toLocaleString('vi-VN')+' căn' : 'Đang xác định'}</b> <span class="st ${p.group==='s2'?'kiem':'note'}">${esc(p.nguon_ma)}</span></div>`;
       d.onclick = ()=>{ CUR_ID = p.id; renderPList(); renderPDetail(p); updateMapLayers(list); };
       box.appendChild(d);
@@ -1578,6 +1682,95 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
         ${p.lat!=null?`<button class="sm admin-kmz-btn" id="btn_dl_kmz" ${(window.NOXH_USER_ROLE==='admin')?'':'hidden'} style="background:#eef2ff;border-color:#818cf8;color:#3730a3;font-weight:600">🌍 Tải bay 3D Google Earth (.kmz)</button>`:''}
         ${p.lat!=null?`<a class="sm" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}">🗺️ Mở Google Maps ${p.hasExactGeo?'':'(ước tính)'}</a>`:''}
       </div>
+      ${(function(){
+        if(p.group !== 's2' && !(p.salesRounds && p.salesRounds.length)) return '';
+        const si = evalProjectSales(p);
+        const r = si.activeRound;
+        const badgeHtml = si.status === 'open'
+          ? `<span class="sale-bdg open">🟢 ĐANG NHẬN HỒ SƠ${si.daysLeft != null ? (' · Còn ' + si.daysLeft + ' ngày') : ''}</span>`
+          : si.status === 'soon'
+          ? `<span class="sale-bdg soon">🟡 SẮP MỞ BÁN${si.daysToStart > 0 ? (' · Còn ' + si.daysToStart + ' ngày') : ''}</span>`
+          : si.status === 'closed'
+          ? `<span class="sale-bdg closed">🔴 ĐÃ HẾT THỜI GIAN MỞ BÁN (${esc(r.dot)})${si.soldOut ? ' · Đã hết quỹ căn' : ''}</span>`
+          : `<span class="sale-bdg none">⚪ CHƯA MỞ BÁN</span>`;
+
+        let bodyHtml = '';
+        if(!r){
+          bodyHtml = `<div style="font-size:13px;color:var(--mut);line-height:1.5">Dự án hiện chưa có thông báo tiếp nhận hồ sơ mở bán chính thức từ Chủ đầu tư / Sở Xây dựng. Người dân có thể <b>đăng ký nhận tin</b> để được thông báo khi có đợt mở bán mới, tuyệt đối không đặt cọc/giữ chỗ qua môi giới.</div>
+            <div class="row" style="margin-top:8px">
+              <button class="sm pri" id="btn_sale_reg">🔔 Đăng ký nhận tin khi có thông báo mở bán</button>
+              <button class="sm" id="btn_sale_chk">✅ Kiểm tra trước điều kiện</button>
+            </div>`;
+        } else {
+          const warnHtml = si.status === 'closed'
+            ? `<div class="sale-warn red"><b>⚠️ Cảnh báo:</b> ${esc(r.dot)} đã kết thúc${r.den ? (' ngày ' + esc(r.den)) : ''}${si.soldOut ? ' (đã hết quỹ căn)' : ''}. Người dân không nộp hồ sơ hoặc đặt cọc qua môi giới trái phép; vui lòng chờ thông báo đợt tiếp theo (nếu còn căn).</div>`
+            : `<div class="sale-warn"><b>ℹ️ Lưu ý (Điều 38 NĐ 100/2024):</b> Người dân nộp hồ sơ trực tiếp tại địa chỉ Chủ đầu tư công bố, tuyệt đối không nộp tiền giữ chỗ hoặc đặt cọc qua môi giới trái phép.</div>`;
+
+          const pdfBtn = r.pdf && /^https?:\/\//i.test(r.pdf)
+            ? `<a class="sm" target="_blank" rel="noopener" href="${esc(r.pdf)}" style="background:#eef2ff;border-color:#818cf8;color:#3730a3;font-weight:600">📄 Tải văn bản Thông báo mở bán (PDF)</a>`
+            : '';
+
+          const ctaHtml = si.status === 'open'
+            ? `<button class="sm pri" id="btn_sale_chk">✅ Kiểm tra điều kiện ngay</button>
+               <button class="sm" id="btn_sale_bm">📋 Xem biểu mẫu &amp; Hồ sơ cần nộp</button>
+               ${!p.rentOnly ? '<button class="sm" id="btn_sale_calc">🧮 Ước tính tiền mua &amp; trả góp</button>' : ''}
+               ${pdfBtn}`
+            : si.status === 'soon'
+            ? `<button class="sm pri" id="btn_sale_chk">✅ Kiểm tra điều kiện &amp; chuẩn bị hồ sơ trước</button>
+               <button class="sm" id="btn_sale_bm">📋 Xem biểu mẫu</button>
+               <button class="sm" id="btn_sale_reg">🔔 Đăng ký nhận tin nhắc lịch</button>
+               ${!p.rentOnly ? '<button class="sm" id="btn_sale_calc">🧮 Ước tính trả góp</button>' : ''}
+               ${pdfBtn}`
+            : `<button class="sm pri" id="btn_sale_reg">🔔 Đăng ký nhận tin đợt mở bán tiếp theo</button>
+               ${!p.rentOnly ? '<button class="sm" id="btn_sale_calc">🧮 Ước tính trả góp (tham khảo)</button>' : ''}
+               ${pdfBtn}`;
+
+          const histHtml = si.historyRounds.length ? `
+            <details style="margin-top:8px;font-size:12.5px">
+              <summary style="cursor:pointer;font-weight:600;color:var(--pri)">📚 Lịch sử các đợt mở bán trước (${si.historyRounds.length} đợt)</summary>
+              <div style="margin-top:6px;display:flex;flex-direction:column;gap:6px">
+                ${si.historyRounds.map(hr=>`<div style="padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg)">
+                  <b>${esc(hr.dot)}</b> (${esc(hr.tu||'—')} → ${esc(hr.den||'—')}) ${hr.so_can ? '· ' + esc(hr.so_can) : ''}<br>
+                  ${hr.gia_ban ? ('Giá bán: <b>' + esc(hr.gia_ban) + '</b> ') : ''}${hr.gia_thue ? ('· Giá thuê: <b>' + esc(hr.gia_thue) + '</b> ') : ''}
+                  ${hr.pdf && /^https?:\/\//i.test(hr.pdf) ? ('· <a target="_blank" rel="noopener" href="'+esc(hr.pdf)+'">Xem văn bản PDF</a>') : ''}
+                </div>`).join('')}
+              </div>
+            </details>` : '';
+
+          const mPrice = String(r.gia_ban || '').match(/(\d+[.,]?\d*)/);
+          const defPrice = mPrice ? Number(mPrice[1].replace(',', '.')) : 17;
+
+          bodyHtml = `
+            <div class="sale-grid">
+              <div class="sale-kv"><b>Đợt &amp; Thời gian nhận HS</b>${esc(r.dot)}<br><span style="color:var(--pri);font-weight:700">${esc(r.tu||'Đang cập nhật')} → ${esc(r.den||'Đang cập nhật')}</span></div>
+              <div class="sale-kv"><b>Giá bán / Giá thuê công khai</b>${r.gia_ban ? ('Bán: <b style="display:inline;color:var(--pri);font-size:13px">' + esc(r.gia_ban) + '</b>') : ''}${r.gia_ban && r.gia_thue ? '<br>' : ''}${r.gia_thue ? ('Thuê: <b style="display:inline;color:var(--wa);font-size:13px">' + esc(r.gia_thue) + '</b>') : ''}${!r.gia_ban && !r.gia_thue ? 'Đang cập nhật' : ''}</div>
+              <div class="sale-kv"><b>Quy mô đợt mở bán</b>${esc(r.so_can || 'Theo thông báo CĐT')}${r.tinh_trang ? ('<br><small style="color:var(--mut)">' + esc(r.tinh_trang) + '</small>') : ''}</div>
+              <div class="sale-kv"><b>Liên hệ Chủ đầu tư chính thức</b>${esc(r.lien_he || p.cdt || 'Liên hệ trực tiếp CĐT')}</div>
+            </div>
+            ${r.ghichu ? ('<div style="font-size:12px;color:var(--mut);margin:4px 0">📝 ' + esc(r.ghichu) + '</div>') : ''}
+            ${warnHtml}
+            <div class="row" style="margin-top:8px">${ctaHtml}</div>
+            <div class="calc-box" id="sale_calc_box" hidden data-defprice="${defPrice}">
+              <b style="color:var(--pri);font-size:13px">🧮 Ước tính tiền mua nhà &amp; Trả góp gói vay ưu đãi NHCSXH (tham khảo theo NĐ 100/2024)</b>
+              <div class="calc-grid">
+                <div><label style="font-size:11.5px;display:block;font-weight:600">Đơn giá (triệu/m²)</label><input type="number" id="c_price" step="0.1" min="5" max="60" value="${defPrice}"></div>
+                <div><label style="font-size:11.5px;display:block;font-weight:600">Diện tích căn (m²)</label><input type="number" id="c_area" step="1" min="25" max="77" value="55"></div>
+                <div><label style="font-size:11.5px;display:block;font-weight:600">Vốn tự có (% · tối thiểu 20%)</label><input type="number" id="c_down" step="5" min="20" max="80" value="20"></div>
+                <div><label style="font-size:11.5px;display:block;font-weight:600">Thời hạn vay (năm · tối đa 25)</label><input type="number" id="c_years" step="1" min="5" max="25" value="20"></div>
+                <div><label style="font-size:11.5px;display:block;font-weight:600">Lãi suất tham khảo (%/năm)</label><input type="number" id="c_rate" step="0.1" min="3" max="12" value="6.6"></div>
+              </div>
+              <div class="calc-res" id="c_out"></div>
+            </div>
+            ${histHtml}`;
+        }
+        return `<div class="sale-box ${si.status}">
+          <div class="sale-hd">
+            <b style="color:var(--pri);font-size:13.5px">📢 Thông tin Mở bán công khai &amp; Tiếp nhận hồ sơ</b>
+            ${badgeHtml}
+          </div>
+          ${bodyHtml}
+        </div>`;
+      })()}
       ${unifiedCardHtml}
       <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)">
         <div class="row" style="margin-top:0;justify-content:space-between">
@@ -1615,8 +1808,52 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     };
     if($('btn_view_3d')) $('btn_view_3d').onclick = ()=>{ if(window.openProject3DModal) window.openProject3DModal(p); };
     if($('btn_dl_kmz')) $('btn_dl_kmz').onclick = ()=>{ if(window.exportProject3DKmz) window.exportProject3DKmz(p, $('btn_dl_kmz')); };
+    if($('btn_sale_chk')) $('btn_sale_chk').onclick = ()=>$('btn_chk_prj').click();
+    if($('btn_sale_reg')) $('btn_sale_reg').onclick = ()=>$('btn_reg_prj').click();
+    if($('btn_sale_bm')) $('btn_sale_bm').onclick = ()=>{
+      if($('ohow')){ $('ohow').value = p.rentOnly ? 'thue' : 'mua'; $('ohow').dispatchEvent(new Event('change')); }
+      goTab('p3');
+    };
+    if($('btn_sale_calc') && $('sale_calc_box')){
+      const runCalc = ()=>{
+        const pr = Math.max(1, Number($('c_price').value) || 17);
+        const ar = Math.max(20, Number($('c_area').value) || 55);
+        const dp = Math.min(90, Math.max(20, Number($('c_down').value) || 20));
+        const yr = Math.min(25, Math.max(1, Number($('c_years').value) || 20));
+        const rt = Math.max(0.1, Number($('c_rate').value) || 6.6);
+        const total = pr * ar;
+        const downAmt = total * dp / 100;
+        const loanAmt = total - downAmt;
+        const nM = yr * 12;
+        const rM = (rt / 100) / 12;
+        const pmtEqual = loanAmt * (rM * Math.pow(1 + rM, nM)) / (Math.pow(1 + rM, nM) - 1);
+        const pmtFirst = (loanAmt / nM) + (loanAmt * rM);
+        $('c_out').innerHTML = `
+          <div class="calc-kpi"><small>Tổng giá trị căn hộ (ước tính)</small><b>${Math.round(total).toLocaleString('vi-VN')} triệu</b></div>
+          <div class="calc-kpi"><small>Vốn tự có ban đầu (${dp}%)</small><b>${Math.round(downAmt).toLocaleString('vi-VN')} triệu</b></div>
+          <div class="calc-kpi"><small>Số tiền vay tối đa (${100-dp}%)</small><b>${Math.round(loanAmt).toLocaleString('vi-VN')} triệu</b></div>
+          <div class="calc-kpi"><small>Trả hàng tháng (gốc + lãi)</small><b>~${pmtEqual.toFixed(1)} tr/tháng</b><small style="margin-top:2px">Dư nợ giảm dần T1: ~${pmtFirst.toFixed(1)} tr</small></div>`;
+      };
+      $('btn_sale_calc').onclick = ()=>{
+        const box = $('sale_calc_box');
+        box.hidden = !box.hidden;
+        if(!box.hidden) runCalc();
+      };
+      ['c_price','c_area','c_down','c_years','c_rate'].forEach(cid=>{
+        if($(cid)) $(cid).oninput = runCalc;
+      });
+    }
   }
 
+  if($('sale_flt_bar')){
+    $('sale_flt_bar').querySelectorAll('.sflt-chip').forEach(b=>{
+      b.onclick = ()=>{
+        CUR_SALE_FILTER = b.dataset.sf || '';
+        $('sale_flt_bar').querySelectorAll('.sflt-chip').forEach(x=>x.classList.toggle('on', x === b));
+        renderPList();
+      };
+    });
+  }
   $('prj_subtabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{
     CUR_GRP = b.dataset.g;
     $('prj_subtabs').querySelectorAll('button').forEach(x=>x.classList.toggle('on', x===b));
@@ -1666,7 +1903,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     if(window.NOXH_CONFIG && window.NOXH_CONFIG.formActionUrl){
       msg.style.color='var(--mut)'; msg.textContent='Đang gửi…';
       fetch(window.NOXH_CONFIG.formActionUrl, {method:'POST', mode:'no-cors', body:JSON.stringify(payload)})
-        .then(()=>{ msg.style.color='var(--ok)'; msg.textContent='Đã ghi nhận đăng ký thành công!'; })
+        .then(()=>{ msg.style.color='var(--ok)'; msg.textContent='Đã ghi nhận đăng ký nhận tin tham khảo thành công! (Lưu ý: Đây là kênh nhận thông báo khi dự án mở bán chính thức, KHÔNG phải hồ sơ đăng ký mua/thuê NOXH).'; })
         .catch(()=>{ msg.style.color='var(--er)'; msg.textContent='Không gửi được, vui lòng thử lại.'; });
     } else {
       msg.style.color='var(--ok)';
@@ -1883,6 +2120,14 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
             hientrangBlock: String(r[26] || '').trim(),
             tiendoVm: String(r[27] || '').trim()
           };
+          let salesRounds = [];
+          const rawSales = String(r[28] || '').trim();
+          if(rawSales && rawSales.startsWith('[')){
+            try{
+              const parsedS = JSON.parse(rawSales);
+              if(Array.isArray(parsedS)) salesRounds = parsedS;
+            }catch(e){}
+          }
 
           let p = PRJ_ALL.find(x=>x.id.toUpperCase() === id);
           if(!p){
@@ -1912,6 +2157,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
             else p.rows.push([lblSum, tomtat]);
           }
           p.v6 = v6Obj;
+          p.salesRounds = salesRounds;
           if(v6Obj.dientich){
             const dtNum = parseFloat(String(v6Obj.dientich).replace(/\./g,'').replace(',','.'));
             if(!isNaN(dtNum) && dtNum > 0) p.dientich = dtNum;
@@ -2685,7 +2931,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
 
 
 <script>
-/* ========== MODULE XEM 3D SIÊU NHẸ (LAZY-LOAD MAPLIBRE) + 3 MỐC & TIỆN ÍCH GẦN NHẤT + KMZ ADMIN - v6.2.7 ========== */
+/* ========== MODULE XEM 3D SIÊU NHẸ (LAZY-LOAD MAPLIBRE) + 3 MỐC & TIỆN ÍCH GẦN NHẤT + KMZ ADMIN - v6.3 ========== */
 (function(){
   let mlLoaded = false, mlPromise = null, map3d = null, spinRaf = null, isSpinning = false, curPrj3d = null;
   let adminOn3d = false, wardLblOn3d = true, autoHubOn3d = false;
