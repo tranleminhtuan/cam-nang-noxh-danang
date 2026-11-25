@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.3.5)</title>
+<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.3.6)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
@@ -30,7 +30,7 @@ body{margin:0;background:var(--bg);color:var(--tx);font:14.5px/1.6 system-ui,-ap
 .topbar{background:var(--card);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:30}
 .mbtn{display:none;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;color:var(--tx);font-weight:700}
 .topbar-title{font-size:16px;font-weight:700;color:var(--pri);margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.wrap{max-width:1220px;width:100%;margin:0 auto;padding:18px 22px 48px}
+.wrap{max-width:1380px;width:100%;margin:0 auto;padding:14px 18px 42px;overflow-x:clip}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:35}
 @media (max-width:900px){
   .sb{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%)}
@@ -57,7 +57,7 @@ button{font:inherit;cursor:pointer}
 .sm.pri{background:var(--pri);color:#fff;border-color:var(--pri)}
 :root[data-theme="dark"] .sm.pri{color:#0e141b}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
-.row>*{flex:0 0 auto}.row .grow{flex:1 1 200px}
+.row>*{flex:0 1 auto;max-width:100%;min-width:0}.row .grow{flex:1 1 200px;min-width:0}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .chip{background:var(--bg);color:var(--acc);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px}
 .chip.on{background:var(--pri);color:#fff;border-color:var(--pri)}
@@ -81,7 +81,7 @@ label.k{font-size:13px;color:var(--mut);display:flex;gap:6px;align-items:center}
 /* Density & Radius Analyzer on Overview */
 .dgrid{display:grid;grid-template-columns:minmax(0,2.25fr) 330px;gap:12px;align-items:start}
 @media (max-width:980px){.dgrid{grid-template-columns:1fr}}
-#ovmap{width:100%;height:clamp(540px,68vh,760px);border-radius:12px;border:1px solid var(--line);z-index:1}
+#ovmap{width:100%;height:clamp(580px,74vh,820px);border-radius:12px;border:1px solid var(--line);z-index:1}
 .rad-res{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:10px}
 .rad-nums{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
 .rad-box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
@@ -96,7 +96,7 @@ label.k{font-size:13px;color:var(--mut);display:flex;gap:6px;align-items:center}
 .stab .cnt{background:rgba(0,0,0,.12);padding:1px 8px;border-radius:999px;font-size:12px}
 .stab.on .cnt{background:rgba(255,255,255,.22)}
 /* Projects Split View */
-.pgrid{display:grid;grid-template-columns:320px minmax(0,1fr);gap:12px;align-items:start}
+.pgrid{display:grid;grid-template-columns:350px minmax(0,1fr);gap:14px;align-items:start}
 @media (max-width:980px){.pgrid{grid-template-columns:1fr}}
 .plist{background:var(--card);border:1px solid var(--line);border-radius:12px;max-height:540px;overflow-y:auto}
 .pitem{padding:11px 13px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s}
@@ -105,7 +105,7 @@ label.k{font-size:13px;color:var(--mut);display:flex;gap:6px;align-items:center}
 .pitem.on{background:rgba(30,127,140,.11);border-left:4px solid var(--acc);padding-left:9px}
 .pitem .pn{font-weight:700;font-size:13.5px;color:var(--pri);margin-bottom:3px;line-height:1.35}
 .pitem .pm{font-size:12px;color:var(--mut);display:flex;flex-wrap:wrap;gap:5px;align-items:center}
-#leafmap{width:100%;height:clamp(560px,68vh,760px);border-radius:12px;border:1px solid var(--line);z-index:1}
+#leafmap{width:100%;height:440px;border-radius:12px;border:1px solid var(--line);z-index:1}
 /* Gallery & Lightbox */
 .gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:10px}
 .gal-item{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg);cursor:pointer;position:relative}
@@ -183,7 +183,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .ward-lbl.dark-bg{background:rgba(19,41,66,.86);color:#fff;border-color:rgba(255,255,255,.35)}
 
 
-/* Modal Xem 3D nhẹ (Lazy-load MapLibre GL JS) - v6.3.5 */
+/* Modal Xem 3D nhẹ (Lazy-load MapLibre GL JS) - v6.3.6 */
 .m3d{display:none;position:fixed;inset:0;background:rgba(10,18,28,.82);z-index:120;align-items:center;justify-content:center;padding:12px}
 .m3d.open{display:flex}
 .m3d-card{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:14px;width:96vw;max-width:1220px;height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.5)}
@@ -208,7 +208,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .m3d-prj-card .tag{background:rgba(255,255,255,.18);padding:1px 6px;border-radius:4px;font-weight:700;color:#fef08a}
 .m3d-legend{position:absolute;right:10px;bottom:12px;z-index:10;background:rgba(15,23,42,.82);color:#e2e8f0;padding:6px 9px;border-radius:8px;font-size:10.5px;line-height:1.5;pointer-events:none;backdrop-filter:blur(3px)}
 
-/* Khối Thông tin Mở bán công khai & Máy tính trả góp NOXH (v6.3.5) */
+/* Khối Thông tin Mở bán công khai & Máy tính trả góp NOXH (v6.3.6) */
 .sale-box{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0 14px;background:var(--card)}
 .sale-box.open{border-color:#16a34a;background:linear-gradient(180deg,rgba(22,163,74,.07),transparent 70%)}
 .sale-box.soon{border-color:#d97706;background:linear-gradient(180deg,rgba(217,119,6,.07),transparent 70%)}
@@ -235,17 +235,33 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .sflt-chip{padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--tx);font-size:12px;font-weight:600;cursor:pointer}
 .sflt-chip.on{background:var(--pri);color:#fff;border-color:var(--pri)}
 
-/* Nhãn tên 94 phường/xã gọn đẹp trên bản đồ 2D (OVMAP & LMAP) - v6.3.5 */
+/* Nhãn tên 94 phường/xã gọn đẹp trên bản đồ 2D (OVMAP & LMAP) - v6.3.6 */
 .adm94-lbl-wrap{background:transparent!important;border:0!important;box-shadow:none!important;pointer-events:none!important}
 .adm94-lbl{display:inline-block;transform:translate(-50%,-50%);font-size:10.5px;font-weight:700;color:#7f1d1d;white-space:nowrap;letter-spacing:.15px;pointer-events:none;user-select:none;text-shadow:-1px -1px 0 rgba(255,255,255,.95),1px -1px 0 rgba(255,255,255,.95),-1px 1px 0 rgba(255,255,255,.95),1px 1px 0 rgba(255,255,255,.95),0 0 4px rgba(255,255,255,.95);transition:font-size .15s ease}
 .adm94-zlow .adm94-lbl{font-size:8.5px;opacity:.88}
 .ward-tw-exp{max-height:380px;overflow-y:auto;border:1px solid var(--line);border-radius:8px}
 
-/* Tinh gọn khoảng trống & hiệu ứng nhãn phường/xã khi hover (v6.3.5) */
+/* Tinh gọn khoảng trống & hiệu ứng nhãn phường/xã khi hover (v6.3.6) */
 #p0 .hero h2{font-size:18px;margin:4px 0 0}
 #p0 .kpi{padding:10px 12px}
 #p0 .box{padding:12px 14px;margin-bottom:10px!important}
 .adm94-lbl.hi{color:#111827!important;background:rgba(254,240,138,.96);padding:1px 6px;border-radius:4px;border:1px solid #d97706;font-size:11.5px!important;z-index:999!important;box-shadow:0 2px 6px rgba(0,0,0,.35);text-shadow:none!important}
+
+/* Chống tràn chữ toàn bộ Web App (mọi TAB) & Thanh công cụ Bản đồ Tổng quan full-width (v6.3.6) */
+.pane,.box,.card,.note,.dn,.warn,.rent-alert,.sale-box,.pitem,.pm,.pn{overflow-wrap:anywhere;word-break:break-word}
+.dgrid>*,.pgrid>*,.fld>*,.sale-grid>*,.kpis>*{min-width:0}
+.ov-tb{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:8px 11px;background:var(--bg);border:1px solid var(--line);border-radius:10px;margin-bottom:8px;font-size:12.5px}
+.ov-tb-grp{display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-width:0;max-width:100%}
+.ov-dot-lg{display:inline-block;width:11px;height:11px;border-radius:50%;background:rgba(30,127,140,.45);border:1.5px solid #1e7f8c;vertical-align:-1px;margin-right:3px}
+.ov-dot-s2{display:inline-block;width:8px;height:8px;border-radius:50%;background:#06b6d4;border:1.5px solid #0e7490;vertical-align:0;margin-right:3px}
+.ov-dot-s3{display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;border:1.5px solid #b45309;vertical-align:0;margin-right:3px}
+.ov-drawer{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.ov-drawer-hd{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px}
+.ov-rad-grid{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:12px;align-items:start}
+@media (max-width:860px){.ov-rad-grid{grid-template-columns:1fr}}
+.ov-map-leg{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--mut)}
+.ov-prj-link{cursor:pointer;color:var(--pri);font-weight:700;text-decoration:underline}
+.ov-prj-link:hover{color:var(--acc)}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" crossorigin=""></script>
@@ -305,7 +321,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 <nav class="sb" id="sb" aria-label="Điều hướng chính">
   <div class="sb-brand">
     <div class="sb-logo">ĐN</div>
-    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.3.5 · QHC 2050 & Ranh giới 94 xã/phường</small></div>
+    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.3.6 · QHC 2050 & Ranh giới 94 xã/phường</small></div>
   </div>
   <div class="sb-grp">Dành cho người dân</div>
   <div class="sb-nav" role="tablist">
@@ -357,68 +373,95 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
       </div>
       <div class="kpis" id="ov_kpis"></div>
 
-      <div class="box" style="margin-bottom:14px">
-        <h3 id="ov_struct_title">Cơ cấu dự án/vị trí đang theo dõi theo tình trạng</h3>
-        <div class="prog-bar" id="ov_pbar"></div>
+      <div class="box" style="padding:10px 14px;margin-bottom:10px">
+        <div class="row" style="margin-top:0;justify-content:space-between;align-items:center;gap:6px">
+          <h3 id="ov_struct_title" style="margin:0;font-size:13.5px">Cơ cấu dự án/vị trí đang theo dõi theo tình trạng</h3>
+        </div>
+        <div class="prog-bar" id="ov_pbar" style="margin-top:6px"></div>
         <div class="prog-leg" id="ov_pleg"></div>
       </div>
 
-      <!-- BẢN ĐỒ MẬT ĐỘ & PHÂN TÍCH BÁN KÍNH CUNG - CẦU -->
-      <div class="box" style="margin-bottom:14px">
-        <div class="row" style="margin-top:0;justify-content:space-between">
-          <div>
-            <h3 style="margin:0">Phân bố mật độ dự án & Phân tích cung – cầu theo bán kính</h3>
-            <p class="note" style="margin:2px 0 0">Chọn khu vực trọng điểm hoặc nhấp trực tiếp trên bản đồ để đo mật độ số dự án, số căn bán và số căn thuê trong bán kính xung quanh (các vị trí chưa có tọa độ chi tiết được mô phỏng theo tâm phường/xã).</p>
+      <!-- BẢN ĐỒ TỔNG QUAN PHÂN BỐ NOXH TOÀN THÀNH PHỐ (FULL-WIDTH + THANH CHỨC NĂNG TRA CỨU) -->
+      <div class="box" style="padding:10px 12px;margin-bottom:10px">
+        <!-- Thanh chức năng 1: Nút bật công cụ tra cứu & Điều khiển nền bản đồ -->
+        <div class="ov-tb">
+          <div class="ov-tb-grp">
+            <button type="button" class="sm" id="btn_ov_drawer_rad" style="font-weight:700;background:#e0f2fe;border-color:#7dd3fc;color:#0369a1">📏 Phân tích bán kính (<span id="ov_rad_badge">5 km</span>)</button>
+            <button type="button" class="sm" id="btn_ov_drawer_ward" style="font-weight:700;background:#f0fdf4;border-color:#86efac;color:#166534">📊 Mật độ theo Phường, xã</button>
+            <button type="button" class="sm" id="ovmap_admin94" style="background:#fef2f2;border-color:#fca5a5;color:#b91c1c;font-weight:600">🗺️ Hiện ranh giới xã/phường mới</button>
+            <button type="button" class="sm" id="ovmap_toggle">🛰️ Đổi nền Đường phố / Vệ tinh</button>
+          </div>
+          <div class="ov-tb-grp">
+            <b style="color:var(--pri)">Lớp QHC 2050:</b>
+            <label class="k"><input type="checkbox" id="qhc_cuc" checked> 3 cực</label>
+            <label class="k"><input type="checkbox" id="qhc_truc"> 2 trục &amp; 4 hành lang</label>
+            <label class="k"><input type="checkbox" id="qhc_dl"> KKT/CNC/FTZ</label>
           </div>
         </div>
-        <div class="dgrid" style="margin-top:12px">
-          <div>
-            <div class="row" style="margin:0 0 8px;padding:7px 10px;background:var(--bg);border:1px solid var(--line);border-radius:8px;font-size:12.5px">
-              <b style="color:var(--pri)">Lớp QHC 2050:</b>
-              <label class="k"><input type="checkbox" id="qhc_cuc" checked> 3 cực phát triển</label>
-              <label class="k"><input type="checkbox" id="qhc_truc"> 2 trục & 4 hành lang</label>
-              <label class="k"><input type="checkbox" id="qhc_dl"> KKT, Khu CNC, FTZ, Hạ tầng</label>
-            </div>
-            <div id="ovmap"></div>
-            <div class="row" style="justify-content:space-between;margin-top:6px">
-              <span class="note">Bấm lên bản đồ để dời tâm bán kính · Nền tham khảo, địa giới theo CSDL mới</span>
-              <div class="row" style="margin-top:0">
-                <button class="sm" id="ovmap_toggle">🛰️ Đổi nền Đường phố / Vệ tinh</button>
-                <button class="sm" id="ovmap_admin94" style="background:#fef2f2;border-color:#fca5a5;color:#b91c1c">🗺️ Hiện ranh giới xã/phường mới</button>
-                
-              </div>
-            </div>
-          </div>
-          <div>
-            <label style="font-size:13px;font-weight:600;color:var(--pri);display:block;margin-bottom:4px">Chọn khu vực tâm khảo sát:</label>
-            <select id="rad_center"></select>
-            <div style="margin-top:10px">
-              <label style="font-size:13px;font-weight:600;color:var(--pri);display:flex;justify-content:space-between">
-                <span>Bán kính phân tích cung – cầu:</span><b id="rad_lbl">5 km</b>
-              </label>
-              <input type="range" id="rad_km" min="2" max="20" step="1" value="5" style="width:100%;margin-top:4px">
-              <div class="chips" style="margin-top:4px" id="rad_presets">
-                <button class="chip" data-km="3">3 km</button>
-                <button class="chip on" data-km="5">5 km</button>
-                <button class="chip" data-km="10">10 km</button>
-                <button class="chip" data-km="15">15 km</button>
-              </div>
-            </div>
-            <div class="rad-res" id="rad_out"></div>
-          </div>
-        </div>
-      </div>
 
-      <!-- BẢNG MẬT ĐỘ THEO PHƯỜNG / XÃ (PHƯƠNG ÁN A: TOP 6 GỌN + MỞ RỘNG TẤT CẢ) -->
-      <div class="box" style="margin-bottom:14px">
-        <div class="row" style="margin-top:0;justify-content:space-between;align-items:center">
-          <div>
-            <h3 id="ov_ward_title" style="margin:0">Mật độ tập trung nguồn cung theo Phường, xã</h3>
-            <p class="note" style="margin:2px 0 0">Mặc định hiển thị Top 6 địa bàn có nguồn cung lớn nhất để giao diện gọn gàng. Bấm vào từng dòng để dời tâm bán kính khảo sát.</p>
+        <!-- Thanh chức năng 2: Tick chọn lớp vị trí NOXH & Tâm phường/xã -->
+        <div class="ov-tb" style="padding:6px 11px">
+          <div class="ov-tb-grp">
+            <b style="color:var(--pri)">Hiển thị trên bản đồ:</b>
+            <label class="k"><input type="checkbox" id="ov_chk_wards" checked> <span class="ov-dot-lg"></span>Tâm phường/xã (chấm lớn)</label>
+            <label class="k"><input type="checkbox" id="ov_chk_s2" checked> <span class="ov-dot-s2"></span>Dự án S2 (chấm nhỏ)</label>
+            <label class="k"><input type="checkbox" id="ov_chk_s3" checked> <span class="ov-dot-s3"></span>Đang TT / QH S3 (chấm nhỏ)</label>
+            <label class="k" style="color:var(--pri);font-weight:600"><input type="checkbox" id="ov_chk_inrad"> Chỉ hiện NOXH trong bán kính</label>
           </div>
-          <button type="button" class="sm" id="btn_ward_toggle" style="font-weight:600;color:var(--pri)">▼ Xem đầy đủ tất cả</button>
+          <span class="note" id="ov_rad_quick_stat" style="font-weight:600;color:var(--pri)">Bấm vào chấm nhỏ NOXH để xem nhanh &amp; chuyển sang Tab Bản đồ chi tiết</span>
         </div>
-        <div class="tw" id="ward_tw" style="margin-top:10px"><table id="ward_tb"></table></div>
+
+        <!-- Ngăn kéo chức năng A: Phân tích cung – cầu theo bán kính (Mặc định thu gọn để bản đồ lớn nhất) -->
+        <div class="ov-drawer" id="ov_drawer_rad" hidden>
+          <div class="ov-drawer-hd">
+            <div>
+              <b style="color:var(--pri);font-size:13.5px">📏 Phân bố mật độ dự án &amp; Phân tích cung – cầu theo bán kính</b>
+              <div class="note">Chọn khu vực trọng điểm hoặc nhấp trực tiếp trên bản đồ để đo mật độ số dự án, số căn bán và số căn thuê trong bán kính xung quanh (các vị trí chưa có tọa độ chi tiết được mô phỏng theo tâm phường/xã).</div>
+            </div>
+            <button type="button" class="sm" id="btn_close_rad">✕ Thu gọn</button>
+          </div>
+          <div class="ov-rad-grid">
+            <div>
+              <label style="font-size:12.5px;font-weight:600;color:var(--pri);display:block;margin-bottom:4px">Chọn khu vực tâm khảo sát:</label>
+              <select id="rad_center"></select>
+              <div style="margin-top:8px">
+                <label style="font-size:12.5px;font-weight:600;color:var(--pri);display:flex;justify-content:space-between">
+                  <span>Bán kính phân tích cung – cầu:</span><b id="rad_lbl">5 km</b>
+                </label>
+                <input type="range" id="rad_km" min="2" max="20" step="1" value="5" style="width:100%;margin-top:4px">
+                <div class="chips" style="margin-top:4px" id="rad_presets">
+                  <button class="chip" data-km="3">3 km</button>
+                  <button class="chip on" data-km="5">5 km</button>
+                  <button class="chip" data-km="10">10 km</button>
+                  <button class="chip" data-km="15">15 km</button>
+                </div>
+              </div>
+            </div>
+            <div class="rad-res" id="rad_out" style="margin-top:0"></div>
+          </div>
+        </div>
+
+        <!-- Ngăn kéo chức năng B: Mật độ tập trung nguồn cung theo Phường, xã (Mặc định thu gọn) -->
+        <div class="ov-drawer" id="ov_drawer_ward" hidden>
+          <div class="ov-drawer-hd">
+            <div>
+              <b id="ov_ward_title" style="color:var(--pri);font-size:13.5px">Mật độ tập trung nguồn cung theo Phường, xã</b>
+              <div class="note">Mặc định hiển thị Top 6 địa bàn có nguồn cung lớn nhất. Bấm vào từng dòng để dời tâm bán kính trên bản đồ.</div>
+            </div>
+            <div class="row" style="margin-top:0">
+              <button type="button" class="sm" id="btn_ward_toggle" style="font-weight:600;color:var(--pri)">▼ Xem đầy đủ tất cả</button>
+              <button type="button" class="sm" id="btn_close_ward">✕ Thu gọn</button>
+            </div>
+          </div>
+          <div class="tw" id="ward_tw"><table id="ward_tb"></table></div>
+        </div>
+
+        <!-- BẢN ĐỒ TỔNG QUAN SIÊU RỘNG -->
+        <div id="ovmap"></div>
+        <div class="ov-map-leg">
+          <span>💡 <b>Nhấp vào nền bản đồ</b> để dời tâm bán kính · <b>Nhấp vào dấu chấm nhỏ NOXH</b> để xem nhanh &amp; chuyển sang Tab Bản đồ chi tiết</span>
+          <span><span class="ov-dot-s2"></span>S2 bán/hỗn hợp &nbsp; <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;vertical-align:0;margin-right:3px"></span>S2 chỉ thuê &nbsp; <span class="ov-dot-s3"></span>S3 đang làm TT &nbsp; <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#8b5cf6;vertical-align:0;margin-right:3px"></span>S3 đã có QH</span>
+        </div>
       </div>
 
       <!-- BẢNG ƯỚC TÍNH THEO NĂM (CHỈ HIỂN THỊ CHO ADMIN) -->
@@ -1118,7 +1161,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
   }
   let CUR_ID = PRJ_ALL[0] ? PRJ_ALL[0].id : null;
   let LMAP = null, TILE_SAT = null, TILE_OSM = null, IS_SAT = true, MARKERS = [], POLY_LAYER = null;
-  let OVMAP = null, OV_BUBBLES = [], RAD_CIRCLE = null, RAD_PIN = null;
+  let OVMAP = null, OV_BUBBLES = [], OV_PRJ_DOTS = [], RAD_CIRCLE = null, RAD_PIN = null;
   let RAD_LAT = 15.98549, RAD_LNG = 108.20263, RAD_NAME = 'Hòa Xuân';
 
   function haversineKm(la1, ln1, la2, ln2){
@@ -1341,26 +1384,108 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
     updateRadiusAnalysis(false);
   }
 
+  window.jumpToProjectDetail = function(pid){
+    const target = PRJ_ALL.find(x=>x.id === pid);
+    if(!target) return;
+    CUR_GRP = target.group || 's2';
+    CUR_ID = target.id;
+    CUR_SALE_FILTER = '';
+    if($('f_db')) $('f_db').value = '';
+    if($('f_px')) $('f_px').value = '';
+    if($('f_type')) $('f_type').value = '';
+    if($('f_nguon')) $('f_nguon').value = '';
+    if($('f_q')) $('f_q').value = '';
+    if($('prj_subtabs')){
+      $('prj_subtabs').querySelectorAll('button').forEach(x=>x.classList.toggle('on', x.dataset.g === CUR_GRP));
+    }
+    populateFilters();
+    renderPList();
+    goTab('p9');
+    setTimeout(()=>{
+      const det = $('pdetail');
+      if(det) det.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 220);
+  };
+
   function renderOvBubbles(){
     if(!OVMAP || typeof L === 'undefined') return;
     OV_BUBBLES.forEach(cm=>{ try{ OVMAP.removeLayer(cm); }catch(e){} });
     OV_BUBBLES = [];
-    // Chỉ hiển thị tâm điểm các địa bàn đã có dự án/vị trí (không chấm các xã/phường trống)
-    const wMap = {};
+    OV_PRJ_DOTS.forEach(cm=>{ try{ OVMAP.removeLayer(cm); }catch(e){} });
+    OV_PRJ_DOTS = [];
+
+    const showWards = !$('ov_chk_wards') || $('ov_chk_wards').checked;
+    const showS2 = !$('ov_chk_s2') || $('ov_chk_s2').checked;
+    const showS3 = !$('ov_chk_s3') || $('ov_chk_s3').checked;
+    const onlyInRad = !!($('ov_chk_inrad') && $('ov_chk_inrad').checked);
+    const km = $('rad_km') ? Number($('rad_km').value) : 5;
+
+    // 1. Tầng dưới: Tâm phường/xã (Dấu chấm LỚN bán trong suốt để phân biệt với vị trí từng dự án)
+    if(showWards){
+      const wMap = {};
+      PRJ_ALL.forEach(p=>{
+        if(p.lat == null || p.lng == null) return;
+        const w = String(p.phuong || 'Khác').trim();
+        if(!wMap[w]) wMap[w] = {ward:w, lat:p.lat, lng:p.lng, s2:0, s3:0, canS2:0, banS2:0, thueS2:0, canDK:0};
+        if(p.group==='s2'){ wMap[w].s2++; wMap[w].canS2 += (p.can||0); wMap[w].banS2 += (p.ban||0); wMap[w].thueS2 += (p.thue||0); }
+        else { wMap[w].s3++; wMap[w].canDK += (p.can||0); }
+      });
+      Object.values(wMap).forEach(w=>{
+        const r = Math.min(26, Math.max(11, Math.sqrt(w.canS2 || (w.canDK*0.35))/4.1));
+        const col = w.canS2 >= 4000 ? '#c83228' : (w.canS2 >= 1500 ? '#d97706' : (w.canS2 > 0 ? '#1e7f8c' : '#64748b'));
+        const cm = L.circleMarker([w.lat, w.lng], {radius:r, color:col, weight:1.5, opacity:0.65, fillColor:col, fillOpacity:0.28}).addTo(OVMAP);
+        cm.bindPopup(`<b>Tâm địa bàn: ${esc(w.ward)}</b><br><b>Dự án S2 (thực tế):</b> ${w.s2} DA · <b>${w.canS2.toLocaleString('vi-VN')} căn</b> (Bán: ${w.banS2.toLocaleString('vi-VN')} · Thuê: ${w.thueS2.toLocaleString('vi-VN')})<br><span style="color:#64748b">Đang làm TT / QH (dự kiến): ${w.s3} vị trí · ${w.canDK.toLocaleString('vi-VN')} căn dự kiến</span>`);
+        cm.on('click', (ev)=>{ L.DomEvent.stopPropagation(ev); RAD_LAT=w.lat; RAD_LNG=w.lng; RAD_NAME=w.ward; updateRadiusAnalysis(false); });
+        OV_BUBBLES.push(cm);
+      });
+    }
+
+    // 2. Tầng trên: Từng vị trí dự án NOXH (Dấu chấm NHỎ — lấy nguồn từ PRJ_ALL giống Tab Bản đồ)
+    // Nhóm các dự án trùng tọa độ tuyệt đối để trải nhẹ vòng tròn (~180m) giúp hiện đủ mọi chấm nhỏ không bị đè nhau
+    const coordCount = {};
     PRJ_ALL.forEach(p=>{
       if(p.lat == null || p.lng == null) return;
-      const w = String(p.phuong || 'Khác').trim();
-      if(!wMap[w]) wMap[w] = {ward:w, lat:p.lat, lng:p.lng, s2:0, s3:0, canS2:0, banS2:0, thueS2:0, canDK:0};
-      if(p.group==='s2'){ wMap[w].s2++; wMap[w].canS2 += (p.can||0); wMap[w].banS2 += (p.ban||0); wMap[w].thueS2 += (p.thue||0); }
-      else { wMap[w].s3++; wMap[w].canDK += (p.can||0); }
-    });
-    Object.values(wMap).forEach(w=>{
-      const r = Math.min(28, Math.max(7, Math.sqrt(w.canS2 || (w.canDK*0.35))/4.2));
-      const col = w.canS2 >= 4000 ? '#c83228' : (w.canS2 >= 1500 ? '#d97706' : (w.canS2 > 0 ? '#1e7f8c' : '#64748b'));
-      const cm = L.circleMarker([w.lat, w.lng], {radius:r, color:'#fff', weight:2, fillColor:col, fillOpacity:0.78}).addTo(OVMAP);
-      cm.bindPopup(`<b>${esc(w.ward)}</b><br><b>Dự án S2 (thực tế):</b> ${w.s2} DA · <b>${w.canS2.toLocaleString('vi-VN')} căn</b> (Bán: ${w.banS2.toLocaleString('vi-VN')} · Thuê: ${w.thueS2.toLocaleString('vi-VN')})<br><span style="color:#64748b">Đang làm TT / QH (dự kiến): ${w.s3} vị trí · ${w.canDK.toLocaleString('vi-VN')} căn dự kiến</span>`);
-      cm.on('click', ()=>{ RAD_LAT=w.lat; RAD_LNG=w.lng; RAD_NAME=w.ward; updateRadiusAnalysis(false); });
-      OV_BUBBLES.push(cm);
+      if(p.group === 's2' && !showS2) return;
+      if(p.group !== 's2' && !showS3) return;
+      const dist = haversineKm(RAD_LAT, RAD_LNG, p.lat, p.lng);
+      const inRad = dist <= km;
+      if(onlyInRad && !inRad) return;
+
+      const key = Number(p.lat).toFixed(4) + ',' + Number(p.lng).toFixed(4);
+      const idx = coordCount[key] || 0;
+      coordCount[key] = idx + 1;
+      let la = Number(p.lat), ln = Number(p.lng);
+      if(idx > 0){
+        const ang = (idx * 137.5) * Math.PI / 180;
+        const step = 0.0016 + Math.floor(idx / 8) * 0.0011;
+        la += step * Math.sin(ang);
+        ln += step * Math.cos(ang);
+      }
+
+      const col = p.rentOnly ? '#ef4444' : (p.group === 's2' ? '#06b6d4' : (p.group === 's3_qh' ? '#8b5cf6' : '#f59e0b'));
+      const dot = L.circleMarker([la, ln], {
+        radius: inRad ? 6.5 : 4.5,
+        color: '#ffffff',
+        weight: inRad ? 2 : 1.2,
+        fillColor: col,
+        fillOpacity: inRad ? 0.98 : 0.62
+      }).addTo(OVMAP);
+
+      const grpTxt = p.group === 's2' ? 'Dự án S2 (đã CTĐT)' : (p.group === 's3_qh' ? 'Đã có QH, chưa đầu tư' : 'Đang làm thủ tục (S3)');
+      const qmTxt = p.can ? (p.can.toLocaleString('vi-VN') + ' căn' + (p.group==='s2' ? ` (Bán: ${(p.ban||0).toLocaleString('vi-VN')} · Thuê: ${(p.thue||0).toLocaleString('vi-VN')})` : ' dự kiến')) : 'Đang xác định';
+      const safeId = esc(p.id).replace(/'/g, "\'");
+      dot.bindTooltip(`<b>${esc(p.name)}</b><br><small>${esc(p.phuong)} · ${qmTxt}</small>`, { direction:'top', offset:[0,-6], opacity:0.95 });
+      dot.bindPopup(`<div style="min-width:210px;font-size:12.5px;line-height:1.45">
+        <div style="font-weight:700;color:#1b3a5c;font-size:13px;margin-bottom:3px">${esc(p.name)}</div>
+        <div><b>Địa bàn:</b> ${esc(p.phuong)}</div>
+        <div><b>Nhóm:</b> ${grpTxt}${p.rentOnly ? ' · <span style="color:#b91c1c;font-weight:700">Chỉ cho thuê</span>' : ''}</div>
+        <div><b>Quy mô:</b> ${qmTxt}</div>
+        <div><b>Cách tâm khảo sát:</b> ${dist.toFixed(1)} km ${inRad ? '<span style="color:#15803d;font-weight:700">(Trong bán kính)</span>' : ''}</div>
+        <div style="margin-top:8px"><button type="button" class="sm pri" style="width:100%" onclick="window.jumpToProjectDetail('${safeId}')">🔎 Xem chi tiết trên Tab Bản đồ &amp; Dự án</button></div>
+      </div>`);
+      dot.on('click', (ev)=>{ L.DomEvent.stopPropagation(ev); });
+      if(inRad && dot.bringToFront) dot.bringToFront();
+      OV_PRJ_DOTS.push(dot);
     });
   }
 
@@ -1389,18 +1514,46 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
           const qmLbl = isS2
             ? `<b>${(p.can||0).toLocaleString('vi-VN')} căn</b>`
             : `<span style="color:var(--mut)">${(p.can||0).toLocaleString('vi-VN')} căn dự kiến (${p.group==='s3_qh'?'đã có QH':'đang làm TT'})</span>`;
-          return `<div style="padding:4px 0;border-bottom:1px solid var(--line)">• <b>${esc(p.name)}</b> (${esc(p.phuong)}) — ${qmLbl} ${p.rentOnly?'<span class="st rent">Chỉ thuê</span>':''}</div>`;
+          const sid = esc(p.id).replace(/'/g, "\'");
+          return `<div style="padding:4px 0;border-bottom:1px solid var(--line)">• <span class="ov-prj-link" onclick="window.jumpToProjectDetail('${sid}')" title="Bấm để xem chi tiết trên Tab Bản đồ &amp; Dự án">${esc(p.name)}</span> (${esc(p.phuong)}) — ${qmLbl} ${p.rentOnly?'<span class="st rent">Chỉ thuê</span>':''}</div>`;
         }).join('') : '<span class="note">Không có dự án nào trong bán kính này.</span>'}
       </div>
     `;
+    if($('ov_rad_badge')) $('ov_rad_badge').textContent = km + ' km · ' + inRad.length + ' vị trí';
+    if($('ov_rad_quick_stat')) $('ov_rad_quick_stat').textContent = `📍 ${RAD_NAME} (${km} km): ${inRad.length} vị trí (${s2List.length} DA S2 · ${s2Can.toLocaleString('vi-VN')} căn)`;
     if(OVMAP){
       if(RAD_CIRCLE) OVMAP.removeLayer(RAD_CIRCLE);
       if(RAD_PIN) OVMAP.removeLayer(RAD_PIN);
-      RAD_CIRCLE = L.circle([RAD_LAT, RAD_LNG], {radius:km*1000, color:'#1b3a5c', weight:2, fillColor:'#1e7f8c', fillOpacity:0.12}).addTo(OVMAP);
-      RAD_PIN = L.circleMarker([RAD_LAT, RAD_LNG], {radius:5, color:'#fff', weight:2, fillColor:'#1b3a5c', fillOpacity:1}).addTo(OVMAP);
-      if(panMap) OVMAP.fitBounds(RAD_CIRCLE.getBounds(), {padding:[20,20]});
+      RAD_CIRCLE = L.circle([RAD_LAT, RAD_LNG], {radius:km*1000, color:'#1b3a5c', weight:2, fillColor:'#1e7f8c', fillOpacity:0.09, interactive:false}).addTo(OVMAP);
+      RAD_PIN = L.circleMarker([RAD_LAT, RAD_LNG], {radius:5, color:'#fff', weight:2, fillColor:'#1b3a5c', fillOpacity:1, interactive:false}).addTo(OVMAP);
+      renderOvBubbles();
+      if(panMap) OVMAP.fitBounds(RAD_CIRCLE.getBounds(), {padding:[25,25]});
     }
   }
+  ['ov_chk_wards','ov_chk_s2','ov_chk_s3','ov_chk_inrad'].forEach(id=>{
+    if($(id)) $(id).onchange = ()=>{ renderOvBubbles(); };
+  });
+  const toggleOvDrawer = (which)=>{
+    const drRad = $('ov_drawer_rad'), drWard = $('ov_drawer_ward');
+    const bRad = $('btn_ov_drawer_rad'), bWard = $('btn_ov_drawer_ward');
+    if(which === 'rad' && drRad){
+      const open = drRad.hidden;
+      drRad.hidden = !open;
+      if(open && drWard) drWard.hidden = true;
+    } else if(which === 'ward' && drWard){
+      const open = drWard.hidden;
+      drWard.hidden = !open;
+      if(open && drRad) drRad.hidden = true;
+    }
+    if(bRad && drRad) bRad.classList.toggle('pri', !drRad.hidden);
+    if(bWard && drWard) bWard.classList.toggle('pri', !drWard.hidden);
+    if(OVMAP) setTimeout(()=>OVMAP.invalidateSize(), 60);
+  };
+  if($('btn_ov_drawer_rad')) $('btn_ov_drawer_rad').onclick = ()=>toggleOvDrawer('rad');
+  if($('btn_ov_drawer_ward')) $('btn_ov_drawer_ward').onclick = ()=>toggleOvDrawer('ward');
+  if($('btn_close_rad')) $('btn_close_rad').onclick = ()=>toggleOvDrawer('rad');
+  if($('btn_close_ward')) $('btn_close_ward').onclick = ()=>toggleOvDrawer('ward');
+
   $('rad_center').onchange = ()=>{
     const [ll, nm] = $('rad_center').value.split('|'); const [la, ln] = ll.split(',').map(Number);
     RAD_LAT = la; RAD_LNG = ln; RAD_NAME = nm; updateRadiusAnalysis(true);
@@ -3108,7 +3261,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
 
 
 <script>
-/* ========== MODULE XEM 3D SIÊU NHẸ (LAZY-LOAD MAPLIBRE) + 3 MỐC & TIỆN ÍCH GẦN NHẤT + KMZ ADMIN - v6.3.5 ========== */
+/* ========== MODULE XEM 3D SIÊU NHẸ (LAZY-LOAD MAPLIBRE) + 3 MỐC & TIỆN ÍCH GẦN NHẤT + KMZ ADMIN - v6.3.6 ========== */
 (function(){
   let mlLoaded = false, mlPromise = null, map3d = null, spinRaf = null, isSpinning = false, curPrj3d = null;
   let adminOn3d = false, wardLblOn3d = true, autoHubOn3d = false;
