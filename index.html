@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.3.4)</title>
+<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.3.5)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
@@ -65,11 +65,11 @@ button{font:inherit;cursor:pointer}
 label.k{font-size:13px;color:var(--mut);display:flex;gap:6px;align-items:center}
 .note{color:var(--mut);font-size:13px}
 /* Hero & KPI */
-.hero{background:linear-gradient(135deg,#16324f,#1e5b73);color:#fff;border-radius:14px;padding:20px 22px;margin-bottom:16px}
+.hero{background:linear-gradient(135deg,#16324f,#1e5b73);color:#fff;border-radius:12px;padding:12px 16px;margin-bottom:10px}
 .hero .tag{display:inline-block;font-size:11.5px;background:rgba(255,255,255,.16);padding:3px 10px;border-radius:999px;margin-bottom:8px}
 .hero h2{color:#fff;font-size:20px;margin:0 0 6px}
 .hero p{margin:0;font-size:13.5px;opacity:.92}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin-bottom:10px}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
 .kpi .kl{font-size:11.5px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
 .kpi .kv-num{font-size:24px;font-weight:800;color:var(--pri);margin:4px 0 2px}
@@ -79,9 +79,9 @@ label.k{font-size:13px;color:var(--mut);display:flex;gap:6px;align-items:center}
 .prog-leg span{display:inline-flex;align-items:center;gap:6px}
 .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
 /* Density & Radius Analyzer on Overview */
-.dgrid{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;align-items:start}
+.dgrid{display:grid;grid-template-columns:minmax(0,2.25fr) 330px;gap:12px;align-items:start}
 @media (max-width:980px){.dgrid{grid-template-columns:1fr}}
-#ovmap{width:100%;height:460px;border-radius:12px;border:1px solid var(--line);z-index:1}
+#ovmap{width:100%;height:clamp(540px,68vh,760px);border-radius:12px;border:1px solid var(--line);z-index:1}
 .rad-res{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:10px}
 .rad-nums{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
 .rad-box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
@@ -96,7 +96,7 @@ label.k{font-size:13px;color:var(--mut);display:flex;gap:6px;align-items:center}
 .stab .cnt{background:rgba(0,0,0,.12);padding:1px 8px;border-radius:999px;font-size:12px}
 .stab.on .cnt{background:rgba(255,255,255,.22)}
 /* Projects Split View */
-.pgrid{display:grid;grid-template-columns:380px 1fr;gap:14px;align-items:start}
+.pgrid{display:grid;grid-template-columns:320px minmax(0,1fr);gap:12px;align-items:start}
 @media (max-width:980px){.pgrid{grid-template-columns:1fr}}
 .plist{background:var(--card);border:1px solid var(--line);border-radius:12px;max-height:540px;overflow-y:auto}
 .pitem{padding:11px 13px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s}
@@ -105,7 +105,7 @@ label.k{font-size:13px;color:var(--mut);display:flex;gap:6px;align-items:center}
 .pitem.on{background:rgba(30,127,140,.11);border-left:4px solid var(--acc);padding-left:9px}
 .pitem .pn{font-weight:700;font-size:13.5px;color:var(--pri);margin-bottom:3px;line-height:1.35}
 .pitem .pm{font-size:12px;color:var(--mut);display:flex;flex-wrap:wrap;gap:5px;align-items:center}
-#leafmap{width:100%;height:540px;border-radius:12px;border:1px solid var(--line);z-index:1}
+#leafmap{width:100%;height:clamp(560px,68vh,760px);border-radius:12px;border:1px solid var(--line);z-index:1}
 /* Gallery & Lightbox */
 .gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:10px}
 .gal-item{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg);cursor:pointer;position:relative}
@@ -183,7 +183,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .ward-lbl.dark-bg{background:rgba(19,41,66,.86);color:#fff;border-color:rgba(255,255,255,.35)}
 
 
-/* Modal Xem 3D nhẹ (Lazy-load MapLibre GL JS) - v6.3.4 */
+/* Modal Xem 3D nhẹ (Lazy-load MapLibre GL JS) - v6.3.5 */
 .m3d{display:none;position:fixed;inset:0;background:rgba(10,18,28,.82);z-index:120;align-items:center;justify-content:center;padding:12px}
 .m3d.open{display:flex}
 .m3d-card{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:14px;width:96vw;max-width:1220px;height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.5)}
@@ -208,7 +208,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .m3d-prj-card .tag{background:rgba(255,255,255,.18);padding:1px 6px;border-radius:4px;font-weight:700;color:#fef08a}
 .m3d-legend{position:absolute;right:10px;bottom:12px;z-index:10;background:rgba(15,23,42,.82);color:#e2e8f0;padding:6px 9px;border-radius:8px;font-size:10.5px;line-height:1.5;pointer-events:none;backdrop-filter:blur(3px)}
 
-/* Khối Thông tin Mở bán công khai & Máy tính trả góp NOXH (v6.3.4) */
+/* Khối Thông tin Mở bán công khai & Máy tính trả góp NOXH (v6.3.5) */
 .sale-box{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0 14px;background:var(--card)}
 .sale-box.open{border-color:#16a34a;background:linear-gradient(180deg,rgba(22,163,74,.07),transparent 70%)}
 .sale-box.soon{border-color:#d97706;background:linear-gradient(180deg,rgba(217,119,6,.07),transparent 70%)}
@@ -235,11 +235,17 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .sflt-chip{padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--tx);font-size:12px;font-weight:600;cursor:pointer}
 .sflt-chip.on{background:var(--pri);color:#fff;border-color:var(--pri)}
 
-/* Nhãn tên 94 phường/xã gọn đẹp trên bản đồ 2D (OVMAP & LMAP) - v6.3.4 */
+/* Nhãn tên 94 phường/xã gọn đẹp trên bản đồ 2D (OVMAP & LMAP) - v6.3.5 */
 .adm94-lbl-wrap{background:transparent!important;border:0!important;box-shadow:none!important;pointer-events:none!important}
 .adm94-lbl{display:inline-block;transform:translate(-50%,-50%);font-size:10.5px;font-weight:700;color:#7f1d1d;white-space:nowrap;letter-spacing:.15px;pointer-events:none;user-select:none;text-shadow:-1px -1px 0 rgba(255,255,255,.95),1px -1px 0 rgba(255,255,255,.95),-1px 1px 0 rgba(255,255,255,.95),1px 1px 0 rgba(255,255,255,.95),0 0 4px rgba(255,255,255,.95);transition:font-size .15s ease}
 .adm94-zlow .adm94-lbl{font-size:8.5px;opacity:.88}
 .ward-tw-exp{max-height:380px;overflow-y:auto;border:1px solid var(--line);border-radius:8px}
+
+/* Tinh gọn khoảng trống & hiệu ứng nhãn phường/xã khi hover (v6.3.5) */
+#p0 .hero h2{font-size:18px;margin:4px 0 0}
+#p0 .kpi{padding:10px 12px}
+#p0 .box{padding:12px 14px;margin-bottom:10px!important}
+.adm94-lbl.hi{color:#111827!important;background:rgba(254,240,138,.96);padding:1px 6px;border-radius:4px;border:1px solid #d97706;font-size:11.5px!important;z-index:999!important;box-shadow:0 2px 6px rgba(0,0,0,.35);text-shadow:none!important}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" crossorigin=""></script>
@@ -299,7 +305,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 <nav class="sb" id="sb" aria-label="Điều hướng chính">
   <div class="sb-brand">
     <div class="sb-logo">ĐN</div>
-    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.3.4 · QHC 2050 & Ranh giới 94 xã/phường</small></div>
+    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.3.5 · QHC 2050 & Ranh giới 94 xã/phường</small></div>
   </div>
   <div class="sb-grp">Dành cho người dân</div>
   <div class="sb-nav" role="tablist">
@@ -2948,48 +2954,119 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       .replace(/^Xã\s+/i, 'X. ')
       .replace(/^Đặc khu\s+/i, 'ĐK. ');
   }
-  function syncAdminZoomClass(map){
+  function layoutAdminLabels2D(map, grp){
+    if(!map || !grp || !grp._lblItems || !map.hasLayer(grp)) return;
     try{
       var c = map.getContainer();
-      if(c) c.classList.toggle('adm94-zlow', map.getZoom() <= 9);
+      var z = map.getZoom();
+      if(c) c.classList.toggle('adm94-zlow', z <= 9);
+      var sz = map.getSize();
+      var placed = [];
+      var padX = z >= 12 ? 6 : 10;
+      var padY = z >= 12 ? 4 : 6;
+      grp._lblItems.forEach(function(it){
+        var el = it.mk.getElement();
+        if(!el) return;
+        var span = el.firstChild;
+        if(!span) return;
+        if(it.hi){
+          span.style.display = 'inline-block';
+          return;
+        }
+        var pt = map.latLngToContainerPoint([it.lat, it.lng]);
+        if(pt.x < -20 || pt.y < -20 || pt.x > sz.x + 20 || pt.y > sz.y + 20){
+          span.style.display = 'none';
+          return;
+        }
+        var w = Math.max(44, it.text.length * (z <= 9 ? 5.2 : 6.1) + 8) + padX;
+        var h = (z <= 9 ? 14 : 17) + padY;
+        var box = { x1: pt.x - w/2, y1: pt.y - h/2, x2: pt.x + w/2, y2: pt.y + h/2 };
+        var clash = false;
+        for(var i = 0; i < placed.length; i++){
+          var b = placed[i];
+          if(!(box.x2 < b.x1 || box.x1 > b.x2 || box.y2 < b.y1 || box.y1 > b.y2)){
+            clash = true; break;
+          }
+        }
+        if(clash){
+          span.style.display = 'none';
+        } else {
+          span.style.display = 'inline-block';
+          placed.push(box);
+        }
+      });
     }catch(e){}
   }
+
   function createAdminLayer(){
     var d = getAdminData();
     if(!d || typeof L === 'undefined') return null;
     var grp = L.layerGroup();
-    var geoLyr = L.geoJSON(d, {
-      style: function(){
-        return { color:'#dc2626', weight:1.7, opacity:0.9, fillColor:'#ef4444', fillOpacity:0.04, dashArray:'5,3' };
-      },
-      onEachFeature: function(feature, layer){
-        var p = feature.properties || {};
-        var title = p.name || 'Đơn vị hành chính';
-        var area = p.area_km2 ? (' · Diện tích: ' + p.area_km2.toLocaleString('vi-VN') + ' km²') : '';
-        layer.bindTooltip('<b>' + title + '</b>' + area, { sticky:true, direction:'top', opacity:0.94 });
-        layer.bindPopup('<div style="font-size:13px;line-height:1.45"><b>' + title + '</b><br><span style="color:#475569">Đơn vị hành chính mới TP. Đà Nẵng' + area + '</span></div>');
-        layer.on('mouseover', function(){ layer.setStyle({ weight:2.8, fillOpacity:0.14 }); });
-        layer.on('mouseout', function(){ layer.setStyle({ weight:1.7, fillOpacity:0.04 }); });
-      }
-    });
-    grp.addLayer(geoLyr);
-    grp._geoLyr = geoLyr;
+    var lblByName = {};
+    var lblItems = [];
 
-    // Hiển thị ngay toàn bộ 94/94 tên phường, xã gọn đẹp tại tâm điểm (không cản click bản đồ)
-    (d.features || []).forEach(function(f){
+    // Tạo nhãn trước (sắp xếp theo diện tích giảm dần để khi zoom xa vẫn phân bổ đều, không chồng chữ)
+    var feats = (d.features || []).slice().sort(function(a, b){
+      var aa = Number((a.properties && a.properties.area_km2) || 0);
+      var ba = Number((b.properties && b.properties.area_km2) || 0);
+      return ba - aa;
+    });
+    feats.forEach(function(f){
       var p = f.properties || {};
       var la = Number(p.lat), ln = Number(p.lng);
       if(isNaN(la) || isNaN(ln) || !p.name) return;
+      var txt = shortAdminName(p.name);
       var ic = L.divIcon({
         className: 'adm94-lbl-wrap',
-        html: '<span class="adm94-lbl">' + shortAdminName(p.name) + '</span>',
+        html: '<span class="adm94-lbl">' + txt + '</span>',
         iconSize: [0, 0]
       });
       var mk = L.marker([la, ln], { icon: ic, interactive: false, keyboard: false });
       grp.addLayer(mk);
+      var item = { name: p.name, text: txt, lat: la, lng: ln, mk: mk, hi: false };
+      lblItems.push(item);
+      lblByName[p.name] = item;
     });
+
+    var baseStyle = { color:'#dc2626', weight:1.6, opacity:0.88, fillColor:'#ef4444', fillOpacity:0.03, dashArray:'5,3' };
+    var hoverStyle = { color:'#f59e0b', weight:3.2, opacity:1, fillColor:'#facc15', fillOpacity:0.34, dashArray:'' };
+
+    var geoLyr = L.geoJSON(d, {
+      style: function(){ return Object.assign({}, baseStyle); },
+      onEachFeature: function(feature, layer){
+        var p = feature.properties || {};
+        var title = p.name || 'Đơn vị hành chính';
+        var area = p.area_km2 ? (' · Diện tích: ' + p.area_km2.toLocaleString('vi-VN') + ' km²') : '';
+        layer.bindTooltip('<b>' + title + '</b>' + area, { sticky:true, direction:'top', opacity:0.96 });
+        layer.bindPopup('<div style="font-size:13px;line-height:1.45"><b>' + title + '</b><br><span style="color:#475569">Đơn vị hành chính mới TP. Đà Nẵng' + area + '</span></div>');
+        layer.on('mouseover', function(){
+          layer.setStyle(hoverStyle);
+          if(layer.bringToFront) layer.bringToFront();
+          var it = lblByName[title];
+          if(it && it.mk.getElement() && it.mk.getElement().firstChild){
+            it.hi = true;
+            var sp = it.mk.getElement().firstChild;
+            sp.style.display = 'inline-block';
+            sp.classList.add('hi');
+          }
+        });
+        layer.on('mouseout', function(){
+          layer.setStyle(baseStyle);
+          var it = lblByName[title];
+          if(it && it.mk.getElement() && it.mk.getElement().firstChild){
+            it.hi = false;
+            it.mk.getElement().firstChild.classList.remove('hi');
+          }
+          if(grp._boundMap) layoutAdminLabels2D(grp._boundMap, grp);
+        });
+      }
+    });
+    grp.addLayer(geoLyr);
+    grp._geoLyr = geoLyr;
+    grp._lblItems = lblItems;
     return grp;
   }
+
   function toggleAdminOnMap(map, btn, getLyr, setLyr){
     if(!map){
       alert('Bản đồ đang khởi tạo, vui lòng thử lại sau 1 giây.');
@@ -3004,12 +3081,13 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
       btn.style.background = '#fef2f2';
       btn.style.color = '#b91c1c';
     } else {
+      lyr._boundMap = map;
       lyr.addTo(map);
       if(lyr._geoLyr) lyr._geoLyr.bringToBack();
-      syncAdminZoomClass(map);
-      if(!map._adm94ZoomBound){
-        map._adm94ZoomBound = true;
-        map.on('zoomend', function(){ syncAdminZoomClass(map); });
+      layoutAdminLabels2D(map, lyr);
+      if(!map._adm94LayoutBound){
+        map._adm94LayoutBound = true;
+        map.on('zoomend moveend', function(){ layoutAdminLabels2D(map, getLyr()); });
       }
       btn.textContent = '✅ Đang hiện ranh giới 94 xã/phường';
       btn.style.background = '#dc2626';
@@ -3030,7 +3108,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
 
 
 <script>
-/* ========== MODULE XEM 3D SIÊU NHẸ (LAZY-LOAD MAPLIBRE) + 3 MỐC & TIỆN ÍCH GẦN NHẤT + KMZ ADMIN - v6.3.4 ========== */
+/* ========== MODULE XEM 3D SIÊU NHẸ (LAZY-LOAD MAPLIBRE) + 3 MỐC & TIỆN ÍCH GẦN NHẤT + KMZ ADMIN - v6.3.5 ========== */
 (function(){
   let mlLoaded = false, mlPromise = null, map3d = null, spinRaf = null, isSpinning = false, curPrj3d = null;
   let adminOn3d = false, wardLblOn3d = true, autoHubOn3d = false;
@@ -3148,7 +3226,38 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
           .setLngLat([w.lng, w.lat])
           .addTo(map3d);
         mk.getElement().style.zIndex = '1';
+        mk._wMeta = { lat: w.lat, lng: w.lng, text: div.textContent };
         wardMarkers3d.push(mk);
+      });
+      layoutWardLabels3D();
+      if(!map3d._w3dBound){
+        map3d._w3dBound = true;
+        map3d.on('moveend zoomend pitchend', layoutWardLabels3D);
+      }
+    }catch(e){}
+  }
+  function layoutWardLabels3D(){
+    if(!map3d || !wardMarkers3d.length) return;
+    try{
+      const rect = map3d.getContainer().getBoundingClientRect();
+      const placed = [];
+      wardMarkers3d.forEach(mk=>{
+        const el = mk.getElement();
+        const m = mk._wMeta;
+        if(!el || !m) return;
+        const pt = map3d.project([m.lng, m.lat]);
+        if(pt.x < 10 || pt.y < 10 || pt.x > rect.width - 10 || pt.y > rect.height - 10){
+          el.style.visibility = 'hidden'; return;
+        }
+        const w = Math.max(46, m.text.length * 6.2 + 12), h = 20;
+        const box = { x1: pt.x - w/2, y1: pt.y - h/2, x2: pt.x + w/2, y2: pt.y + h/2 };
+        let clash = false;
+        for(let i = 0; i < placed.length; i++){
+          const b = placed[i];
+          if(!(box.x2 < b.x1 || box.x1 > b.x2 || box.y2 < b.y1 || box.y1 > b.y2)){ clash = true; break; }
+        }
+        if(clash){ el.style.visibility = 'hidden'; }
+        else { el.style.visibility = 'visible'; placed.push(box); }
       });
     }catch(e){}
   }
