@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.3.12)</title>
+<title>Cẩm nang Nhà ở xã hội – TP. Đà Nẵng (bản v6.3.13)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
@@ -183,7 +183,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .ward-lbl.dark-bg{background:rgba(19,41,66,.86);color:#fff;border-color:rgba(255,255,255,.35)}
 
 
-/* Modal Xem 3D nhẹ (Lazy-load MapLibre GL JS) - v6.3.12 */
+/* Modal Xem 3D nhẹ (Lazy-load MapLibre GL JS) - v6.3.13 */
 .m3d{display:none;position:fixed;inset:0;background:rgba(10,18,28,.82);z-index:120;align-items:center;justify-content:center;padding:12px}
 .m3d.open{display:flex}
 .m3d-card{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:14px;width:96vw;max-width:1220px;height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.5)}
@@ -208,7 +208,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .m3d-prj-card .tag{background:rgba(255,255,255,.18);padding:1px 6px;border-radius:4px;font-weight:700;color:#fef08a}
 .m3d-legend{position:absolute;right:10px;bottom:12px;z-index:10;background:rgba(15,23,42,.82);color:#e2e8f0;padding:6px 9px;border-radius:8px;font-size:10.5px;line-height:1.5;pointer-events:none;backdrop-filter:blur(3px)}
 
-/* Khối Thông tin Mở bán công khai & Máy tính trả góp NOXH (v6.3.12) */
+/* Khối Thông tin Mở bán công khai & Máy tính trả góp NOXH (v6.3.13) */
 .sale-box{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0 14px;background:var(--card)}
 .sale-box.open{border-color:#16a34a;background:linear-gradient(180deg,rgba(22,163,74,.07),transparent 70%)}
 .sale-box.soon{border-color:#d97706;background:linear-gradient(180deg,rgba(217,119,6,.07),transparent 70%)}
@@ -235,19 +235,19 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .sflt-chip{padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--tx);font-size:12px;font-weight:600;cursor:pointer}
 .sflt-chip.on{background:var(--pri);color:#fff;border-color:var(--pri)}
 
-/* Nhãn tên 94 phường/xã gọn đẹp trên bản đồ 2D (OVMAP & LMAP) - v6.3.12 */
+/* Nhãn tên 94 phường/xã gọn đẹp trên bản đồ 2D (OVMAP & LMAP) - v6.3.13 */
 .adm94-lbl-wrap{background:transparent!important;border:0!important;box-shadow:none!important;pointer-events:none!important}
 .adm94-lbl{display:inline-block;transform:translate(-50%,-50%);font-size:10.5px;font-weight:700;color:#7f1d1d;white-space:nowrap;letter-spacing:.15px;pointer-events:none;user-select:none;text-shadow:-1px -1px 0 rgba(255,255,255,.95),1px -1px 0 rgba(255,255,255,.95),-1px 1px 0 rgba(255,255,255,.95),1px 1px 0 rgba(255,255,255,.95),0 0 4px rgba(255,255,255,.95);transition:font-size .15s ease}
 .adm94-zlow .adm94-lbl{font-size:8.5px;opacity:.88}
 .ward-tw-exp{max-height:380px;overflow-y:auto;border:1px solid var(--line);border-radius:8px}
 
-/* Tinh gọn khoảng trống & hiệu ứng nhãn phường/xã khi hover (v6.3.12) */
+/* Tinh gọn khoảng trống & hiệu ứng nhãn phường/xã khi hover (v6.3.13) */
 #p0 .hero h2{font-size:18px;margin:4px 0 0}
 #p0 .kpi{padding:10px 12px}
 #p0 .box{padding:12px 14px;margin-bottom:10px!important}
 .adm94-lbl.hi{color:#111827!important;background:rgba(254,240,138,.96);padding:1px 6px;border-radius:4px;border:1px solid #d97706;font-size:11.5px!important;z-index:999!important;box-shadow:0 2px 6px rgba(0,0,0,.35);text-shadow:none!important}
 
-/* Chống tràn chữ toàn bộ Web App (mọi TAB) & Thanh công cụ Bản đồ Tổng quan full-width (v6.3.12) */
+/* Chống tràn chữ toàn bộ Web App (mọi TAB) & Thanh công cụ Bản đồ Tổng quan full-width (v6.3.13) */
 .pane,.box,.card,.note,.dn,.warn,.rent-alert,.sale-box,.pitem,.pm,.pn{overflow-wrap:anywhere;word-break:break-word}
 .dgrid>*,.pgrid>*,.fld>*,.sale-grid>*,.kpis>*{min-width:0}
 .ov-tb{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:8px 11px;background:var(--bg);border:1px solid var(--line);border-radius:10px;margin-bottom:8px;font-size:12.5px}
@@ -263,7 +263,7 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .ov-prj-link{cursor:pointer;color:var(--pri);font-weight:700;text-decoration:underline}
 .ov-prj-link:hover{color:var(--acc)}
 
-/* Giao diện trực quan Tab Giới thiệu & Chức năng (v6.3.12) */
+/* Giao diện trực quan Tab Giới thiệu & Chức năng (v6.3.13) */
 .guide-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
 .gstep{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 12px;cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s}
 .gstep:hover{transform:translateY(-2px);border-color:var(--acc);box-shadow:0 6px 16px rgba(0,0,0,.08)}
@@ -278,14 +278,14 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:v
 .ggrp b{display:block;color:var(--pri);margin-bottom:2px}
 .ggrp span{color:var(--mut);line-height:1.4}
 
-/* Toast thông báo chuyển nền bản đồ dự phòng (v6.3.12) */
+/* Toast thông báo chuyển nền bản đồ dự phòng (v6.3.13) */
 .map-fb-toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:99999;background:#1e293b;color:#f8fafc;border:1px solid #f59e0b;border-left:4px solid #f59e0b;border-radius:10px;padding:9px 14px;font-size:13px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,.28);max-width:min(92vw,520px);line-height:1.45;pointer-events:none;opacity:0;transition:opacity .2s ease}
 .map-fb-toast.show{opacity:1}
 
-/* Ẩn cột Xác nhận của quản trị trong Bộ văn bản đối với người dùng thường (v6.3.12) */
+/* Ẩn cột Xác nhận của quản trị trong Bộ văn bản đối với người dùng thường (v6.3.13) */
 body:not(.is-staff) .staff-only-col{display:none!important}
 
-/* Lớp khóa mã PIN thử nghiệm nội bộ & Nhãn nhận diện AI (Luật AI 134/2025) - v6.3.12 */
+/* Lớp khóa mã PIN thử nghiệm nội bộ & Nhãn nhận diện AI (Luật AI 134/2025) - v6.3.13 */
 .pin-gate{position:fixed;inset:0;z-index:999999;background:linear-gradient(135deg,#0f2238 0%,#183a5a 55%,#1b5b6b 100%);display:flex;align-items:center;justify-content:center;padding:16px}
 .pin-gate[hidden]{display:none!important}
 .pin-card{background:#ffffff;color:#182330;border-radius:16px;padding:24px 22px;max-width:410px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.38);text-align:center}
@@ -299,6 +299,10 @@ body:not(.is-staff) .staff-only-col{display:none!important}
 .test-red-warn{background:#fef2f2;color:#991b1b;border:1.5px solid #fca5a5;border-left:5px solid #dc2626;border-radius:10px;padding:10px 13px;font-size:13px;line-height:1.5;margin-bottom:12px}
 
 .qa-msg.a::before{content:"🤖 [AI hỗ trợ tổng hợp]";display:inline-block;font-size:10.5px;font-weight:700;color:#3730a3;background:#eef2ff;border:1px solid #c7d2fe;padding:1px 7px;border-radius:999px;margin-bottom:6px}
+
+/* Nhãn chủ quyền biển đảo Việt Nam (Hoàng Sa, Trường Sa) luôn hiển thị rõ nét trên bản đồ - v6.3.13 */
+.vn-sov-wrap{background:transparent!important;border:0!important;box-shadow:none!important;pointer-events:none!important}
+.vn-sov-lbl{display:inline-block;transform:translate(-50%,-50%);background:rgba(15,34,56,.88);color:#fef08a;border:1px solid rgba(250,204,21,.75);border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800;white-space:nowrap;letter-spacing:.25px;box-shadow:0 2px 8px rgba(0,0,0,.35);pointer-events:none;user-select:none}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" crossorigin=""></script>
@@ -372,7 +376,7 @@ body:not(.is-staff) .staff-only-col{display:none!important}
 <nav class="sb" id="sb" aria-label="Điều hướng chính">
   <div class="sb-brand">
     <div class="sb-logo">ĐN</div>
-    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.3.12 · QHC 2050 & Ranh giới 94 xã/phường</small></div>
+    <div><b>Cẩm nang NOXH<br>TP. Đà Nẵng</b><small>Bản v6.3.13 · QHC 2050 & Ranh giới 94 xã/phường</small></div>
   </div>
   <div class="sb-nav" role="tablist" style="margin-top:8px">
     <button class="tab" role="tab" aria-selected="true" data-p="p0" data-t="Tổng quan & Phân bố cung – cầu NOXH"><span class="ic">📊</span>Tổng quan & Phân bố</button>
@@ -781,7 +785,7 @@ body:not(.is-staff) .staff-only-col{display:none!important}
       <div class="box">
         <h3>Đăng ký nhận thông tin mở bán & hướng dẫn hồ sơ NOXH</h3>
         <div class="test-red-warn"><b>⚠️ CHỨC NĂNG THỬ NGHIỆM – KHÔNG NHẬP SĐT/EMAIL THẬT</b><br>Biểu mẫu này chỉ phục vụ kiểm thử nội bộ, chưa áp dụng thu thập dữ liệu cá nhân thực tế của công dân.</div>
-        <p class="note" style="margin:0 0 12px">Dữ liệu đăng ký gửi về Google Sheet tổng hợp nhu cầu của đơn vị (khi gắn <code>NOXH_CONFIG.formActionUrl</code>). Đây là kênh cung cấp thông tin, không phải nộp hồ sơ đăng ký mua nhà.</p>
+        <p class="note" style="margin:0 0 12px">Kênh này chỉ dùng để ghi nhận nhu cầu và hỗ trợ cung cấp thông tin tham khảo về các đợt mở bán NOXH, <b>không phải</b> thủ tục nộp hồ sơ đăng ký mua/thuê mua/thuê nhà ở xã hội.</p>
         <div class="fld">
           <div><label>Họ và tên *</label><input type="text" id="reg_name" placeholder="Nguyễn Văn A"></div>
           <div><label>Số điện thoại / Zalo *</label><input type="tel" id="reg_phone" placeholder="09xx xxx xxx"></div>
@@ -1429,7 +1433,20 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
 
   function initOvMap(){
     if(OVMAP || typeof L === 'undefined' || !$('ovmap')) return;
-    OVMAP = L.map('ovmap').setView([15.92, 108.28], 10); window.OVMAP = OVMAP;
+    OVMAP = L.map('ovmap', { minZoom: 6, maxBounds: [[7.0, 102.0], [23.8, 118.5]], maxBoundsViscosity: 0.85 }).setView([15.92, 108.28], 10); window.OVMAP = OVMAP;
+    if(!window.addVnSovereigntyLabels){
+      window.addVnSovereigntyLabels = function(m){
+        if(!m || typeof L === 'undefined') return;
+        [
+          { lat: 16.575, lng: 111.95, text: '★ Quần đảo Hoàng Sa (TP. Đà Nẵng, Việt Nam)' },
+          { lat: 10.72,  lng: 114.80, text: '★ Quần đảo Trường Sa (Việt Nam)' }
+        ].forEach(function(pt){
+          var ic = L.divIcon({ className: 'vn-sov-wrap', html: '<span class="vn-sov-lbl">' + pt.text + '</span>', iconSize: [0, 0] });
+          L.marker([pt.lat, pt.lng], { icon: ic, interactive: false, keyboard: false, zIndexOffset: 900 }).addTo(m);
+        });
+      };
+    }
+    window.addVnSovereigntyLabels(OVMAP);
     if(!window.showMapFallbackToast){
       let _fbTimer = null, _fbLast = 0;
       window.showMapFallbackToast = function(msg){
@@ -1449,8 +1466,8 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
         _fbTimer = setTimeout(()=>{ el.classList.remove('show'); }, 4800);
       };
     }
-    const ovBase = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap · Địa giới theo CSDL mới', maxNativeZoom:19, maxZoom:19});
-    const ovSat = L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&hl=vi&x={x}&y={y}&z={z}', {attribution:'© Google Satellite Hybrid · Địa giới theo CSDL mới', subdomains:['0','1','2','3'], maxNativeZoom:20, maxZoom:20});
+    const ovBase = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap (nền tham khảo) · Quần đảo Hoàng Sa (TP. Đà Nẵng) & Trường Sa thuộc chủ quyền Việt Nam', maxNativeZoom:19, maxZoom:19});
+    const ovSat = L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&hl=vi&gl=VN&x={x}&y={y}&z={z}', {attribution:'© Google Satellite Hybrid (nền tham khảo) · Quần đảo Hoàng Sa (TP. Đà Nẵng) & Trường Sa thuộc chủ quyền Việt Nam', subdomains:['0','1','2','3'], maxNativeZoom:20, maxZoom:20});
     ovBase.addTo(OVMAP);
     let ovIsSat = false, ovSatErrs = 0;
     ovSat.on('tileload', ()=>{ ovSatErrs = 0; });
@@ -1766,9 +1783,10 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
   }
   function initMap(){
     if(LMAP || typeof L === 'undefined') return;
-    LMAP = L.map('leafmap').setView([15.98, 108.22], 11); window.LMAP = LMAP;
-    TILE_SAT = L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&hl=vi&x={x}&y={y}&z={z}', {attribution:'© Google Satellite Hybrid', subdomains:['0','1','2','3'], maxNativeZoom:20, maxZoom:20});
-    TILE_OSM = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap · Địa giới theo CSDL mới', maxNativeZoom:19, maxZoom:19});
+    LMAP = L.map('leafmap', { minZoom: 6, maxBounds: [[7.0, 102.0], [23.8, 118.5]], maxBoundsViscosity: 0.85 }).setView([15.98, 108.22], 11); window.LMAP = LMAP;
+    if(window.addVnSovereigntyLabels) window.addVnSovereigntyLabels(LMAP);
+    TILE_SAT = L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&hl=vi&gl=VN&x={x}&y={y}&z={z}', {attribution:'© Google Satellite Hybrid (nền tham khảo) · Hoàng Sa & Trường Sa thuộc Việt Nam', subdomains:['0','1','2','3'], maxNativeZoom:20, maxZoom:20});
+    TILE_OSM = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap (nền tham khảo) · Quần đảo Hoàng Sa (TP. Đà Nẵng) & Trường Sa thuộc chủ quyền Việt Nam', maxNativeZoom:19, maxZoom:19});
     let lmSatErrs = 0;
     TILE_SAT.on('tileload', ()=>{ lmSatErrs = 0; });
     TILE_SAT.on('tileerror', ()=>{
@@ -3425,7 +3443,7 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
 
 
 <script>
-/* ========== MODULE XEM 3D SIÊU NHẸ (LAZY-LOAD MAPLIBRE) + 3 MỐC & TIỆN ÍCH GẦN NHẤT + KMZ ADMIN - v6.3.12 ========== */
+/* ========== MODULE XEM 3D SIÊU NHẸ (LAZY-LOAD MAPLIBRE) + 3 MỐC & TIỆN ÍCH GẦN NHẤT + KMZ ADMIN - v6.3.13 ========== */
 (function(){
   let mlLoaded = false, mlPromise = null, map3d = null, spinRaf = null, isSpinning = false, curPrj3d = null;
   let adminOn3d = false, wardLblOn3d = true, autoHubOn3d = false;
@@ -3920,10 +3938,10 @@ if(CFG.sheetCsvUrl){fetch(CFG.sheetCsvUrl).then(r=>r.text()).then(t=>{const L=ro
           'google-hyb': {
             type: 'raster',
             tiles: [
-              'https://mt0.google.com/vt/lyrs=y&hl=vi&x={x}&y={y}&z={z}',
-              'https://mt1.google.com/vt/lyrs=y&hl=vi&x={x}&y={y}&z={z}',
-              'https://mt2.google.com/vt/lyrs=y&hl=vi&x={x}&y={y}&z={z}',
-              'https://mt3.google.com/vt/lyrs=y&hl=vi&x={x}&y={y}&z={z}'
+              'https://mt0.google.com/vt/lyrs=y&hl=vi&gl=VN&x={x}&y={y}&z={z}',
+              'https://mt1.google.com/vt/lyrs=y&hl=vi&gl=VN&x={x}&y={y}&z={z}',
+              'https://mt2.google.com/vt/lyrs=y&hl=vi&gl=VN&x={x}&y={y}&z={z}',
+              'https://mt3.google.com/vt/lyrs=y&hl=vi&gl=VN&x={x}&y={y}&z={z}'
             ],
             tileSize: 256,
             maxzoom: 20,
