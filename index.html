@@ -561,7 +561,7 @@ body:not(.is-admin) .admin-only-date, body:not(.is-admin) #progtab{display:none!
           </div>
           <div class="gstep" onclick="goTab('p9')">
             <div class="gs-top"><span class="gs-num">02</span><span class="gs-ic">🌐</span></div>
-            <b>Mở bán, 3D &amp; Trả góp</b>
+            <b>Dự án, Mở bán &amp; 3D</b>
             <p>Xem trạng thái mở bán nhiều đợt, giá công khai, mô hình 3D + tiện ích 5 km &amp; thông tin CĐT.</p>
           </div>
           <div class="gstep" onclick="goTab('p8')">
@@ -923,7 +923,7 @@ function drawBar(b){const r=REV[b.id],p=PROP[b.id];b.el.replaceChildren();
  box.querySelectorAll('button').forEach(bt=>{if(r&&r.status===bt.dataset.s)bt.classList.add('on');bt.onclick=async()=>{m.textContent='Đang lưu…';try{await DB.collection('reviews').doc(b.id).set({status:bt.dataset.s,note:ta.value.trim(),label:b.label,ctx:b.ctx,by:ME.id,byName:ME.name,at:Date.now()});m.textContent='Đã lưu'}catch(e){m.textContent='Không lưu được ('+((e&&e.code)||'lỗi')+')'}}});
  b.el.appendChild(box);
  if(p){const q=document.createElement('div');q.className='prop';const stt=p.state==='dongy'?['Đã đồng ý','ok']:p.state==='tuchoi'?['Đã từ chối','goc']:['Chờ quyết định','kiem'];
-  q.innerHTML='<b>Phương án sửa đổi do Claude đề xuất</b> <span class="st '+stt[1]+'"></span><div class="pt"></div><div class="dn pb"></div><div class="row"><button class="sm" data-p="dongy">Đồng ý</button><button class="sm" data-p="tuchoi">Từ chối</button></div>';
+  q.innerHTML='<b>Phương án tổng hợp của AI</b> <span class="st '+stt[1]+'"></span><div class="pt"></div><div class="dn pb"></div><div class="row"><button class="sm" data-p="dongy">Đồng ý</button><button class="sm" data-p="tuchoi">Từ chối</button></div>';
   q.querySelector('.st').textContent=stt[0];q.querySelector('.pt').textContent=p.text||'';q.querySelector('.pb').textContent=p.basis?'Căn cứ: '+p.basis:'';
   q.querySelectorAll('button').forEach(bt=>bt.onclick=async()=>{try{await DB.collection('proposals').doc(b.id).update({state:bt.dataset.p,decidedBy:ME.id,decidedAt:Date.now()})}catch(e){}});b.el.appendChild(q)}}
 function td(tr,t){const c=tr.insertCell();c.textContent=t==null?'':String(t);return c}
@@ -931,7 +931,7 @@ function renderAdm(){if(!IS_ADMIN)return;
  const rs=Object.entries(REV).sort((a,b)=>(b[1].at||0)-(a[1].at||0));const cnt={dung:0,sai:0,xem:0};rs.forEach(([k,v])=>{if(cnt[v.status]!==undefined)cnt[v.status]++});
  const pm=Object.values(PROP).filter(p=>p.state!=='dongy'&&p.state!=='tuchoi').length;
  $('admsum').innerHTML=`Đã xác nhận đúng: <b>${cnt.dung}</b> · Chưa đúng: <b>${cnt.sai}</b> · Cần xem lại: <b>${cnt.xem}</b> · Phương án sửa đổi chờ quyết định: <b>${pm}</b>`;
- const f=$('admflt').value,tb=$('admtb');tb.replaceChildren();const h=tb.insertRow();['Nội dung','Trạng thái','Ghi chú / nội dung đúng','Phương án của Claude','Người xác nhận','Ngày'].forEach(x=>{const c=document.createElement('th');c.textContent=x;h.appendChild(c)});
+ const f=$('admflt').value,tb=$('admtb');tb.replaceChildren();const h=tb.insertRow();['Nội dung','Trạng thái','Ghi chú / nội dung đúng','Phương án tổng hợp của AI','Người xác nhận','Ngày'].forEach(x=>{const c=document.createElement('th');c.textContent=x;h.appendChild(c)});
  rs.filter(([k,v])=>!f||v.status===f).forEach(([k,v])=>{const r=tb.insertRow();td(r,v.label||k);td(r,STN[v.status]||v.status);td(r,v.note);const p=PROP[k];td(r,p?((p.state==='dongy'?'[Đã đồng ý] ':p.state==='tuchoi'?'[Đã từ chối] ':'[Chờ quyết định] ')+(p.text||'')):'');td(r,v.byName||v.by);td(r,fdate(v.at))});
  const ut=$('uptb');ut.replaceChildren();const uh=ut.insertRow();['Tên','Loại','Ghi chú','Người tải','Ngày',''].forEach(x=>{const c=document.createElement('th');c.textContent=x;uh.appendChild(c)});
  Object.entries(UPL).sort((a,b)=>(b[1].at||0)-(a[1].at||0)).forEach(([id,u])=>{const r=ut.insertRow();td(r,u.name);td(r,u.kind==='text'?'Nội dung dán ('+(u.content||'').length+' ký tự)':(u.type||'tệp')+(u.size?' · '+Math.round(u.size/1024)+' KB':''));td(r,u.note);td(r,u.byName||u.by);td(r,fdate(u.at));
@@ -939,7 +939,7 @@ function renderAdm(){if(!IS_ADMIN)return;
 function redrawAll(){for(const id in BARS){BARS[id]=BARS[id].filter(b=>b.el.isConnected);BARS[id].forEach(drawBar)}renderAdm()}
 function sync(col,store){DB.collection(col).onSnapshot(s=>{for(const k in store)delete store[k];s.docs.forEach(d=>store[d.id]=d.data());redrawAll()},()=>{})}
 $('admflt').onchange=renderAdm;
-$('admcsv').onclick=async()=>{const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';const rows=[['Mã mục','Nội dung','Trạng thái','Ghi chú hoặc nội dung đúng','Người xác nhận','Ngày','Trích nội dung','Phương án sửa đổi của Claude','Quyết định']];
+$('admcsv').onclick=async()=>{const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';const rows=[['Mã mục','Nội dung','Trạng thái','Ghi chú hoặc nội dung đúng','Người xác nhận','Ngày','Trích nội dung','Phương án tổng hợp của AI','Quyết định']];
  Object.entries(REV).sort().forEach(([k,v])=>{const p=PROP[k]||{};rows.push([k,v.label,STN[v.status]||v.status,v.note,v.byName||v.by,fdate(v.at),v.ctx,p.text,p.state==='dongy'?'Đã đồng ý':p.state==='tuchoi'?'Đã từ chối':p.text?'Chờ quyết định':''])});
  const blob=new Blob(['\ufeff'+rows.map(r=>r.map(q).join(',')).join('\r\n')],{type:'text/csv'});
  if(!DL){$('admmsg').textContent='Chưa bật tải về trong chế độ xem này.';return}
